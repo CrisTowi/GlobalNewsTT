@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="col-lg-9">
+  <div class="row">
+    <div class="col-sm-6 col-md-4">
+      <a href="#" data-toggle="modal" data-target="#ModalMD">
+        <div class="thumbnail">
+          <img src="{{ STATIC_URL }}img/ballena.jpg" style="width: 300px; height: 200px;">
+          <div class="caption">
+            <h3>Usuario 1</h3>
+            <p>Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje </p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-sm-6 col-md-4">
+      <a href="#" data-toggle="modal" data-target="#ModalMD">
+        <div class="thumbnail">
+          <img src="{{ STATIC_URL }}img/me.jpg" style="width: 300px; height: 200px;">
+          <div class="caption">
+            <h3>Usuario 2</h3>
+            <p>Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje Ultimo mensaje </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- /.col-lg-8 -->
+
+<!-- Modal -->
+<div class="modal fade" id="ModalMD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Mensajes con: Usuario</h4>
+      </div>
+      <div class="modal-body">
+        <ul class="chat">
+            <li class="left clearfix">
+                <span class="chat-img pull-left">
+                    <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />
+                </span>
+                <div class="chat-body clearfix">
+                    <div class="header">
+                        <strong class="primary-font">Christian Consuelo</strong> 
+                        <small class="pull-right text-muted">
+                            <i class="fa fa-clock-o fa-fw"></i> Hace 12 minutos
+                        </small>
+                    </div>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                    </p>
+                    <a href="#">Eliminar</a> <a href="#">Esconder</a>
+                </div>
+            </li>
+            <li class="right clearfix">
+                <span class="chat-img pull-right">
+                    <img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />
+                </span>
+                <div class="chat-body clearfix">
+                    <div class="header">
+                        <small class=" text-muted">
+                            <i class="fa fa-clock-o fa-fw"></i> Hace 13 minutos</small>
+                        <strong class="pull-right primary-font">Diana Mar</strong>
+                    </div>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                    </p>
+                    <a href="#">Eliminar</a> <a href="#">Esconder</a>
+                </div>
+            </li>
+            <li class="left clearfix">
+                <span class="chat-img pull-left">
+                    <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />
+                </span>
+                <div class="chat-body clearfix">
+                    <div class="header">
+                        <strong class="primary-font">Christian Consuelo</strong> 
+                        <small class="pull-right text-muted">
+                            <i class="fa fa-clock-o fa-fw"></i> Hace 15 minutos</small>
+                    </div>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                    </p>
+                    <a href="#">Eliminar</a> <a href="#">Esconder</a>
+                </div>
+            </li>
+            <li class="right clearfix">
+                <span class="chat-img pull-right">
+                    <img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />
+                </span>
+                <div class="chat-body clearfix">
+                    <div class="header">
+                        <small class=" text-muted">
+                            <i class="fa fa-clock-o fa-fw"></i> Hace 15 minutos</small>
+                        <strong class="pull-right primary-font">Diana Mar</strong>
+                    </div>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                    </p>
+                    <a href="#">Eliminar</a> <a href="#">Esconder</a>
+                </div>
+            </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-2">
+                <button class="btn btn-success">Enviar</button>
+            </div>
+            <div class="col-md-10">
+                <input type="text" class="form-control" placeholder="Mensaje...">
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

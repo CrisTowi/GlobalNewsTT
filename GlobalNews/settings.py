@@ -26,6 +26,10 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'plantillas'),
+)
+
 
 # Application definition
 
@@ -36,7 +40,17 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
+    'rest_framework',
+    'django.contrib.humanize',
+    'Principal',
 )
+
+ADMINS = (
+    ('Christian', 'christian.consuelo2@gmail.com'),
+)
+
+MANAGERS = ADMINS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -94,3 +108,19 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+AUTH_USER_MODEL = 'Principal.Usuario'
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR,'carga')
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash.
+# Examples: "http://example.com/media/", "http://media.example.com/"
+MEDIA_URL = '/carga/'
