@@ -10,7 +10,7 @@ class NotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nota
         fields = ('usuario','subseccion','titulo','descripcion','imagen',
-        					'facha','longitud','latitud','imagen','likes', 'privacidad', )
+        					'fecha','longitud','latitud','imagen','likes', 'privacidad', )
 
 class ComentarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
