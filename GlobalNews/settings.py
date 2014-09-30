@@ -71,19 +71,19 @@ WSGI_APPLICATION = 'GlobalNews.wsgi.application'
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': 'db',                      # Or path to database file if using sqlite3.
-    #     'USER': '',                      # Not used with sqlite3.
-    #     'PASSWORD': '',                  # Not used with sqlite3.
-    #     'HOST': '',                
-    #     'PORT': '',
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                
+        'PORT': '',
+    }
 }
 
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+# DATABASES['default'] =  dj_database_url.config()
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -130,4 +130,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'carga')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = '/carga/'
+MEDIA_URL = '/media/'

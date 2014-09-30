@@ -71,7 +71,7 @@ class Nota(models.Model):
 	privacidad = models.BooleanField(default=True)
 
 	def __unicode__(self):
-		return self.descripcion
+		return self.titulo
 
 class ReporteNota(models.Model):
 	usuario = models.ForeignKey(Usuario, related_name='usuario_reportenota')

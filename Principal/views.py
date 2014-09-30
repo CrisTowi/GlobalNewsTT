@@ -86,8 +86,9 @@ def perfil(request, id):
 	ctx = {'usuario': usuario}
 	return render(request, 'perfil.html', ctx)
 
-def publicacion(request):
-	ctx = {}
+def publicacion(request, id):
+	publicacion = Nota.objects.get(id = id)
+	ctx = {'publicacion': publicacion}
 	return render(request, 'publicacion.html', ctx)
 
 

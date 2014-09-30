@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'logout/$', 'Principal.views.logout', name='logout'),
 
     url(r'perfil/(?P<id>\d+)$', 'Principal.views.perfil', name='perfil'),
-    url(r'publicacion/$', 'Principal.views.publicacion', name='publicacion'),
+    url(r'publicacion/(?P<id>\d+)$', 'Principal.views.publicacion', name='publicacion'),
 
     url(r'lista/post/$', 'Principal.views.lista_publicaciones', name='lista_publicaciones'),
     url(r'lista/post/seccion/$', 'Principal.views.lista_publicaciones_seccion', name='lista_publicaciones_seccion'),
@@ -45,7 +45,9 @@ urlpatterns = patterns('',
 
     url(r'editar/post/$', 'Principal.views.editar_post', name='editar_post'),
     url(r'editar/usuario/$', 'Principal.views.editar_perfil', name='editar_perfil'),
-
+    url(r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root':settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
+
+
 
 )

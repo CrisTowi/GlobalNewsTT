@@ -5,23 +5,21 @@
     <!-- /.panel -->
     	<div class="row">
     		<div class="col-xs-5">
-    			<img src="{{ STATIC_URL }}img/ballena.jpg">
+    			<img width="300px" src="{{ MEDIA_URL }}{{ publicacion.imagen }}">
     		</div>
     		<div class="col-xs-7">
-    			<strong>Autor: </strong> <a href="/perfil/">Christian</a>
+    			<strong>Autor: </strong> <a href="/perfil/{{ publicacion.usuario.id }}">{{ publicacion.usuario.username }}</a>
     			<br><br>
     			<a class="tag">Politica</a>
 
-    			<h3>Encabezado Encabezado Encabezado Encabezado Encabezado Encabezado Encabezado Encabezado.</h3>
+    			<h3>{{ publicacion.titulo }}</h3>
 
     		</div>
     	</div>
     	<br>
     	<br>
     	<div class="texto_publicacion">
-    		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    		{{ publicacion.descripcion }}
     	</div>
     	<br>
     	<br>
