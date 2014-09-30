@@ -1,12 +1,16 @@
 from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion
 from rest_framework import serializers
 
+
 class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Usuario
         fields = ('url','username','ap_paterno','ap_materno','correo','foto','estado', )
 
 class NotaSerializer(serializers.ModelSerializer):
+
+    usuario = serializers.Field(source='usuario.username')
+    fecha = serializers.Field(source='formato_fecha')
     class Meta:
         model = Nota
         fields = ('usuario','subseccion','titulo','descripcion','imagen',
