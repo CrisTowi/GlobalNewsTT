@@ -71,9 +71,6 @@ class Nota(models.Model):
 	likes = models.IntegerField(default=0)
 	privacidad = models.BooleanField(default=True)
 
-	def formato_descripcion(self):
-		return self.descripcion[0:140] + "..."
-
 	def formato_fecha(self):
 		return naturaltime(self.fecha)
 

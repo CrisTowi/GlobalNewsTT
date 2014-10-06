@@ -22,7 +22,7 @@
                     </div>
                     <div class="timeline-panel">
                         <div class="timeline-heading">
-                            <h4 class="timeline-title">{{ noticia.titulo }}</h4>
+                            <a href="/publicacion/{{ noticia.id }}"><h4 class="timeline-title">{{ noticia.titulo }}</h4></a>
                             <a href="/perfil/{{ noticia.usuario.id }}"><h5>Por {{ noticia.usuario.username }}</h5></a>
                             <p>
                                 <small class="text-muted"><i class="fa fa-time"></i>{{ noticia.fecha|naturaltime|capfirst }}</small>
@@ -30,7 +30,7 @@
                             </p>
                         </div>
                         <div class="timeline-body">
-                            <p>{{ noticia.descripcion }}</p>
+                            <p>{{ noticia.descripcion|slice:":140"|add:" ..." }}</p>
                         </div>
                     </div>
                 </li>

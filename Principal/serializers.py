@@ -11,7 +11,6 @@ class NotaSerializer(serializers.ModelSerializer):
 
     usuario = serializers.Field(source='usuario.username')
     fecha = serializers.Field(source='formato_fecha')
-    descripcion = serializers.Field(source='formato_descripcion')
     seccion = serializers.Field(source='subseccion.seccion.id')
     
     class Meta:

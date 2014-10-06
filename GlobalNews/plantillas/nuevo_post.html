@@ -9,53 +9,15 @@
 <!-- /.panel -->
 <div class="panel panel-default">
     <div class="panel-heading">
-        <i class="fa fa-clock-o fa-fw"></i> Nuevo Post
+        <i class="fa fa-clock-o fa-fw"></i> Nueva Nota
     </div>
                             <div class="panel-body">
         <div class="row">
             <div class="col-lg-12">
-                <form role="form">
-                    <div class="form-group">
-                        <label>Titulo de la nota</label>
-                        <input class="form-control" placeholder="Titulo">
-                        <p class="help-block">Ejemplo: Carambana de coches en la Gustavo A. Madero</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Sección</label>
-                        <select class="form-control">
-                            <option>Sección 1</option>
-                            <option>Sección 2</option>
-                            <option>Sección 3</option>
-                            <option>Sección 4</option>
-                            <option>Sección 5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Privacidad</label>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>Público
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">Privado
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Imagen</label>
-                        <input type="file">
-                    </div>
-                    <div class="form-group">
-                        <label>Texto</label>
-                        <textarea class="form-control" rows="10"></textarea>
-                        <p class="help-block">Trata de ser lo más claro posible =) </p>
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Nacimiento</label>
-                        <input class="form-control" placeholder="Fecha de Nacimiento" id="calendario">
-                    </div>
+                <form id="nueva_nota_form" role="form" method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
+                    <h1>Nueva Nota</h1>
+                    {{ form.as_p }}
+                    <br>
                     <button id="abrir_mapa" class="btn btn-primary">Una ubicación diferente</button>
                     <p class="help-block">De lo contrario se pondrá con tu ubicación actual</p>
 
@@ -64,8 +26,8 @@
                     </div>
                     <br>
                     <br>
-                    <button type="submit" class="btn btn-success">Crear</button>
-                    <button type="reset" class="btn btn-default">Reiniciar</button>
+                    <input type="submit" class="btn btn-success" value="Crear"></input>
+                    <input type="reset" class="btn btn-default" value="Reiniciar"></input>
                 </form>
             </div>
             <!-- /.col-lg-6 (nested) -->
