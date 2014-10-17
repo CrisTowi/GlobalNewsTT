@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
-from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion
+from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
@@ -13,6 +13,11 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 
 from django.contrib.auth.decorators import login_required
+
+from django.db.models import Q
+from django.http import JsonResponse
+
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 #Viwesets para el API REST
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -49,15 +54,23 @@ def lista_usuarios(request):
 	return render(request, 'usuarios_admin.html', ctx)
 
 def lista_mensajes(request):
-	ctx = {'nombre_vista': 'Lista de Mensajes Directos'}
+
+	mensajes = MensajeDirecto.objects.filter( usuario_destinatario = request.user )
+
+	ctx = {'nombre_vista': 'Lista de Mensajes Directos', 'mensajes': mensajes}
+
 	return render(request, 'lista_mensajes.html', ctx)
 
-def lista_seguidos(request):
-	ctx = {'nombre_vista': 'Lista de Seguidos'}
-	return render(request, 'lista_seguidores.html', ctx)
+def lista_seguidos(request, id):
+	siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = id)
 
-def lista_seguidores(request):
-	ctx = {'nombre_vista': 'Lista de Seguidores'}
+	ctx = {'nombre_vista': 'Lista de Seguidos', 'siguiendo': siguiendo}
+	return render(request, 'lista_siguiendo.html', ctx)
+
+def lista_seguidores(request, id):
+	seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
+
+	ctx = {'nombre_vista': 'Lista de Seguidores', 'seguidores': seguidores}
 	return render(request, 'lista_seguidores.html', ctx)
 
 def lista_publicaciones(request):
@@ -270,3 +283,17 @@ def login_usuario(request):
 def logout_usuario(request):
 	logout(request)
 	return HttpResponseRedirect('/login/')
+
+
+#Ajax
+def get_chat(request):
+	usuario = request.GET.get('usuario_consultor', None)
+	usuario_chat = request.GET.get('usuario_chat', None)
+
+	mensajes = list(MensajeDirecto.objects.filter(Q(usuario_remitente = usuario, usuario_destinatario = usuario_chat) | Q(usuario_remitente = usuario_chat, usuario_destinatario = usuario)).values())
+
+
+	for mensaje in mensajes:
+		mensaje['fecha'] = naturaltime(mensaje['fecha']);
+
+	return JsonResponse(mensajes, safe=False)

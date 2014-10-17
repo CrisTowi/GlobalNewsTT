@@ -31,15 +31,15 @@ urlpatterns = patterns('',
     url(r'lista/nota/$', 'Principal.views.lista_publicaciones', name='lista_publicaciones'),
     url(r'lista/nota/usuario/(?P<id>\d+)$', 'Principal.views.lista_publicaciones_usuario', name='lista_publicaciones_usuario'),
 
-
-
     url(r'lista/nota/seccion/$', 'Principal.views.lista_publicaciones_seccion', name='lista_publicaciones_seccion'),
     url(r'lista/reportes/nota$', 'Principal.views.lista_reportes', name='lista_reportes'),
     url(r'lista/reportes/usuario$', 'Principal.views.lista_reportes_usuario', name='lista_reportes_usuario'),
     url(r'lista/usuarios/$', 'Principal.views.lista_usuarios', name='lista_usuarios'),
     url(r'lista/mensajes/$', 'Principal.views.lista_mensajes', name='lista_mensajes'),
-    url(r'lista/seguidos/$', 'Principal.views.lista_seguidos', name='lista_seguidos'),
-    url(r'lista/seguidores/$', 'Principal.views.lista_seguidores', name='lista_seguidores'),
+
+    url(r'lista/seguidos/(?P<id>\d+)$', 'Principal.views.lista_seguidos', name='lista_seguidos'),
+    url(r'lista/seguidores/(?P<id>\d+)$', 'Principal.views.lista_seguidores', name='lista_seguidores'),
+    
     url(r'lista/subsecciones/$', 'Principal.views.lista_subsecciones', name='lista_subsecciones'),
     url(r'lista/secciones/$', 'Principal.views.lista_secciones', name='lista_secciones'),
 
@@ -50,4 +50,9 @@ urlpatterns = patterns('',
     url(r'editar/usuario/$', 'Principal.views.editar_perfil', name='editar_perfil'),
     url(r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root':settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
+
+
+    #Vistas en AJAX
+    url(r'chat/$', 'Principal.views.get_chat', name='get_chat'),
+
 )

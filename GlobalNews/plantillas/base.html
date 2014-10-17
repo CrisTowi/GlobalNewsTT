@@ -18,7 +18,7 @@
 
     <!-- SB Admin CSS - Include with every page -->
     <link href="{{ STATIC_URL }}css/sb-admin.css" rel="stylesheet">
-
+    
     {% block css%}
     {% endblock %}
 
@@ -218,7 +218,7 @@
                                 <a href="/nuevo/nota/"><i class="glyphicon glyphicon-plus-sign"></i>Nueva Publicación</a>
                             </li>
                             <li>
-                                <a href="publicaciones.html"><i class="glyphicon glyphicon-th-list"></i>  Mis Publicaciones</a>
+                                <a href="/lista/nota/usuario/{{ user.id }}"><i class="glyphicon glyphicon-th-list"></i>  Mis Publicaciones</a>
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->
@@ -228,6 +228,23 @@
                         <a href="#"><i class="fa fa-sitemap fa-fw"></i>Secciones<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
 
+                            {% for seccion in secciones %}
+                            <li>
+                                <a href="#">{{ seccion.nombre }}</a>
+                                <ul class="nav nav-third-level">
+                                    <li>
+                                        <a href="/lista/publicaciones/">Choques / Automoviles Descompuestos</a>
+                                    </li>
+                                    <li>
+                                        <a href="/lista/publicaciones/">Obras</a>
+                                    </li>
+                                    <li>
+                                        <a href="/lista/publicaciones/">Manifestaciones</a>
+                                    </li>
+                                </ul>
+                            </li>                                
+                            {% endfor %}
+  
                             <li>
                                 <a href="#">Tráfico</a>
                                 <ul class="nav nav-third-level">
@@ -325,14 +342,14 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="list-group">
-                                <a href="#" class="list-group-item">
-                                    <i class="glyphicon glyphicon-ok-circle"></i>  123 Seguidores
+                                <a href="/lista/seguidores/{{ user.id }}" class="list-group-item">
+                                    <i class="glyphicon glyphicon-ok-circle"></i>  {{ num_seguidores }} Seguidores
                                 </a>                                
-                                <a href="#" class="list-group-item">
-                                    <i class="glyphicon glyphicon-ok-circle"></i>  32 Siguiendo
+                                <a href="/lista/seguidos/{{ user.id }}" class="list-group-item">
+                                    <i class="glyphicon glyphicon-ok-circle"></i>  {{ num_siguiendo }} Siguiendo
                                 </a>                                
-                                <a href="#" class="list-group-item">
-                                    <i class="glyphicon glyphicon-list-alt"></i>  200 Publicaciones
+                                <a href="/lista/nota/usuario/{{ user.id }}" class="list-group-item">
+                                    <i class="glyphicon glyphicon-list-alt"></i>  {{ num_notas }} Publicaciones
                                 </a>
                             </div>
                         </div>

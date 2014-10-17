@@ -113,6 +113,7 @@ class MensajeDirecto(models.Model):
 
 	contenido = models.CharField(max_length=50)
 	fecha = models.DateTimeField(auto_now_add=True)
+	leido = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return str(self.usuario_remitente) + ' ' + str(self.usuario_destinatario)
