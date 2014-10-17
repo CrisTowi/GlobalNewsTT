@@ -18,11 +18,15 @@
                     <h3>Nombre: </h3> <span style="font-size: 20px">{{ usuario.nombre }}</span>
                     <h3>Apellido Paterno: </h3> <span style="font-size: 20px">{{ usuario.ap_paterno }}</span>
                     <h3>Apellido Materno: </h3> <span style="font-size: 20px">{{ usuario.ap_materno }}</span>
+                    {% if user.id == usuario.id %}
+                    <br><br>
+                    <a class="btn btn-success" href="/editar/usuario/{{ usuario.id }}">Editar</a>
+                    {% else %}
                     <br><br>
                     <button class="btn btn-success" data-toggle="modal" data-target="#ModalSeguir">Seguir</button>
-                    <br>
-                    <br>
+                    <br><br>
                     <a href="#" data-toggle="modal" data-target="#ModalDenunciar">Denunciar</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

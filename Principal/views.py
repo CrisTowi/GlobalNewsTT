@@ -179,7 +179,7 @@ def nuevo_usuario(request):
 			u.username = username
 			u.correo = email
 
-			u.imagen = imagen
+			u.foto = imagen
 
 			u.save()
 
@@ -197,6 +197,60 @@ def nuevo_usuario(request):
 
 	ctx = {'form':form}
 	return render(request,'nuevo_usuario.html',ctx)
+
+@login_required(login_url='/login')
+def editar_perfil(request, id):
+	ctx = {}
+
+	u = Usuario.objects.get(id = id)
+
+	if request.method == 'GET':
+		form = NuevoUsuarioForm(initial={
+					'username': u.username,
+					'nombre': u.nombre,
+					'ap_paterno': u.ap_paterno,
+					'ap_materno': u.ap_materno,
+					'email': u.correo,
+					'imagen': u.foto,
+				})
+
+	if request.method == 'POST':
+		form = NuevoUsuarioForm(request.POST, request.FILES)
+		if form.is_valid():
+			username = form.cleaned_data['username']
+			nombre = form.cleaned_data['nombre']
+			ap_paterno = form.cleaned_data['ap_paterno']
+			ap_materno = form.cleaned_data['ap_materno']
+			password = form.cleaned_data['password1']
+			email = form.cleaned_data['email']
+			imagen = request.FILES['imagen']
+
+			u.nombre = nombre
+			u.ap_paterno = ap_paterno
+			u.ap_materno = ap_materno
+			u.username = username
+			u.correo = email
+
+			u.foto = imagen
+
+			u.save()
+
+			access = authenticate(username=username, password=password)
+			if access is not None:
+				if access.is_active:
+					login(request,access)
+					return HttpResponseRedirect('/')
+				else:
+					return render_to_response('noactive.html', context_instance=RequestContext(request))
+			else:
+				return HttpResponseRedirect('/')
+
+
+	ctx = {'form':form}
+	return render(request,'nuevo_usuario.html',ctx)
+
+
+
 
 @login_required(login_url='/login')
 def editar_post(request, id):
@@ -250,11 +304,6 @@ def editar_post(request, id):
 	ctx = {'form':form}
 
 	return render(request, 'editar_post.html', ctx)
-
-@login_required(login_url='/login')
-def editar_perfil(request):
-	ctx = {}
-	return render(request, 'editar_perfil.html', ctx)
 
 #Sesiones
 def login_usuario(request):

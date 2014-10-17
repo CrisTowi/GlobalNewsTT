@@ -47,7 +47,7 @@ urlpatterns = patterns('',
     url(r'nuevo/usuario/$', 'Principal.views.nuevo_usuario', name='nuevo_usuario'),
 
     url(r'editar/nota/(?P<id>\d+)$', 'Principal.views.editar_post', name='editar_post'),
-    url(r'editar/usuario/$', 'Principal.views.editar_perfil', name='editar_perfil'),
+    url(r'editar/usuario/(?P<id>\d+)$', 'Principal.views.editar_perfil', name='editar_perfil'),
     url(r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root':settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
 
