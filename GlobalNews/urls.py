@@ -58,8 +58,6 @@ urlpatterns = patterns('',
 
     url(r'nuevo/comentario/$', 'Principal.views.nuevo_comentario', name='nuevo_comentario'),
     url(r'like/$', 'Principal.views.like', name='like'),
-    url(r'dislike/$', 'Principal.views.dislike', name='dislike'),
-
 
     #Seguir y dejar de Seguir
     url(r'dejar_de_seguir/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),
