@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
-from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario
+from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
@@ -70,6 +70,7 @@ def lista_seguidos(request, id):
 def lista_seguidores(request, id):
 	seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
 
+
 	ctx = {'nombre_vista': 'Lista de Seguidores', 'seguidores': seguidores}
 	return render(request, 'lista_seguidores.html', ctx)
 
@@ -114,7 +115,15 @@ def perfil(request, id):
 
 def publicacion(request, id):
 	publicacion = Nota.objects.get(id = id)
-	ctx = {'publicacion': publicacion}
+	comentarios = Comentario.objects.filter(nota = publicacion)
+
+	likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
+	like = False
+
+	if likes.count() > 0:
+		like = True
+
+	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like}
 	return render(request, 'publicacion.html', ctx)
 
 
@@ -346,3 +355,78 @@ def get_chat(request):
 		mensaje['fecha'] = naturaltime(mensaje['fecha']);
 
 	return JsonResponse(mensajes, safe=False)
+
+
+def get_puntos(request):
+
+	notas = list(Nota.objects.all().values())
+
+	print notas
+
+	return JsonResponse(notas, safe=False)
+
+
+def nuevo_comentario(request):
+	contenido = request.GET['comentario']
+	id_post = request.GET['id_post']
+	id_usuario = request.GET['id_usuario']
+
+
+	usuario = Usuario.objects.get(id = id_usuario)
+	nota = Nota.objects.get(id = id_post)
+
+	comentario = Comentario()
+
+	comentario.contenido = contenido
+	comentario.usuario = usuario
+	comentario.nota = nota
+
+	comentario.save()
+
+	comentario_json = {'contenido': comentario.contenido, 'usuario': usuario.username, 'imagen': str(usuario.foto)}
+
+	return JsonResponse(comentario_json, safe=False)
+
+def like(request):
+
+	id_post = request.GET['id_post']
+	id_usuario = request.GET['id_usuario']
+
+	like = request.GET['like']
+	usuario = Usuario.objects.get(id = id_usuario)
+	nota = Nota.objects.get(id = id_post)
+
+	if like == 'true':
+		like = LikeNota.objects.get(usuario = usuario, nota = nota)
+		like.delete()
+	else:
+		like = LikeNota()
+		like.nota = nota
+		like.usuario = usuario
+		like.save()
+		
+	respuesta = {'usuario': usuario.username, 'titulo': nota.titulo}
+	return JsonResponse(respuesta, safe=False)
+
+
+#Seguir y Dejar de Seguir
+def dejar_de_seguir(request, id):
+
+	usuario_seguido = Usuario.objects.get(id = id)
+
+	u = UsuarioSigueUsuario.objects.get(usuario_seguido = usuario_seguido, usuario_seguidor = request.user)
+
+	u.delete()
+
+
+	return HttpResponseRedirect('/lista/seguidos/' + str(request.user.id))
+
+def seguir(request, id):
+
+	usu = UsuarioSigueUsuario()
+	usu.usuario_seguido = Usuario.objects.get(id = id)
+	usu.usuario_seguidor = Usuario.objects.get(id = request.user.id)
+
+	usu.save()
+
+	return HttpResponseRedirect('/perfil/' + str(id))

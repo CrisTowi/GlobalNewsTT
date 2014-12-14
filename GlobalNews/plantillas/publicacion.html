@@ -21,12 +21,14 @@
     	<div class="texto_publicacion">
     		{{ publicacion.descripcion }}
     	</div>
+      <input type="hidden" id="id-post" value="{{ publicacion.id }}">
+      <input type="hidden" id="id-user" value="{{ user.id }}">
     	<br>
     	<br>
     	<br>
     	<div class="row">
-    		<div class="col-md-1"><button class="btn btn-success">Enviar</button></div>
-    		<div class="col-md-11"> <textarea class="form-control" placeholder="Comentario"></textarea> </div>
+    		<div class="col-md-1"><button class="btn btn-success" id="btn-enviar">Enviar</button></div>
+    		<div class="col-md-11"> <textarea class="form-control" placeholder="Comentario" id="comentario"></textarea> </div>
     	</div>
     	<br>
         {% if request.user != publicacion.user %}
@@ -36,9 +38,32 @@
           <button class="btn btn-danger" data-toggle="modal" data-target="#ModalEliminarPost">Eliminar</button>
           <a href="/editar/nota/{{ publicacion.id }}">Editar</a>
         {% endif %}
-        <button type="button" class="btn btn-default btn-lg">
+        {% if like %}
+        <button type="button" class="btn btn-primary btn-lg" id="btn-dislike">
             <span class="glyphicon glyphicon-thumbs-up"></span>
-        </button>     
+        </button>    
+        {% else %}
+        <button type="button" class="btn btn-default btn-lg" id="btn-like">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+        </button>   
+        {% endif %}
+        <br>
+        <br>
+
+        <section class="comentarios" id="comentarios">
+          {% for comentario in comentarios %}
+          <div class="media">
+            <a class="media-left media-middle" href="#">
+              <img src="{{ MEDIA_URL }}{{ comentario.usuario.foto }}" width="50">
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">{{ comentario.usuario.username }}</h4>
+              {{ comentario.contenido }}
+            </div>
+          </div>
+          {% endfor %}
+        </section>
+
     <!-- /.panel -->
 </div>
 <!-- /.col-lg-8 -->
@@ -52,7 +77,7 @@
         <h4 class="modal-title" id="myModalLabel">Titulo</h4>
       </div>
       <div class="modal-body">
-<div class="row">
+      <div class="row">
     		<div class="col-xs-5">
     			<img src="{{ STATIC_URL }}img/ballena.jpg">
     		</div>
@@ -105,33 +130,33 @@
         <h4 class="modal-title" id="myModalLabel">Titulo</h4>
       </div>
       <div class="modal-body">
-                <form role="form">
-                    <div class="form-group">
-                        <label>Titulo del Reporte</label>
-                        <input class="form-control" placeholder="Titulo">
-                        <p class="help-block">Ejemplo: Noticia Falsa</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Razón</label>
-                        <select class="form-control">
-                            <option>Razón 1</option>
-                            <option>Razón 2</option>
-                            <option>Razón 3</option>
-                            <option>Razón 4</option>
-                            <option>Razón 5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Imagen</label>
-                        <input type="file">
-                    </div>
-                    <div class="form-group">
-                        <label>Explicacion (Opcional)</label>
-                        <textarea class="form-control" rows="10"></textarea>
-                        <p class="help-block">Trata de ser lo más claro posible =) </p>
-                    </div>
-                    <br>
-                </form>
+        <form role="form">
+            <div class="form-group">
+                <label>Titulo del Reporte</label>
+                <input class="form-control" placeholder="Titulo">
+                <p class="help-block">Ejemplo: Noticia Falsa</p>
+            </div>
+            <div class="form-group">
+                <label>Razón</label>
+                <select class="form-control">
+                    <option>Razón 1</option>
+                    <option>Razón 2</option>
+                    <option>Razón 3</option>
+                    <option>Razón 4</option>
+                    <option>Razón 5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file">
+            </div>
+            <div class="form-group">
+                <label>Explicacion (Opcional)</label>
+                <textarea class="form-control" rows="10"></textarea>
+                <p class="help-block">Trata de ser lo más claro posible =) </p>
+            </div>
+            <br>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -140,4 +165,39 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript">
+  $('#btn-enviar').on('click', function(){
+    var comentario = $('#comentario').val();
+    var id_post = $('#id-post').val();
+    var id_user = $('#id-user').val();
+    $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
+      var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div>");
+      html.hide();
+      html.appendTo($('#comentarios')).show("slow");
+      $('#comentario').val("");
+    });
+  });
+
+  $('#btn-like').on('click', function(){
+    var id_post = $('#id-post').val();
+    var id_user = $('#id-user').val();
+    $.get( "/like", { id_post: id_post, id_usuario: id_user, like: false }, function(data){
+      location.replace("/publicacion/" + id_post);
+    });
+  });
+
+  $('#btn-dislike').on('click', function(){
+    var id_post = $('#id-post').val();
+    var id_user = $('#id-user').val();
+    $.get( "/like", { id_post: id_post, id_usuario: id_user, like: true }, function(data){
+      location.replace("/publicacion/" + id_post);
+    });
+  });
+
+</script>
+
 {% endblock %}

@@ -68,7 +68,6 @@ class Nota(models.Model):
 	fecha = models.DateTimeField(auto_now_add=True)
 	longitud = models.FloatField()
 	latitud = models.FloatField()
-	likes = models.IntegerField(default=0)
 	privacidad = models.BooleanField(default=True)
 
 	def formato_fecha(self):
@@ -76,6 +75,14 @@ class Nota(models.Model):
 
 	def __unicode__(self):
 		return self.titulo
+
+
+class LikeNota(models.Model):
+	nota = models.ForeignKey(Nota, related_name='like_nota')
+	usuario = models.ForeignKey(Usuario, related_name='usuario_like')
+
+	def __unicode__(self):
+		return self.nota.titulo
 
 class ReporteNota(models.Model):
 	usuario = models.ForeignKey(Usuario, related_name='usuario_reportenota')
