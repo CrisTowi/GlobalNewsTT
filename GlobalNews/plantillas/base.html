@@ -227,91 +227,11 @@
                     <li>
                         <a href="#"><i class="fa fa-sitemap fa-fw"></i>Secciones<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-
                             {% for seccion in secciones %}
                             <li>
-                                <a href="#">{{ seccion.nombre }}</a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="/lista/publicaciones/">Choques / Automoviles Descompuestos</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Obras</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Manifestaciones</a>
-                                    </li>
-                                </ul>
+                                <a href="/lista/nota/seccion/{{ seccion.id }}">{{ seccion.nombre }}</a>
                             </li>                                
                             {% endfor %}
-  
-                            <li>
-                                <a href="#">Tráfico</a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="/lista/publicaciones/">Choques / Automoviles Descompuestos</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Obras</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Manifestaciones</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Eventos Culturales</a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="/lista/publicaciones/">Obras de Teatro</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Conciertos</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Politica</a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="/lista/publicaciones/">Manifestaciones</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Nuevas Reformas y Leyes</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Escándalos</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Deportes</a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="/lista/publicaciones/">Exhibiciones</a>
-                                    </li>
-                                    <li>
-                                        <a href="/lista/publicaciones/">Torneos</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Urbano</a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="#">Crimen</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Problemas Viales</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Problemas en Servicios</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Clima</a>
-                            </li>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>

@@ -26,7 +26,7 @@
                     </div>
                     <br>
                     <br>
-                    <input type="submit" class="btn btn-success" value="Crear"></input>
+                    <input type="submit" id="btn-crear" class="btn btn-success" value="Crear"></input>
                     <input type="reset" class="btn btn-default" value="Reiniciar"></input>
                 </form>
             </div>
@@ -50,7 +50,31 @@
 
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
 </script>
+
 <script>
+
+window.onload = function() {
+
+google.maps.Map.prototype.clearMarkers = function() {
+    for(var i=0; i < this.markers.length; i++){
+        this.markers[i].setMap(null);
+    }
+    this.markers = new Array();
+};
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position){
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+
+
+        $('#id_latitud').val(lat);
+        $('#id_longitud').val(lon);
+
+    });
+}      
+}
+
 
 $('#abrir_mapa').on('click', function(e){
     $('#googleMap').height(300);
@@ -67,12 +91,30 @@ $('#abrir_mapa').on('click', function(e){
             zoom:13,
             mapTypeId:google.maps.MapTypeId.ROADMAP
             };
-              var map=new google.maps.Map(document.getElementById("googleMap")
-            ,mapProp);
+            var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+            google.maps.event.addListener(map, "click", function(data)
+            {
+                latitud = data.latLng.k;
+                longitud = data.latLng.D;
+
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(latitud,longitud),
+                    map: map,
+                });
+
+                $('#id_latitud').val(latitud);
+                $('#id_longitud').val(longitud);
+            });
 
       });
       }  
     });
+
+
+
 </script>
+
+
 {% endblock %}
 

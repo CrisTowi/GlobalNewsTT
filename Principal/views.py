@@ -2,11 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
-from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota
+from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota,Subseccion
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
-from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm
+from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm
 
 from django.template import RequestContext
 
@@ -70,7 +70,6 @@ def lista_seguidos(request, id):
 def lista_seguidores(request, id):
 	seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
 
-
 	ctx = {'nombre_vista': 'Lista de Seguidores', 'seguidores': seguidores}
 	return render(request, 'lista_seguidores.html', ctx)
 
@@ -87,8 +86,14 @@ def lista_publicaciones_usuario(request, id):
 	ctx = {'nombre_vista': 'Lista de Notas', 'notas': notas}
 	return render(request, 'lista_publicaciones.html', ctx)
 
-def lista_publicaciones_seccion(request):
-	ctx = {'nombre_vista': 'Lista de Publicaciones en Seccion'}
+def lista_publicaciones_seccion(request, id):
+
+	seccion = Seccion.objects.get(id = id)
+	subseccion = Subseccion.objects.get(seccion = seccion)
+
+	notas = Nota.objects.filter(subseccion = subseccion)
+
+	ctx = {'nombre_vista': 'Lista de Publicaciones en ' + seccion.nombre , 'notas': notas, 'seccion': seccion}
 	return render(request, 'lista_publicaciones_seccion.html', ctx)	
 
 def lista_subsecciones(request):
@@ -103,7 +108,8 @@ def lista_secciones(request):
 
 #Muestran info
 def index(request):
-	noticias = Nota.objects.all()
+	siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
+	noticias = Nota.objects.filter(usuario = siguiendo_id).order_by('-id')
 
 	ctx = {'noticias': noticias}
 	return render(request, 'index.html', ctx)
@@ -117,19 +123,22 @@ def publicacion(request, id):
 	publicacion = Nota.objects.get(id = id)
 	comentarios = Comentario.objects.filter(nota = publicacion)
 
+	num_likes = LikeNota.objects.filter(nota = publicacion).count()
+
 	likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
 	like = False
 
 	if likes.count() > 0:
 		like = True
 
-	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like}
+	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes}
 	return render(request, 'publicacion.html', ctx)
 
 
 #Formularios
 @login_required(login_url='/login')
 def nuevo_post(request):
+
 	p = True
 
 	ctx = {}
@@ -141,6 +150,8 @@ def nuevo_post(request):
 			subseccion = form.cleaned_data['subseccion']
 			privacidad = form.cleaned_data['privacidad']
 			imagen = request.FILES['imagen']
+			latitud = request.POST['latitud']
+			longitud = request.POST['longitud']
 
 			if privacidad == 'publico':
 				p = True
@@ -155,8 +166,8 @@ def nuevo_post(request):
 			nota.privacidad = p
 			nota.imagen = imagen
 
-			nota.longitud = 19.476286
-			nota.latitud = -99.097218
+			nota.longitud = longitud
+			nota.latitud = latitud
 
 			nota.save()
 
@@ -214,23 +225,23 @@ def editar_perfil(request, id):
 	u = Usuario.objects.get(id = id)
 
 	if request.method == 'GET':
-		form = NuevoUsuarioForm(initial={
+		form = EditarUsuarioForm(initial={
 					'username': u.username,
 					'nombre': u.nombre,
 					'ap_paterno': u.ap_paterno,
 					'ap_materno': u.ap_materno,
 					'email': u.correo,
+					#'bio': u.bio,
 					'imagen': u.foto,
 				})
 
 	if request.method == 'POST':
-		form = NuevoUsuarioForm(request.POST, request.FILES)
+		form = EditarUsuarioForm(request.POST, request.FILES)
 		if form.is_valid():
 			username = form.cleaned_data['username']
 			nombre = form.cleaned_data['nombre']
 			ap_paterno = form.cleaned_data['ap_paterno']
 			ap_materno = form.cleaned_data['ap_materno']
-			password = form.cleaned_data['password1']
 			email = form.cleaned_data['email']
 			imagen = request.FILES['imagen']
 
@@ -244,16 +255,7 @@ def editar_perfil(request, id):
 
 			u.save()
 
-			access = authenticate(username=username, password=password)
-			if access is not None:
-				if access.is_active:
-					login(request,access)
-					return HttpResponseRedirect('/')
-				else:
-					return render_to_response('noactive.html', context_instance=RequestContext(request))
-			else:
-				return HttpResponseRedirect('/')
-
+			return HttpResponseRedirect('/perfil/' + str(u.id))
 
 	ctx = {'form':form}
 	return render(request,'nuevo_usuario.html',ctx)
@@ -313,6 +315,14 @@ def editar_post(request, id):
 	ctx = {'form':form}
 
 	return render(request, 'editar_post.html', ctx)
+
+@login_required(login_url='/login')
+def eliminar_post(request, id):
+	nota = Nota.objects.get(id = id)
+	if(nota.usuario == request.user):
+		nota.delete()		
+
+	return HttpResponseRedirect('/')
 
 #Sesiones
 def login_usuario(request):
@@ -411,13 +421,9 @@ def like(request):
 
 #Seguir y Dejar de Seguir
 def dejar_de_seguir(request, id):
-
 	usuario_seguido = Usuario.objects.get(id = id)
-
 	u = UsuarioSigueUsuario.objects.get(usuario_seguido = usuario_seguido, usuario_seguidor = request.user)
-
 	u.delete()
-
 
 	return HttpResponseRedirect('/lista/seguidos/' + str(request.user.id))
 

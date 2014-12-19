@@ -55,6 +55,9 @@ class NuevaNotaForm(forms.Form):
     imagen      = forms.ImageField(label='Imagen', required=False)
     subseccion  = forms.ModelChoiceField(label='Subseccion', queryset=Subseccion.objects.all(), empty_label="(Vacio)")
     privacidad  = forms.ChoiceField(choices=PRIVACIDAD_CHOISE, widget=forms.RadioSelect())
+    latitud      = forms.DecimalField(label='Latitud', widget=forms.TextInput(attrs={'placeholder': 'Latitud', 'class':'form-control'}))
+    longitud      = forms.DecimalField(label='Longitud', widget=forms.TextInput(attrs={'placeholder': 'Longitud', 'class':'form-control'}))
+
 
 class NuevoUsuarioForm(forms.Form):
 
@@ -63,10 +66,29 @@ class NuevoUsuarioForm(forms.Form):
     ap_paterno  = forms.CharField(label='Apellido Paterno',widget=forms.TextInput(attrs={'placeholder': 'Apellido Paterno', 'class':'form-control'}))
     ap_materno  = forms.CharField(label='Apellido Materno',widget=forms.TextInput(attrs={'placeholder': 'Apellido Materno', 'class':'form-control'}))
     email       = forms.EmailField(label='Email', required=False, widget=forms.TextInput(attrs={'placeholder': 'Email', 'class':'form-control'}))
-    bio         = forms.CharField(label='Bio',widget=forms.Textarea(attrs={'placeholder': 'Bio', 'class':'form-control'}))
+    #bio         = forms.CharField(label='Bio',widget=forms.Textarea(attrs={'placeholder': 'Bio', 'class':'form-control'}))
 
     password1   = forms.CharField(label='Password',widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class':'form-control'}))
     password2   = forms.CharField(label='Password (De nuevo)',widget=forms.PasswordInput(attrs={'placeholder': 'Password (De nuevo)', 'class':'form-control'}))
+
+    imagen      = forms.ImageField(label='Imagen', required=False)
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        password1 = cd.get('password1')
+        password2 = cd.get('password2')
+        if password2 != password1:
+            raise forms.ValidationError('Los dos passwords deben ser iguales')
+        return password2
+
+class EditarUsuarioForm(forms.Form):
+
+    username    = forms.CharField(label='Username', widget=forms.TextInput(attrs={'placeholder': 'Username', 'class':'form-control'}))
+    nombre      = forms.CharField(label='Nombre',widget=forms.TextInput(attrs={'placeholder': 'Name', 'class':'form-control'}))
+    ap_paterno  = forms.CharField(label='Apellido Paterno',widget=forms.TextInput(attrs={'placeholder': 'Apellido Paterno', 'class':'form-control'}))
+    ap_materno  = forms.CharField(label='Apellido Materno',widget=forms.TextInput(attrs={'placeholder': 'Apellido Materno', 'class':'form-control'}))
+    email       = forms.EmailField(label='Email', required=False, widget=forms.TextInput(attrs={'placeholder': 'Email', 'class':'form-control'}))
+    #bio         = forms.CharField(label='Bio',widget=forms.Textarea(attrs={'placeholder': 'Bio', 'class':'form-control'}))
 
     imagen      = forms.ImageField(label='Imagen', required=False)
 

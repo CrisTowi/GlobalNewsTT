@@ -21,11 +21,13 @@ function initialize(){
                 var marker1 = new google.maps.Marker({
                 position: new google.maps.LatLng(data[i].latitud,data[i].longitud),
                 map: map,
-                title: data[i].titulo
+                title: data[i].titulo,
+                url: '/publicacion/' + data[i].id
+                });
+                google.maps.event.addListener(marker1, 'click', function() {
+                window.location.href = this.url;
                 });
 
-
-                console.log('HOLA');
               }
 
         });

@@ -1,22 +1,25 @@
 {% extends 'base.html' %}
-
+{% load tz %}
+{% load humanize %}
 {% block contenido %}
 <div class="seguir">
-    <button class="btn btn-success">Seguir esta Sección</button>
+    <button class="btn btn-success">Seguir {{ seccion.nombre }}</button>
 </div>
 <div class="col-lg-9">
     <!-- blog entry -->
+    {% for nota in notas %}
     <div>
         <hr>
         <p>
-            <span class="glyphicon glyphicon-time"></span> Publicado el Viernes 4 de Julio de 2014, 04:19 pm</p>
+            <span class="glyphicon glyphicon-time"></span> Publicado {{ nota.fecha|naturaltime|capfirst }}</p>
         <hr>
-        <img src="http://placehold.it/900x300" class="img-responsive">
+        <img src="{{ MEDIA_URL }}{{ nota.imagen }}" class="img-responsive">
         <hr>
-        <p>Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota Texto de la nota </p>
-        <a class="btn btn-primary" href="#">Leer más <span class="glyphicon glyphicon-chevron-right"></span></a>
+        <p> {{ nota.descripcion }} </p>
+        <a class="btn btn-primary" href="/publicacion/{{ nota.id }}">Leer más <span class="glyphicon glyphicon-chevron-right"></span></a>
         <hr>
     </div>
+    {% endfor %}
     <!-- pager -->
     <ul class="pager">
         <li class="previous"><a href="#">&larr; Anterior</a>

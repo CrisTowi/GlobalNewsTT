@@ -1,7 +1,8 @@
 from Principal.models import Seccion, Nota, UsuarioSigueUsuario
 
 def secciones_processor(request):
-	secciones = Seccion.objects.all()            
+	secciones = Seccion.objects.all()
+
 	return {'secciones': secciones}
 
 

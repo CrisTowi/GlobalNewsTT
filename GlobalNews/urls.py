@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     url(r'lista/nota/$', 'Principal.views.lista_publicaciones', name='lista_publicaciones'),
     url(r'lista/nota/usuario/(?P<id>\d+)$', 'Principal.views.lista_publicaciones_usuario', name='lista_publicaciones_usuario'),
 
-    url(r'lista/nota/seccion/$', 'Principal.views.lista_publicaciones_seccion', name='lista_publicaciones_seccion'),
+    url(r'lista/nota/seccion/(?P<id>\d+)$', 'Principal.views.lista_publicaciones_seccion', name='lista_publicaciones_seccion'),
     url(r'lista/reportes/nota$', 'Principal.views.lista_reportes', name='lista_reportes'),
     url(r'lista/reportes/usuario$', 'Principal.views.lista_reportes_usuario', name='lista_reportes_usuario'),
     url(r'lista/usuarios/$', 'Principal.views.lista_usuarios', name='lista_usuarios'),
@@ -48,6 +48,9 @@ urlpatterns = patterns('',
 
     url(r'editar/nota/(?P<id>\d+)$', 'Principal.views.editar_post', name='editar_post'),
     url(r'editar/usuario/(?P<id>\d+)$', 'Principal.views.editar_perfil', name='editar_perfil'),
+
+    url(r'eliminar/nota/(?P<id>\d+)$', 'Principal.views.eliminar_post', name='eliminar_post'),
+
     url(r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root':settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
 
