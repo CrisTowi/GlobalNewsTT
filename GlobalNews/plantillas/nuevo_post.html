@@ -52,15 +52,10 @@
 </script>
 
 <script>
-
+var markers = [];
+var map;
 window.onload = function() {
 
-google.maps.Map.prototype.clearMarkers = function() {
-    for(var i=0; i < this.markers.length; i++){
-        this.markers[i].setMap(null);
-    }
-    this.markers = new Array();
-};
 
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position){
@@ -73,6 +68,33 @@ if (navigator.geolocation) {
 
     });
 }      
+}
+
+// Sets the map on all markers in the array.
+function setAllMap(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+  setAllMap(null);
+}
+
+// Add a marker to the map and push to the array.
+function addMarker(location) {
+  var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+  markers.push(marker);
+}
+
+// Deletes all markers in the array by removing references to them.
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
 }
 
 
@@ -91,17 +113,18 @@ $('#abrir_mapa').on('click', function(e){
             zoom:13,
             mapTypeId:google.maps.MapTypeId.ROADMAP
             };
-            var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
 
             google.maps.event.addListener(map, "click", function(data)
             {
                 latitud = data.latLng.k;
                 longitud = data.latLng.D;
 
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(latitud,longitud),
-                    map: map,
-                });
+                deleteMarkers();
+
+                addMarker(new google.maps.LatLng(latitud,longitud));
+
+                console.log(markers);
 
                 $('#id_latitud').val(latitud);
                 $('#id_longitud').val(longitud);

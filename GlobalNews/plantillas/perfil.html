@@ -23,7 +23,11 @@
                     <a class="btn btn-success" href="/editar/usuario/{{ usuario.id }}">Editar</a>
                     {% else %}
                     <br><br>
-                    <a href="/seguir/{{ usuario.id }}" class="btn btn-success">Seguir</a>
+                    {% if follow %}
+                        <a href="/dejar_de_seguir/{{ usuario.id }}" class="btn btn-danger">Dejar de Seguir</a>
+                    {% else %}
+                        <a href="/seguir/{{ usuario.id }}" class="btn btn-success">Seguir</a>
+                    {% endif %}
                     <!--<button class="btn btn-success" data-toggle="modal" data-target="#ModalSeguir">Seguir</button> -->
                     <br><br>
                     <a href="#" data-toggle="modal" data-target="#ModalDenunciar">Denunciar</a>

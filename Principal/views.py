@@ -109,14 +109,21 @@ def lista_secciones(request):
 #Muestran info
 def index(request):
 	siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-	noticias = Nota.objects.filter(usuario = siguiendo_id).order_by('-id')
+	noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user)).order_by('-id')
 
 	ctx = {'noticias': noticias}
 	return render(request, 'index.html', ctx)
 
 def perfil(request, id):
 	usuario = Usuario.objects.get(id = id)
-	ctx = {'usuario': usuario}
+
+	usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = usuario, usuario_seguidor = request.user)
+	if usu:
+		follow = True
+	else:
+		follow = False
+
+	ctx = {'usuario': usuario, 'follow': follow}
 	return render(request, 'perfil.html', ctx)
 
 def publicacion(request, id):
@@ -370,8 +377,6 @@ def get_chat(request):
 def get_puntos(request):
 
 	notas = list(Nota.objects.all().values())
-
-	print notas
 
 	return JsonResponse(notas, safe=False)
 
