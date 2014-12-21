@@ -12,11 +12,12 @@ class NotaSerializer(serializers.ModelSerializer):
     usuario = serializers.Field(source='usuario.username')
     fecha = serializers.Field(source='formato_fecha')
     seccion = serializers.Field(source='subseccion.seccion.id')
+    likes = serializers.Field(source='num_likes')
     
     class Meta:
         model = Nota
         fields = ('id','usuario','seccion','subseccion','titulo','descripcion','imagen',
-        					'fecha','longitud','latitud','likes', 'privacidad', )
+        					'fecha','longitud','latitud','likes','privacidad', )
 
 class ComentarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -26,6 +26,7 @@
     	<br>
     	<br>
     	<br>
+      {% if user.is_authenticated %}
     	<div class="row">
     		<div class="col-md-1"><button class="btn btn-success" id="btn-enviar">Enviar</button></div>
     		<div class="col-md-11"> <textarea class="form-control" placeholder="Comentario" id="comentario"></textarea> </div>
@@ -50,6 +51,8 @@
         {% endif %}
         <br>
         <br>
+
+      {% endif %}
 
         <section class="comentarios" id="comentarios">
           {% for comentario in comentarios %}

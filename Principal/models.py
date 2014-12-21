@@ -73,6 +73,9 @@ class Nota(models.Model):
 	def formato_fecha(self):
 		return naturaltime(self.fecha)
 
+	def num_likes(self):
+		return LikeNota.objects.filter(nota = self).count()
+
 	def __unicode__(self):
 		return self.titulo
 

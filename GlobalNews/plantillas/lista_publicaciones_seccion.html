@@ -2,9 +2,12 @@
 {% load tz %}
 {% load humanize %}
 {% block contenido %}
+
+{% if user.is_authenticated %}
 <div class="seguir">
     <button class="btn btn-success">Seguir {{ seccion.nombre }}</button>
 </div>
+{% endif %}
 <div class="col-lg-9">
     <!-- blog entry -->
     {% for nota in notas %}

@@ -108,18 +108,28 @@ def lista_secciones(request):
 
 #Muestran info
 def index(request):
-	siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-	noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user)).order_by('-id')
+
+	if request.user.is_authenticated():
+		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
+		noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user)).order_by('-id')
+
+	else:
+		noticias = Nota.objects.all()
 
 	ctx = {'noticias': noticias}
 	return render(request, 'index.html', ctx)
 
 def perfil(request, id):
+
 	usuario = Usuario.objects.get(id = id)
 
-	usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = usuario, usuario_seguidor = request.user)
-	if usu:
-		follow = True
+	if request.user.is_authenticated():
+		usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = usuario, usuario_seguidor = request.user)
+		if usu:
+			follow = True
+		else:
+			follow = False
+
 	else:
 		follow = False
 
@@ -129,14 +139,14 @@ def perfil(request, id):
 def publicacion(request, id):
 	publicacion = Nota.objects.get(id = id)
 	comentarios = Comentario.objects.filter(nota = publicacion)
+	like = False
 
 	num_likes = LikeNota.objects.filter(nota = publicacion).count()
 
-	likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
-	like = False
-
-	if likes.count() > 0:
-		like = True
+	if request.user.is_authenticated():
+		likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
+		if likes.count() > 0:
+			like = True
 
 	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes}
 	return render(request, 'publicacion.html', ctx)
