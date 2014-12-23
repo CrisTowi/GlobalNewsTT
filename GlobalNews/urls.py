@@ -66,4 +66,9 @@ urlpatterns = patterns('',
     url(r'dejar_de_seguir/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),
     url(r'seguir/(?P<id>\d+)$', 'Principal.views.seguir', name='seguir'),
 
+
+    #Movil
+    url(r'nuevo/post/$', 'Principal.views.nuevo_post_movil', name='nuevo_post_movil'),
+
+
 )

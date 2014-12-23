@@ -19,6 +19,8 @@ from django.http import JsonResponse
 
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
+from django.views.decorators.csrf import csrf_exempt
+
 #Viwesets para el API REST
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
@@ -194,6 +196,37 @@ def nuevo_post(request):
 
 	ctx = {'form':form}
 	return render(request,'nuevo_post.html',ctx)
+
+
+@csrf_exempt
+def nuevo_post_movil(request):
+
+	print request.POST
+
+	usuario_id = int(request.POST['usuario'])
+	titulo = request.POST['titulo']
+	descripcion = request.POST['descripcion']
+	subseccion_id = int(request.POST['subseccion'])
+	privacidad = True
+	latitud = float(request.POST['latitud'])
+	longitud = float(request.POST['longitud'])
+
+	nota = Nota()
+	nota.usuario = Usuario.objects.get(id = usuario_id)
+	nota.titulo = titulo
+	nota.descripcion = descripcion
+	nota.subseccion = Subseccion.objects.get(id = subseccion_id)
+	nota.privacidad = privacidad
+
+	nota.longitud = longitud
+	nota.latitud = latitud
+
+	nota.save()
+
+	respuesta = {'id_nota': nota.id}
+
+	return JsonResponse(respuesta, safe=False)
+
 
 def nuevo_usuario(request):
 	ctx = {}
