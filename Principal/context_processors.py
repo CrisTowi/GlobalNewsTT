@@ -14,3 +14,8 @@ def seguidores_siguiendo_publicaciones_processor(request):
 	num_seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = usuario).count()
 
 	return {'num_notas': num_notas, 'num_siguiendo': num_siguiendo, 'num_seguidores': num_seguidores}
+
+def novedades(request):
+	novedades = Nota.objects.all().order_by('-fecha')[:4]
+
+	return {'novedades': novedades}

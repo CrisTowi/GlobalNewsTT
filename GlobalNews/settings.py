@@ -141,4 +141,5 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "django.contrib.messages.context_processors.messages",
 "Principal.context_processors.seguidores_siguiendo_publicaciones_processor",
 "Principal.context_processors.secciones_processor",
+"Principal.context_processors.novedades",
 )

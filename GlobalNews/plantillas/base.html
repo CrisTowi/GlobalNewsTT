@@ -1,3 +1,5 @@
+{% load tz %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 
@@ -285,67 +287,34 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <ul class="chat">
+
+                                {% for nota in novedades %}
+                                {% if forloop.counter|divisibleby:2 %}
+                                <li class="right clearfix">
+                                    <span class="chat-img pull-right">
+                                {% else %}
                                 <li class="left clearfix">
-                                    <span class="chat-img pull-left">
-                                        <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />
+                                    <span class="chat-img pull-left">           
+                                {% endif %}
+                                
+                                        <img src="{{ MEDIA_URL }}{{ nota.imagen }}" width="50px" alt="User Avatar" class="img-circle" />
                                     </span>
                                     <div class="chat-body clearfix">
                                         <div class="header">
-                                            <strong class="primary-font">Inauguración de Exposición de Arte</strong> 
+                                            <a href="/publicacion/{{ nota.id }}">
+                                            <strong class="primary-font">{{ nota.titulo }}</strong> 
+                                            </a>
                                             <small class="pull-right text-muted">
-                                                <i class="fa fa-clock-o fa-fw"></i> Hace 12 minutos
+                                                <i class="fa fa-clock-o fa-fw"></i> {{ nota.fecha|naturaltime|capfirst }}
                                             </small>
                                         </div>
                                         <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                            {{ nota.descripcion }}
                                         </p>
                                     </div>
-                                </li>
-                                <li class="right clearfix">
-                                    <span class="chat-img pull-right">
-                                        <img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />
-                                    </span>
-                                    <div class="chat-body clearfix">
-                                        <div class="header">
-                                            <small class=" text-muted">
-                                                <i class="fa fa-clock-o fa-fw"></i> Hace 13 minutos</small>
-                                            <strong class="pull-right primary-font">Manifestación de la CFE</strong>
-                                        </div>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="left clearfix">
-                                    <span class="chat-img pull-left">
-                                        <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />
-                                    </span>
-                                    <div class="chat-body clearfix">
-                                        <div class="header">
-                                            <strong class="primary-font">Choque en Av. Politécnico</strong> 
-                                            <small class="pull-right text-muted">
-                                                <i class="fa fa-clock-o fa-fw"></i> Hace 15 minutos</small>
-                                        </div>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="right clearfix">
-                                    <span class="chat-img pull-right">
-                                        <img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />
-                                    </span>
-                                    <div class="chat-body clearfix">
-                                        <div class="header">
-                                            <small class=" text-muted">
-                                                <i class="fa fa-clock-o fa-fw"></i> Hace 15 minutos</small>
-                                            <strong class="pull-right primary-font">Huelga de empleados de PEMEX</strong>
-                                        </div>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                                        </p>
-                                    </div>
-                                </li>
+                                </li>                               
+
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
