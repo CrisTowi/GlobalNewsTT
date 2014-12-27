@@ -23,8 +23,12 @@ def novedades_processor(request):
 	return {'novedades': novedades}
 
 def mensajes_directos_processor(request):
-	chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
 
-	print chats
+	chats = []
+
+	if request.user.is_authenticated():
+
+		chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
+
 
 	return {'chats_processor': chats}
