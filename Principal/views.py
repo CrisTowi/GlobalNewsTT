@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
-from Principal.models import Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota,Subseccion
+from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota,Subseccion
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
@@ -20,6 +20,8 @@ from django.http import JsonResponse
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from django.views.decorators.csrf import csrf_exempt
+
+from django.db.models import Count
 
 #Viwesets para el API REST
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -56,10 +58,9 @@ def lista_usuarios(request):
 	return render(request, 'usuarios_admin.html', ctx)
 
 def lista_mensajes(request):
+	chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
 
-	mensajes = MensajeDirecto.objects.filter( usuario_destinatario = request.user )
-
-	ctx = {'nombre_vista': 'Lista de Mensajes Directos', 'mensajes': mensajes}
+	ctx = {'nombre_vista': 'Lista de Mensajes Directos', 'chats': chats}
 
 	return render(request, 'lista_mensajes.html', ctx)
 

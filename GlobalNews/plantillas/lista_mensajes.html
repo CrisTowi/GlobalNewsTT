@@ -11,8 +11,12 @@ $('.btn-abre-platica').on('click', function(e){
 
     var id_usuario = $(this).data("usuario");
     var username_chat = $(this).data("username");
-    var username_local = "{{ user.username }}"
+    var imagen = $(this).data("imagen");
+    var username_local = "{{ user.username }}";
     var usaurio = $('#input_usuario').val();
+    var media_url = $('#media_url').val();
+    var imagen_local = "{{ user.foto }}"
+
 
         $.ajax({
           url: "{% url 'get_chat' %}",
@@ -23,14 +27,16 @@ $('.btn-abre-platica').on('click', function(e){
             $.each(response, function(i, objeto){
 
 
+
                 if(objeto.usuario_remitente_id == id_usuario){ 
+                      var imagen_url = media_url + imagen;
         var template = '<li class="left clearfix"> \
                             <span class="chat-img pull-left"> \
-                                <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" /> \
+                                <img src=" ' + imagen_url + ' " alt="User Avatar" width="50px" class="img-circle" /> \
                             </span> \
                             <div class="chat-body clearfix"> \
                                 <div class="header"> \
-                                    <strong class="primary-font">' + username_local + '</strong> \
+                                    <strong class="primary-font">' + username_chat + '</strong> \
                                     <small class="pull-right text-muted"> \
                                         <i class="fa fa-clock-o fa-fw"></i> ' + objeto.fecha + ' \
                                     </small> \
@@ -42,15 +48,16 @@ $('.btn-abre-platica').on('click', function(e){
                             </div> \
                         </li>';
                 } else {
+                      var imagen_url = media_url + imagen_local
         var template = '<li class="right clearfix"> \
                             <span class="chat-img pull-right"> \
-                                <img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" /> \
+                                <img src="' + imagen_url + '" alt="User Avatar" width="50px" class="img-circle" /> \
                             </span> \
                             <div class="chat-body clearfix"> \
                                 <div class="header"> \
                                     <small class=" text-muted"> \
                                         <i class="fa fa-clock-o fa-fw"></i>' + objeto.fecha + '</small> \
-                                    <strong class="pull-right primary-font">' + username_chat + '</strong> \
+                                    <strong class="pull-right primary-font">' + username_local + '</strong> \
                                 </div> \
                                 <p> \
                                     '+ objeto.contenido +' \
@@ -77,17 +84,30 @@ $('.btn-abre-platica').on('click', function(e){
 {% block contenido %}
 <div class="col-lg-9">
   <div class="row">    
-    {% for mensaje in mensajes %}
+    {% for chat in chats %}
     <div class="col-sm-6 col-md-4">
-      <a href="#" data-toggle="modal" class="btn-abre-platica" id="btn-abre-platica" data-usuario="{{ mensaje.usuario_remitente.id }}" data-username="{{ mensaje.usuario_remitente.username }}" data-target="#ModalMD">
-        <div class="thumbnail">
-          <img src="{{ MEDIA_URL }}{{ mensaje.usuario_remitente.foto }}" style="width: 300px; height: 200px;">
-          <div class="caption">
-            <h3>{{ mensaje.usuario_remitente.username }}</h3>
-            <p>{{ mensaje.contenido }} </p>
+
+      {% if chat.usuario_uno == user %}
+        <a href="#" data-toggle="modal" class="btn-abre-platica" id="btn-abre-platica" data-usuario="{{ chat.usuario_dos.id }}" data-imagen="{{ chat.usuario_dos.foto }}" data-username="{{ chat.usuario_dos.username }}" data-target="#ModalMD">
+          <div class="thumbnail">
+            <img src="{{ MEDIA_URL }}{{ chat.usuario_dos.foto }}" style="width: 300px; height: 200px;">
+            <div class="caption">
+              <h3>{{ chat.usuario_dos.username }}</h3>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
+      {% else %}
+        <a href="#" data-toggle="modal" class="btn-abre-platica" id="btn-abre-platica" data-usuario="{{ chat.usuario_uno.id }}" data-imagen="{{ chat.usuario_uno.foto }}" data-username="{{ chat.usuario_uno.username }}" data-target="#ModalMD">
+          <div class="thumbnail">
+            <img src="{{ MEDIA_URL }}{{ chat.usuario_uno.foto }}" style="width: 300px; height: 200px;">
+            <div class="caption">
+              <h3>{{ chat.usuario_uno.username }}</h3>
+            </div>
+          </div>
+        </a>      
+      {% endif %}
+
+
     </div>
     {% endfor %}
   </div>
@@ -120,4 +140,5 @@ $('.btn-abre-platica').on('click', function(e){
   </div>
 </div>
 <input type="hidden" id="input_usuario" value="{{ user.id }}"></input>
+<input type="hidden" id="media_url" value="{{ MEDIA_URL }}"></input>
 {% endblock %}

@@ -1,7 +1,7 @@
 #encoding:utf-8
 
 from django.contrib import admin
-from Principal.models import Usuario, Comentario, ReporteNota, Nota, UsuarioSigueSeccion, UsuarioSigueUsuario, Subseccion, Seccion, ReporteUsuario, MensajeDirecto
+from Principal.models import Chat, Usuario, Comentario, ReporteNota, Nota, UsuarioSigueSeccion, UsuarioSigueUsuario, Subseccion, Seccion, ReporteUsuario, MensajeDirecto
 
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Permission
@@ -44,3 +44,4 @@ admin.site.register(Subseccion)
 admin.site.register(Seccion)
 admin.site.register(ReporteUsuario)
 admin.site.register(MensajeDirecto)
+admin.site.register(Chat)

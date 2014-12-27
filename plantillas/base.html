@@ -87,30 +87,16 @@
                         <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-messages">
+                        {% for chat_processor in chats_processor %}
                         <li>
                             <a href="#">
                                 <div>
-                                    <strong>Christian Consuelo</strong>
-                                    <span class="pull-right text-muted">
-                                        <em>Ayer</em>
-                                    </span>
+                                    <strong>{{ chat_processor.usuario_uno.username }}</strong>
                                 </div>
-                                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
                             </a>
                         </li>
                         <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <strong>Christian Consuelo</strong>
-                                    <span class="pull-right text-muted">
-                                        <em>Ayer</em>
-                                    </span>
-                                </div>
-                                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
+                        {% endfor %}
                         <li>
                             <a class="text-center" href="/lista/mensajes/">
                                 <strong>Leer Todos los Mensajes...</strong>

@@ -117,9 +117,17 @@ class ReporteUsuario(models.Model):
 	def __unicode__(self):
 		return str(self.usuario_reportado) + ' ' + str(self.usuario_reportador)
 
+class Chat(models.Model):
+	usuario_uno = models.ForeignKey(Usuario, related_name='usuario_uno')
+	usuario_dos = models.ForeignKey(Usuario, related_name='usuario_dos')
+
+	def __unicode__(self):
+		return str(self.usuario_uno) + ' ' + str(self.usuario_dos)
+
 class MensajeDirecto(models.Model):
 	usuario_remitente = models.ForeignKey(Usuario, related_name='usuario_remitente')
 	usuario_destinatario = models.ForeignKey(Usuario, related_name='usuario_destinatario')	
+	chat = models.ForeignKey(Chat, related_name='chat')
 
 	contenido = models.CharField(max_length=50)
 	fecha = models.DateTimeField(auto_now_add=True)
