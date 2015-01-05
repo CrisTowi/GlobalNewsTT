@@ -53,7 +53,6 @@ class Subseccion(models.Model):
 	seccion = models.ForeignKey(Seccion, related_name='seccion_subseccion')
 
 	nombre = models.CharField(max_length=45)
-	tiempo_aparicion = models.DateField()
 
 	def __unicode__(self):
 		return self.nombre
@@ -140,7 +139,6 @@ class UsuarioSigueUsuario(models.Model):
 	usuario_seguido = models.ForeignKey(Usuario, related_name='usuario_seguido')
 	usuario_seguidor = models.ForeignKey(Usuario, related_name='usuario_seguidor')
 
-	fecha = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return str(self.usuario_seguido) + ' ' + str(self.usuario_seguidor)
@@ -149,7 +147,6 @@ class UsuarioSigueSeccion(models.Model):
 	usuario = models.ForeignKey(Usuario, related_name='usuario_sigueseccion')
 	seccion = models.ForeignKey(Seccion, related_name='seccion_seguidausuario')
 
-	fecha = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return str(self.usuario) + ' ' + str(self.seccion)

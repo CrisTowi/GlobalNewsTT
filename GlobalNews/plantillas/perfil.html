@@ -22,7 +22,8 @@
                     <br><br>
                     <a class="btn btn-success" href="/editar/usuario/{{ usuario.id }}">Editar</a>
                     {% else %}
-                    <br><br>
+                    <br><br><br><br>
+                    <a class="btn btn-success" href="/lista/nota/usuario/{{ usuario.id }}">Publicaciones</a>
                     {% if user.is_authenticated %}
                         {% if follow %}
                             <a href="/dejar_de_seguir/{{ usuario.id }}" class="btn btn-danger">Dejar de Seguir</a>

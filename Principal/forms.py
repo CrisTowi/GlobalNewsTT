@@ -55,8 +55,8 @@ class NuevaNotaForm(forms.Form):
     imagen      = forms.ImageField(label='Imagen', required=False)
     subseccion  = forms.ModelChoiceField(label='Subseccion', queryset=Subseccion.objects.all(), empty_label="(Vacio)")
     privacidad  = forms.ChoiceField(choices=PRIVACIDAD_CHOISE, widget=forms.RadioSelect())
-    latitud      = forms.DecimalField(label='Latitud', widget=forms.TextInput(attrs={'placeholder': 'Latitud', 'class':'form-control'}))
-    longitud      = forms.DecimalField(label='Longitud', widget=forms.TextInput(attrs={'placeholder': 'Longitud', 'class':'form-control'}))
+    latitud     = forms.DecimalField(label='Latitud', widget=forms.HiddenInput(attrs={'placeholder': 'Latitud', 'class':'form-control'}))
+    longitud    = forms.DecimalField(label='Longitud', widget=forms.HiddenInput(attrs={'placeholder': 'Longitud', 'class':'form-control'}))
 
 
 class NuevoUsuarioForm(forms.Form):
