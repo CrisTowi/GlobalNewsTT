@@ -6,7 +6,7 @@ from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccio
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
-from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm
+from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm, ReporteNotaForm
 
 from django.template import RequestContext
 
@@ -140,6 +140,9 @@ def perfil(request, id):
 	return render(request, 'perfil.html', ctx)
 
 def publicacion(request, id):
+
+	form = ReporteNotaForm()
+
 	publicacion = Nota.objects.get(id = id)
 	comentarios = Comentario.objects.filter(nota = publicacion)
 	like = False
@@ -151,11 +154,30 @@ def publicacion(request, id):
 		if likes.count() > 0:
 			like = True
 
-	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes}
+	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
 	return render(request, 'publicacion.html', ctx)
 
 
 #Formularios
+
+@csrf_exempt
+def nuevo_reporte_post(request):
+
+	usuario = request.user
+	nota = Nota.objects.get(id = int(request.POST['publicacion_id']))
+	tipo = request.POST['razon']
+	descripcion = request.POST['descripcion']
+
+	reporte_nota = ReporteNota()
+	reporte_nota.usuario = usuario
+	reporte_nota.nota = nota
+	reporte_nota.tipo = tipo
+	reporte_nota.descripcion = descripcion
+
+	reporte_nota.save()
+
+	return HttpResponseRedirect('/')
+
 @login_required(login_url='/login')
 def nuevo_post(request):
 

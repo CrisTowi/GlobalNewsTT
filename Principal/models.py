@@ -89,6 +89,7 @@ class LikeNota(models.Model):
 class ReporteNota(models.Model):
 	usuario = models.ForeignKey(Usuario, related_name='usuario_reportenota')
 	nota = models.ForeignKey(Nota, related_name='nota_reportenota')
+	descripcion = models.TextField(default="")
 
 	tipo = models.CharField(max_length=45)
 	fecha = models.DateField(auto_now_add=True)

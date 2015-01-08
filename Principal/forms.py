@@ -3,13 +3,17 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth import get_user_model
 
-from Principal.models import Subseccion
+from Principal.models import Subseccion, Nota
 
 from models import Usuario
 User = get_user_model()
 
 PRIVACIDAD_CHOISE = [('publico','Publico'),
-         ('privado','Privado')]
+        ('privado','Privado')]
+
+
+RAZON_REPORTE_CHOISE =  [('agresivo', 'Agresivo'),
+        ('contenido_sexual', 'Contenido Sexual')]
 
 class CrearUsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
@@ -58,6 +62,10 @@ class NuevaNotaForm(forms.Form):
     latitud     = forms.DecimalField(label='Latitud', widget=forms.HiddenInput(attrs={'placeholder': 'Latitud', 'class':'form-control'}))
     longitud    = forms.DecimalField(label='Longitud', widget=forms.HiddenInput(attrs={'placeholder': 'Longitud', 'class':'form-control'}))
 
+
+class ReporteNotaForm(forms.Form):
+    razon  = forms.ChoiceField(label='Razón', choices=RAZON_REPORTE_CHOISE, widget=forms.RadioSelect())
+    descripcion = forms.CharField(label='Descripcion',widget=forms.Textarea(attrs={'placeholder': 'Descripcion', 'class':'form-control'}))
 
 class NuevoUsuarioForm(forms.Form):
 
