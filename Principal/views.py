@@ -6,7 +6,7 @@ from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccio
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
-from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm, ReporteNotaForm
+from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm, ReporteNotaForm, ReporteUsuarioForm
 
 from django.template import RequestContext
 
@@ -124,6 +124,8 @@ def index(request):
 
 def perfil(request, id):
 
+	form = ReporteUsuarioForm()
+
 	usuario = Usuario.objects.get(id = id)
 
 	if request.user.is_authenticated():
@@ -136,7 +138,7 @@ def perfil(request, id):
 	else:
 		follow = False
 
-	ctx = {'usuario': usuario, 'follow': follow}
+	ctx = {'usuario': usuario, 'follow': follow, 'form': form}
 	return render(request, 'perfil.html', ctx)
 
 def publicacion(request, id):
@@ -160,7 +162,6 @@ def publicacion(request, id):
 
 #Formularios
 
-@csrf_exempt
 def nuevo_reporte_post(request):
 
 	usuario = request.user
@@ -175,6 +176,24 @@ def nuevo_reporte_post(request):
 	reporte_nota.descripcion = descripcion
 
 	reporte_nota.save()
+
+	return HttpResponseRedirect('/')
+
+
+def nuevo_reporte_usuario(request):
+
+	usuario_reportador = request.user
+	usuario_reportado = Usuario.objects.get(id = int(request.POST['usuario_id']))
+	tipo = request.POST['razon']
+	descripcion = request.POST['descripcion']
+
+	reporte_usaurio = ReporteUsuario()
+	reporte_usaurio.usuario_reportador = usuario_reportador
+	reporte_usaurio.usuario_reportado = usuario_reportado
+	reporte_usaurio.tipo = tipo
+	reporte_usaurio.descripcion = descripcion
+
+	reporte_usaurio.save()
 
 	return HttpResponseRedirect('/')
 

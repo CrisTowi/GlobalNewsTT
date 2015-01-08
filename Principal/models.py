@@ -110,12 +110,13 @@ class Comentario(models.Model):
 class ReporteUsuario(models.Model):
 	usuario_reportado = models.ForeignKey(Usuario, related_name='usuario_reportado')
 	usuario_reportador = models.ForeignKey(Usuario, related_name='usuario_reportador')
+	descripcion = models.TextField(default="")
 
 	tipo = models.CharField(max_length=45)
 	fecha = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return str(self.usuario_reportado) + ' ' + str(self.usuario_reportador)
+		return str(self.usuario_reportador) + ' ' + str(self.usuario_reportado)
 
 class Chat(models.Model):
 	usuario_uno = models.ForeignKey(Usuario, related_name='usuario_uno')

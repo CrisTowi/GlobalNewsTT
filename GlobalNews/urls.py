@@ -71,5 +71,6 @@ urlpatterns = patterns('',
     url(r'nuevo/post/$', 'Principal.views.nuevo_post_movil', name='nuevo_post_movil'),
 
     url(r'nuevo_reporte_nota/$', 'Principal.views.nuevo_reporte_post', name='nuevo_reporte_post'),
+    url(r'nuevo_reporte_usuario/$', 'Principal.views.nuevo_reporte_usuario', name='nuevo_reporte_usuario'),
 
 )
