@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
-from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota,Subseccion
+from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota,Subseccion, UsuarioSigueSeccion
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
@@ -94,9 +94,19 @@ def lista_publicaciones_seccion(request, id):
 	seccion = Seccion.objects.get(id = id)
 	subseccion = Subseccion.objects.get(seccion = seccion)
 
+	if request.user.is_authenticated():
+		usu = UsuarioSigueSeccion.objects.filter(seccion = seccion, usuario = request.user)
+		if usu:
+			follow = True
+		else:
+			follow = False
+
+	else:
+		follow = False
+
 	notas = Nota.objects.filter(subseccion = subseccion)
 
-	ctx = {'nombre_vista': 'Lista de Publicaciones en ' + seccion.nombre , 'notas': notas, 'seccion': seccion}
+	ctx = {'nombre_vista': 'Lista de Publicaciones en ' + seccion.nombre , 'notas': notas, 'seccion': seccion, 'follow': follow}
 	return render(request, 'lista_publicaciones_seccion.html', ctx)	
 
 def lista_subsecciones(request):
@@ -113,6 +123,9 @@ def lista_secciones(request):
 def index(request):
 
 	if request.user.is_authenticated():
+
+		#siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
+
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
 		noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user)).order_by('-id')
 
@@ -526,3 +539,29 @@ def seguir(request, id):
 	usu.save()
 
 	return HttpResponseRedirect('/perfil/' + str(id))
+
+
+def seguir_seccion(request, id):
+
+	usuario = request.user
+	seccion = Seccion.objects.get(id = id)
+
+	uss = UsuarioSigueSeccion()
+	uss.usuario = usuario
+	uss.seccion = seccion
+
+	uss.save()
+
+	return HttpResponseRedirect('/lista/nota/seccion/' + str(id))
+
+def dejar_de_seguir_seccion(request, id):
+
+
+	seccion = Seccion.objects.get(id = id)
+	usuario = request.user
+
+	uss = UsuarioSigueSeccion.objects.get(seccion = seccion, usuario = usuario)
+
+	uss.delete()
+
+	return HttpResponseRedirect('/lista/nota/seccion/' + str(id))

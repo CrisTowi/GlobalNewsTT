@@ -4,9 +4,17 @@
 {% block contenido %}
 
 {% if user.is_authenticated %}
-<div class="seguir">
-    <button class="btn btn-success">Seguir {{ seccion.nombre }}</button>
-</div>
+
+    {% if follow %}
+        <div class="seguir">
+            <a href="/unfollow/seccion/{{ seccion.id }}" class="btn btn-danger">Dejar de seguir {{ seccion.nombre }}</a>
+        </div>    
+    {% else %}
+        <div class="seguir">
+            <a href="/seguir/seccion/{{ seccion.id }}" class="btn btn-success">Seguir {{ seccion.nombre }}</a>
+        </div>
+    {% endif %}
+
 {% endif %}
 <div class="col-lg-9">
     <!-- blog entry -->
@@ -16,7 +24,7 @@
         <p>
             <span class="glyphicon glyphicon-time"></span> Publicado {{ nota.fecha|naturaltime|capfirst }}</p>
         <hr>
-        <img src="{{ MEDIA_URL }}{{ nota.imagen }}" class="img-responsive">
+        <img width="200px" src="{{ MEDIA_URL }}{{ nota.imagen }}" class="img-responsive">
         <hr>
         <p> {{ nota.descripcion }} </p>
         <a class="btn btn-primary" href="/publicacion/{{ nota.id }}">Leer más <span class="glyphicon glyphicon-chevron-right"></span></a>

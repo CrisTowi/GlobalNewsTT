@@ -63,8 +63,12 @@ urlpatterns = patterns('',
     url(r'like/$', 'Principal.views.like', name='like'),
 
     #Seguir y dejar de Seguir
-    url(r'dejar_de_seguir/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),
+    url(r'unfollow/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),
     url(r'seguir/(?P<id>\d+)$', 'Principal.views.seguir', name='seguir'),
+
+    url(r'seguir/seccion/(?P<id>\d+)$', 'Principal.views.seguir_seccion', name='seguir_seccion'),
+    url(r'unfollow/seccion/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir_seccion', name='dejar_de_seguir_seccion'),
+    
 
 
     #Movil
