@@ -124,10 +124,14 @@ def index(request):
 
 	if request.user.is_authenticated():
 
-		#siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
+		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
+
+		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
+
+		print subsecciones_id
 
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-		noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user)).order_by('-id')
+		noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
 
 	else:
 		noticias = Nota.objects.all()
@@ -497,6 +501,34 @@ def nuevo_comentario(request):
 	comentario.save()
 
 	comentario_json = {'contenido': comentario.contenido, 'usuario': usuario.username, 'imagen': str(usuario.foto)}
+
+	return JsonResponse(comentario_json, safe=False)
+
+
+def nuevo_mensaje(request):
+
+	usuario_remitente = Usuario.objects.get(id = int(request.GET['usuario_consultor']))
+	usuario_destinatario = Usuario.objects.get(id = int(request.GET['usuario_chat']))
+	mensaje = request.GET['mensaje']
+
+	chat = Chat.objects.get((Q(usuario_uno = usuario_remitente) | Q(usuario_dos = usuario_remitente)), (Q(usuario_uno = usuario_destinatario) | Q(usuario_dos = usuario_destinatario)))
+
+	mensaje_directo = MensajeDirecto()
+	mensaje_directo.usuario_remitente = usuario_remitente
+	mensaje_directo.usuario_destinatario = usuario_destinatario
+	mensaje_directo.contenido = mensaje
+	mensaje_directo.chat = chat
+
+	mensaje_directo.save()
+
+	comentario_json = {'contenido': mensaje_directo.contenido, 'fecha': naturaltime(mensaje_directo.fecha), 'id': mensaje_directo.id}
+
+	return JsonResponse(comentario_json, safe=False)
+
+def eliminar_mensaje(request):
+	MensajeDirecto.objects.get(id = int(request.GET['id'])).delete()
+
+	comentario_json = {'mensaje': 'Eliminado satisfactoriamente'}
 
 	return JsonResponse(comentario_json, safe=False)
 

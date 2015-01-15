@@ -6,22 +6,67 @@
 $('.btn-abre-platica').on('click', function(e){
     e.preventDefault();
 
-
+    $("#btn-enviar").off('click');
     $('#chat').html("");
 
     var id_usuario = $(this).data("usuario");
     var username_chat = $(this).data("username");
     var imagen = $(this).data("imagen");
     var username_local = "{{ user.username }}";
-    var usaurio = $('#input_usuario').val();
+    var usuario = $('#input_usuario').val();
     var media_url = $('#media_url').val();
     var imagen_local = "{{ user.foto }}"
 
 
-        $.ajax({
+  obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local);
+  $('#btn-enviar').on('click', function(){
+
+      var mensaje = $('#mensaje').val();
+
+      $.get( "/nuevo/mensaje/", {usuario_consultor: usuario , usuario_chat: id_usuario, mensaje: mensaje}, function(data){
+        var imagen_url = media_url + imagen_local
+        var template = $('<li class="right clearfix"> \
+                            <span class="chat-img pull-right"> \
+                                <img src="' + imagen_url + '" alt="User Avatar" width="50px" class="img-circle" /> \
+                            </span> \
+                            <div class="chat-body clearfix"> \
+                                <div class="header"> \
+                                    <small class=" text-muted"> \
+                                        <i class="fa fa-clock-o fa-fw"></i>' + data.fecha + '</small> \
+                                    <strong class="pull-right primary-font">' + username_local + '</strong> \
+                                </div> \
+                                <p> \
+                                    '+ data.contenido +' \
+                                </p> \
+                                <a href="#"  class="eliminar" data-id="' + data.id + '">Eliminar</a> \
+                            </div> \
+                        </li>');
+            template.hide();
+            $('#chat').append(template);
+            template.show('slow');
+
+
+            $('#mensaje').val('');
+      });
+  });
+
+
+  $(document).on("click", ".eliminar", function(){
+    event.preventDefault();
+    var id = $(this).data("id");
+      $.get( "/eliminar/mensaje/", {id: id}, function(data){
+        $('#chat').html("");
+        obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local);
+      });
+  });
+
+});
+
+function obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local){
+$.ajax({
           url: "{% url 'get_chat' %}",
           type: "GET", //send it through get method
-          data: {usuario_consultor: usaurio , usuario_chat: id_usuario},
+          data: {usuario_consultor: usuario , usuario_chat: id_usuario},
           success: function(response) {
     
             $.each(response, function(i, objeto){
@@ -44,7 +89,7 @@ $('.btn-abre-platica').on('click', function(e){
                                 <p> \
                                     ' + objeto.contenido + ' \
                                 </p> \
-                                <a href="#">Eliminar</a> <a href="#">Esconder</a> \
+                                <a href="#"  class="eliminar" data-id="' + objeto.id + '">Eliminar</a> \
                             </div> \
                         </li>';
                 } else {
@@ -62,19 +107,16 @@ $('.btn-abre-platica').on('click', function(e){
                                 <p> \
                                     '+ objeto.contenido +' \
                                 </p> \
-                                <a href="#">Eliminar</a> <a href="#">Esconder</a> \
+                                <a href="#" class="eliminar" data-id="' + objeto.id + '">Eliminar</a> \
                             </div> \
                         </li>';
-
                 }
-
             $('#chat').prepend(template);
-
         });
       }
 });
+}
 
-});
 
 </script>
 {% endblock %}
@@ -129,10 +171,10 @@ $('.btn-abre-platica').on('click', function(e){
       <div class="modal-footer">
         <div class="row">
             <div class="col-md-2">
-                <button class="btn btn-success">Enviar</button>
+                <button class="btn btn-success" id="btn-enviar">Enviar</button>
             </div>
             <div class="col-md-10">
-                <input type="text" class="form-control" placeholder="Mensaje...">
+                <input type="text" id="mensaje" class="form-control" placeholder="Mensaje...">
             </div>
         </div>
       </div>
