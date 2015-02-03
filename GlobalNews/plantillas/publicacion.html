@@ -10,7 +10,7 @@
     		<div class="col-xs-7">
     			<strong>Autor: </strong> <a href="/perfil/{{ publicacion.usuario.id }}">{{ publicacion.usuario.username }}</a>
     			<br><br>
-    			<a class="tag">Politica</a>
+    			<a href="/lista/nota/seccion/{{ publicacion.subseccion.seccion.id }}">{{ publicacion.subseccion.seccion }}</a>
 
     			<h3>{{ publicacion.titulo }}</h3>
           <h4>{{ num_likes }} Me gusta</h4>
@@ -156,7 +156,7 @@
     var id_post = $('#id-post').val();
     var id_user = $('#id-user').val();
     $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
-      var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div>");
+      var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><br><br><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div>");
       html.hide();
       html.appendTo($('#comentarios')).show("slow");
       $('#comentario').val("");

@@ -26,20 +26,15 @@
             </tr>
         </thead>
         <tbody>
+            {% for reporte in reportes_nota %}
             <tr>
-                <td>23143994912312</td>
-                <td><a href="/publicacion/">Choque en GAM</a></td>
-                <td>Noticia Falsa</td>
-                <td><a class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" href="#"></a></td>
+                <td>{{ reporte.id }}</td>
+                <td><a href="/publicacion/{{ reporte.nota.id }}">{{ reporte.nota.titulo }}</a></td>
+                <td>{{ reporte.descripcion }}</td>
+                <td><a id="abrir_eliminar" class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
                 <td><a class="glyphicon glyphicon-edit" data-toggle="modal" data-target="#ModalDenunciar" href="#"></a></td>
-            </tr>
-            <tr>
-                <td>23143994912312</td>
-                <td><a href="publicacion/">Atropellado en Miguel Hidalgo</a></td>
-                <td>Contenido Inapropiado</td>
-                <td><a class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" href="#"></a></td>
-                <td><a class="glyphicon glyphicon-edit" data-toggle="modal" data-target="#ModalDenunciar" href="#"></a></td>
-            </tr>
+            </tr>              
+            {% endfor %}
         </tbody>
     </table>
 </div>
@@ -57,9 +52,10 @@
             <h4>¿Deseas dar de baja esta noticia?</h4>
         </div>
       </div>
+      <input type="text" id="id_nota_dar_de_baja">
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-danger">Dar de baja</button>
+        <a id="btn-dardebaja" href="#" class="btn btn-danger">Dar de baja</a>
       </div>
     </div>
   </div>
@@ -96,5 +92,22 @@
     </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block js %}
+  
+  <script type="text/javascript">
+
+    $('#abrir_eliminar').on('click', function(e){
+      e.preventDefault();
+      var id_nota = $(this).data('id');
+      $('#id_nota_dar_de_baja').val(id_nota);
+
+      $('#btn-dardebaja').attr('href', '/dardebaja/nota/' + id_nota);
+
+    });  
+
+  </script>
 
 {% endblock %}

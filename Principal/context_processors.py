@@ -1,4 +1,4 @@
-from Principal.models import Seccion, Nota, UsuarioSigueUsuario, Chat
+from Principal.models import Seccion, Nota, UsuarioSigueUsuario, Chat, ReporteUsuario, ReporteNota
 from django.db.models import Q
 
 
@@ -32,3 +32,12 @@ def mensajes_directos_processor(request):
 
 
 	return {'chats_processor': chats}
+
+def reportes(request):
+
+	reportes_usuario = ReporteUsuario.objects.all()[:2]
+	reportes_nota = ReporteNota.objects.all()[:2]
+
+	print reportes_nota
+
+	return {'reportes_usuario': reportes_usuario, 'reportes_nota': reportes_nota}

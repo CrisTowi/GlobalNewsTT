@@ -80,4 +80,10 @@ urlpatterns = patterns('',
     url(r'nuevo_reporte_nota/$', 'Principal.views.nuevo_reporte_post', name='nuevo_reporte_post'),
     url(r'nuevo_reporte_usuario/$', 'Principal.views.nuevo_reporte_usuario', name='nuevo_reporte_usuario'),
 
+    #Administracion
+    url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),
+
+
+    url(r'prueba/$', 'Principal.views.prueba', name='prueba'),
+
 )

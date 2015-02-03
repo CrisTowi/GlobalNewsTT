@@ -1,0 +1,11 @@
+{
+  "name": "globalnews",
+  "version": "0.0.1",
+  "description": "Servidor en Node.js para GlobalNews",
+  "dependencies": {
+    "cookie": "^0.1.2",
+    "express": "^4.10.2",
+    "redis": "^0.12.1",
+    "socket.io": "^1.3.2"
+  }
+}

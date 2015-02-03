@@ -23,6 +23,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.db.models import Count
 
+from django.contrib.sessions.models import Session
+
+import redis
+
 #Viwesets para el API REST
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
@@ -46,11 +50,15 @@ class SeccionViewSet(viewsets.ModelViewSet):
 
 #Listas
 def lista_reportes(request):
-	ctx = {'nombre_vista': 'Lista de Reportes de Notas'}
+	reportes_nota = ReporteNota.objects.all()
+
+	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas'}
 	return render(request, 'reportes.html', ctx)
 
 def lista_reportes_usuario(request):
-	ctx = {'nombre_vista': 'Lista de Reportes de Usuario'}
+	reportes_usuario = ReporteUsuario.objects.all()
+
+	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario'}
 	return render(request, 'reportes_usuarios.html', ctx)
 
 def lista_usuarios(request):
@@ -79,20 +87,20 @@ def lista_seguidores(request, id):
 def lista_publicaciones(request):
 	notas = Nota.objects.all()
 
-	ctx = {'nombre_vista': 'Lista de Notas', 'notas': notas}
+	ctx = {'nombre_vista': 'Lista de Noticias', 'notas': notas}
 	return render(request, 'lista_publicaciones.html', ctx)
 
 def lista_publicaciones_usuario(request, id):
 	usuario = Usuario.objects.get(id = id)
 	notas = Nota.objects.filter(usuario = usuario)
 
-	ctx = {'nombre_vista': 'Lista de Notas', 'notas': notas}
+	ctx = {'nombre_vista': 'Lista de Noticias', 'notas': notas}
 	return render(request, 'lista_publicaciones.html', ctx)
 
 def lista_publicaciones_seccion(request, id):
 
 	seccion = Seccion.objects.get(id = id)
-	subseccion = Subseccion.objects.get(seccion = seccion)
+	subseccion = Subseccion.objects.filter(seccion = seccion)
 
 	if request.user.is_authenticated():
 		usu = UsuarioSigueSeccion.objects.filter(seccion = seccion, usuario = request.user)
@@ -127,8 +135,6 @@ def index(request):
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
 
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
-
-		print subsecciones_id
 
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
 		noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
@@ -504,12 +510,13 @@ def nuevo_comentario(request):
 
 	return JsonResponse(comentario_json, safe=False)
 
-
+@csrf_exempt
 def nuevo_mensaje(request):
 
-	usuario_remitente = Usuario.objects.get(id = int(request.GET['usuario_consultor']))
-	usuario_destinatario = Usuario.objects.get(id = int(request.GET['usuario_chat']))
-	mensaje = request.GET['mensaje']
+	usuario_remitente = Usuario.objects.get(id = int(request.POST['usuario_consultor']))
+	usuario_destinatario = Usuario.objects.get(id = int(request.POST['usuario_chat']))
+	mensaje = request.POST['mensaje']
+	id_chat = request.POST['id_chat']
 
 	chat = Chat.objects.get((Q(usuario_uno = usuario_remitente) | Q(usuario_dos = usuario_remitente)), (Q(usuario_uno = usuario_destinatario) | Q(usuario_dos = usuario_destinatario)))
 
@@ -520,6 +527,10 @@ def nuevo_mensaje(request):
 	mensaje_directo.chat = chat
 
 	mensaje_directo.save()
+
+	#Once comment has been created post it to the chat channel
+	r = redis.StrictRedis(host='localhost', port=6379, db=0)
+	r.publish('chat', '{ "contenido": "' + mensaje_directo.contenido + '", "fecha": "' + naturaltime(mensaje_directo.fecha) + '", "id": ' + str(mensaje_directo.id) + ', "usuario_remitente": '+ str(usuario_remitente.id) +', "id_chat": "'+ str(id_chat) +'" }')
 
 	comentario_json = {'contenido': mensaje_directo.contenido, 'fecha': naturaltime(mensaje_directo.fecha), 'id': mensaje_directo.id}
 
@@ -563,7 +574,6 @@ def dejar_de_seguir(request, id):
 	return HttpResponseRedirect('/lista/seguidos/' + str(request.user.id))
 
 def seguir(request, id):
-
 	usu = UsuarioSigueUsuario()
 	usu.usuario_seguido = Usuario.objects.get(id = id)
 	usu.usuario_seguidor = Usuario.objects.get(id = request.user.id)
@@ -574,7 +584,6 @@ def seguir(request, id):
 
 
 def seguir_seccion(request, id):
-
 	usuario = request.user
 	seccion = Seccion.objects.get(id = id)
 
@@ -587,8 +596,6 @@ def seguir_seccion(request, id):
 	return HttpResponseRedirect('/lista/nota/seccion/' + str(id))
 
 def dejar_de_seguir_seccion(request, id):
-
-
 	seccion = Seccion.objects.get(id = id)
 	usuario = request.user
 
@@ -597,3 +604,28 @@ def dejar_de_seguir_seccion(request, id):
 	uss.delete()
 
 	return HttpResponseRedirect('/lista/nota/seccion/' + str(id))
+
+
+def dar_de_baja_nota(request, id):
+	nota = Nota.objects.get(id = id)
+	nota.delete()
+
+	return HttpResponseRedirect('/lista/reportes/nota')
+
+def dar_de_baja_usuario(request, id):
+	usuario = Usuario.objects.get(id = id)
+	usuario.delete()
+
+	return HttpResponseRedirect('/lista/reportes/usuario')
+
+@csrf_exempt
+def prueba(request):
+	session = Session.objects.get(session_key=request.POST.get('sessionid'))
+	user_id = session.get_decoded().get('_auth_user_id')
+	user = Usuario.objects.get(id = user_id)
+
+	print user
+
+	json_respuesta = {'mensaje': 'Mensaje'}
+
+	return JsonResponse(json_respuesta, safe=False)

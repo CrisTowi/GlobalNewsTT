@@ -192,6 +192,7 @@
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/mapa.js"></script>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
 <script type="text/javascript">
     
@@ -201,7 +202,6 @@ obtieneIdNoticia = function(id){
 }; 
 $('#btn-eliminar').on('click', function(e){
     e.preventDefault();
-
     location.replace("/eliminar/nota/" + id_noticia);
 });
 

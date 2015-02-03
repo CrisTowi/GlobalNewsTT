@@ -13,7 +13,7 @@ PRIVACIDAD_CHOISE = [('publico','Publico'),
 
 
 RAZON_REPORTE_CHOISE =  [('agresivo', 'Agresivo'),
-        ('contenido_sexual', 'Contenido Sexual')]
+        ('contenido_inapropiado', 'Contenido Inapropiado')]
 
 class CrearUsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)

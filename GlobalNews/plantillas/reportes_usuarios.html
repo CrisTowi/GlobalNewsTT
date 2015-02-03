@@ -22,27 +22,21 @@
                 <th>Username</th>
                 <th>Reporte</th>
                 <th>Estado</th>
-                <th>Dar de Baja</th>
+                <th>Eliminar</th>
                 <th>Contactar</th>
             </tr>
         </thead>
         <tbody>
+            {% for reporte in reportes_usuario %}
             <tr>
-                <td>23123994912312</td>
-                <td>Cris_Towi</td>
-                <td><a data-toggle="modal" data-target="#ModalDetalle" href="#">Mala conducta</a></td>
+                <td>{{ reporte.usuario_reportado.id }}</td>
+                <td><a href="/perfil/{{ reporte.usuario_reportado.id }}">{{ reporte.usuario_reportado.username }}</a></td>
+                <td>{{ reporte.descripcion }}</td>
                 <td><a class="glyphicon glyphicon-minus" href="#"></a></td>
                 <td><a class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" href="#"></a></td>
                 <td><a class="glyphicon glyphicon-edit" data-toggle="modal" data-target="#ModalDenunciar" href="#"></a></td>
-            </tr>
-            <tr>
-                <td>23123993122312</td>
-                <td>Marnenmar</td>
-                <td><a data-toggle="modal" data-target="#ModalDetalle" href="#">Mala conducta</a></td>
-                <td><a class="glyphicon glyphicon-plus" href="#"></a></td>
-                <td><a class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" href="#"></a></td>
-                <td><a class="glyphicon glyphicon-edit" data-toggle="modal" data-target="#ModalDenunciar" href="#"></a></td>
-            </tr>
+            </tr>    
+            {% endfor %}
         </tbody>
     </table>
 </div>
