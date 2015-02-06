@@ -222,9 +222,7 @@ def nuevo_reporte_usuario(request):
 
 @login_required(login_url='/login')
 def nuevo_post(request):
-
 	p = True
-
 	ctx = {}
 	if request.method == 'POST':
 		form = NuevaNotaForm(request.POST, request.FILES)
@@ -250,10 +248,20 @@ def nuevo_post(request):
 			nota.privacidad = p
 			nota.imagen = imagen
 
+
+			r = redis.StrictRedis(host='localhost', port=6379, db=1)
+
+			r.publish('otra', 'OOOOOOOTRA')
+
 			nota.longitud = longitud
 			nota.latitud = latitud
 
 			nota.save()
+
+			#Once comment has been created post it to the chat channel
+
+			print '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'" }'
+			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'" }')
 
 			return HttpResponseRedirect('/')
 	else:

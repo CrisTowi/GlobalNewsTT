@@ -1,3 +1,4 @@
+var map = null;
 function initialize(){
     var lat, lon;
     
@@ -13,7 +14,7 @@ function initialize(){
             zoom:13,
             mapTypeId:google.maps.MapTypeId.ROADMAP
             };
-              var map=new google.maps.Map(document.getElementById("googleMap")
+              map=new google.maps.Map(document.getElementById("googleMap")
             ,mapProp);
 
 

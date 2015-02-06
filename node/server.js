@@ -11,17 +11,21 @@ var host = 'localhost';
 var usuarios = [];
 
 var callback = function(channel, message){
-    
+    var datos = JSON.parse(message);
     switch (channel) {
         case 'chat':
-            var datos = JSON.parse(message);
 
             io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
+            break;
+
+        case 'publicacion':
+            io.sockets.emit('nueva_publicacion', datos);
             break;
     }
 };
 //Se subscribe al canal de chat
 sub.subscribe('chat');
+sub.subscribe('publicacion');
 sub.addListener('message', callback);
 
 io.sockets.on('connection', function (socket) {

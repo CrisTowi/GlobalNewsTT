@@ -11,7 +11,7 @@
         <div id="googleMap" style="height:380px;"></div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-            <ul class="timeline">
+            <ul class="timeline" id="timeline">
                 {% for noticia in noticias %}
                 {% if forloop.counter|divisibleby:2 %}
                 <li class="timeline-inverted">
@@ -193,6 +193,57 @@
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/mapa.js"></script>
 <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+    var socket = io.connect("localhost:3000");
+    var left_right = 1;
+
+    socket.on('nueva_publicacion', function(data){
+
+        var ubicacion = '';
+
+        if(left_right == 1){
+            ubicacion = ' class="timeline-inverted"';
+            left_right = 0;
+        } else {
+            ubicacion = '';
+            left_right = 1;
+        }
+
+        var template = $('<li' + ubicacion + '> \
+                                    <div class="timeline-badge"><i class="fa fa-check"></i> \
+                                    </div> \
+                                    <div class="timeline-panel"> \
+                                        <div class="timeline-heading"> \
+                                            <a href="/publicacion/' + data.id + '"><h4 class="timeline-title">' + data.titulo + '</h4></a> \
+                                            <a href="/perfil/' + data.usuario_id + '"><h5>Por ' + data.usuario + '</h5></a> \
+                                            <p> \
+                                                <small class="text-muted"><i class="fa fa-time"></i>' + data.fecha + '</small> \
+                                            </p> \
+                                        </div> \
+                                        <div class="timeline-body"> \
+                                            <p>' + data.descripcion + '</p> \
+                                        </div> \
+                                    </div> \
+                                </li>');
+        template.hide();
+        $('#timeline').prepend(template);
+        template.show('slow');
+
+
+        var marker1 = new google.maps.Marker({
+            position: new google.maps.LatLng(data.latitud,data.longitud),
+            map: map,
+            title: data.titulo,
+            url: '/publicacion/' + data.id
+            });
+            google.maps.event.addListener(marker1, 'click', function() {
+            window.location.href = this.url;
+        });
+    });
+
+
+</script>
 
 <script type="text/javascript">
     
