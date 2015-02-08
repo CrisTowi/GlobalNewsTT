@@ -1,6 +1,7 @@
 var map = null;
 function initialize(){
     var lat, lon;
+    var im = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
     
     $.get('/puntos', function(data){
 
@@ -30,6 +31,13 @@ function initialize(){
                 });
 
               }
+
+            var userMarker = new google.maps.Marker({
+              position: new google.maps.LatLng(lat,lon),
+              map: map,
+              title: 'Mi Ubicación',
+              icon: im
+            });
 
         });
       }

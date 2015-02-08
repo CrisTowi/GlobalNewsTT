@@ -64,17 +64,17 @@ if (navigator.geolocation) {
     });
 }      
 }
-// Sets the map on all markers in the array.
+// Agrega al mapa todos los marcadores del arreglo
 function setAllMap(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
 }
-// Removes the markers from the map, but keeps them in the array.
+// Borra los marcadores del array pero los sigue teniendo en el arreglo
 function clearMarkers() {
   setAllMap(null);
 }
-// Add a marker to the map and push to the array.
+// Agregar un marcador al arreglo
 function addMarker(location) {
   var marker = new google.maps.Marker({
     position: location,
@@ -82,7 +82,7 @@ function addMarker(location) {
   });
   markers.push(marker);
 }
-// Deletes all markers in the array by removing references to them.
+// Borra todos los markadores vaciando la referencia de ellos
 function deleteMarkers() {
   clearMarkers();
   markers = [];
@@ -91,6 +91,8 @@ $('#abrir_mapa').on('click', function(e){
     $('#googleMap').height(300);
     e.preventDefault();
       var lat, lon;
+
+      // Obtiene la localizaçión del usuario
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
               lat = position.coords.latitude;
@@ -101,6 +103,15 @@ $('#abrir_mapa').on('click', function(e){
             mapTypeId:google.maps.MapTypeId.ROADMAP
             };
             map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            var im = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+            var userMarker = new google.maps.Marker({
+              position: new google.maps.LatLng(lat,lon),
+              map: map,
+              title: 'Mi Ubicación',
+              icon: im
+            });
+
+            // Cuando presionas un marcador te envia a la nota
             google.maps.event.addListener(map, "click", function(data)
             {
                 latitud = data.latLng.k;

@@ -1,20 +1,21 @@
+//Importar los módulos
 var http = require('http');
 var server = http.createServer().listen(3000);
 var io = require('socket.io').listen(server);
 var cookie_reader = require('cookie');
 var querystring = require('querystring');
-var redis = require('redis');
-
-var sub = redis.createClient();
-
 var host = 'localhost';
 var usuarios = [];
 
+//Crear un cliente Redis
+var redis = require('redis');
+var sub = redis.createClient();
+
+//Funcion que maneja cada evento enviado desde Django
 var callback = function(channel, message){
     var datos = JSON.parse(message);
     switch (channel) {
         case 'chat':
-
             io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
             break;
 
@@ -23,24 +24,13 @@ var callback = function(channel, message){
             break;
     }
 };
+
 //Se subscribe al canal de chat
 sub.subscribe('chat');
 sub.subscribe('publicacion');
 sub.addListener('message', callback);
 
 io.sockets.on('connection', function (socket) {
-
-    //Configure socket.io to store cookie set by Django
-    io.set('authorization', function(data, accept){
-        if(data.headers.cookie){
-            data.cookie = cookie_reader.parse(data.headers.cookie);
-            return accept(null, true);
-        }
-        return accept('error', false);
-    });
-    io.set('log level', 1);
-
-    var contador = 0;
 
     //Usuario conectado
     console.log('Conectado');
@@ -51,6 +41,19 @@ io.sockets.on('connection', function (socket) {
         'session_id': session_id,
         'socket_id': socket.id
     };
+
+    usuarios.push(obj_usuario);
+
+    //COnfigurar las cookies para comunicarse con Django
+    io.set('authorization', function(data, accept){
+        if(data.headers.cookie){
+            data.cookie = cookie_reader.parse(data.headers.cookie);
+            return accept(null, true);
+        }
+        return accept('error', false);
+    });
+    io.set('log level', 1);
+
 
     //Arir chat
     socket.on('abrir_chat', function(id_chat){
@@ -65,7 +68,7 @@ io.sockets.on('connection', function (socket) {
         valores = querystring.stringify(data);
 
         var options = {
-            host: 'localhost',
+            host: host,
             port: 8000,
             path: '/nuevo/mensaje/',
             method: 'POST',
@@ -75,18 +78,20 @@ io.sockets.on('connection', function (socket) {
             }
         };        
 
-        //Enviar mensaje a Django
+        //Enviar mensaje a Django y termina el request
         var req = http.get(options, function(res){
             res.setEncoding('utf8');
-
         });
-        
         req.write(valores);
         req.end();
     });
 
-    // Unsubscribe after a disconnect event
-    socket.on('disconnect', function () {
-        console.log('Ya me fui');
+    // Desconectar al usuario y sacarlo de la lista de usuarios
+    socket.on('disconnect', function (socket) {
+        for(var i=0; i<usuarios.length; i++){
+            if(usuarios[i].socket_id == this.id){
+                usuarios.splice(i, 1);
+            }
+        }
     });
 });
