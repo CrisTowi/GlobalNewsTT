@@ -83,7 +83,4 @@ urlpatterns = patterns('',
     #Administracion
     url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),
 
-
-    url(r'prueba/$', 'Principal.views.prueba', name='prueba'),
-
 )

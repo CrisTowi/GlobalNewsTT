@@ -12,8 +12,9 @@ var redis = require('redis');
 var sub = redis.createClient();
 
 //Funcion que maneja cada evento enviado desde Django
-var callback = function(channel, message){
+var recibeMensaje = function(channel, message){
     var datos = JSON.parse(message);
+    console.log(datos);
     switch (channel) {
         case 'chat':
             io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
@@ -22,13 +23,24 @@ var callback = function(channel, message){
         case 'publicacion':
             io.sockets.emit('nueva_publicacion', datos);
             break;
+
+        case 'comentario':
+            for(var i=0; i<usuarios.length; i++){
+                if(usuarios[i].session_id == datos.session_key){
+                    io.to(usuarios[i].socket_id).emit('nuevo_comentario', datos);
+                }
+            }
+            break;
     }
 };
 
-//Se subscribe al canal de chat
+//Subscribe a los diferentes canales
 sub.subscribe('chat');
 sub.subscribe('publicacion');
-sub.addListener('message', callback);
+sub.subscribe('comentario');
+
+//Evento que recibe mensaje de redis
+sub.addListener('message', recibeMensaje);
 
 io.sockets.on('connection', function (socket) {
 
@@ -43,7 +55,7 @@ io.sockets.on('connection', function (socket) {
     };
 
     usuarios.push(obj_usuario);
-
+    console.log(usuarios);
     //COnfigurar las cookies para comunicarse con Django
     io.set('authorization', function(data, accept){
         if(data.headers.cookie){

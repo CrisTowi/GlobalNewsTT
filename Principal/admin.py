@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from Principal.models import Chat, Usuario, Comentario, ReporteNota, Nota, UsuarioSigueSeccion, UsuarioSigueUsuario, Subseccion, Seccion, ReporteUsuario, MensajeDirecto
-
+from django.contrib.sessions.models import Session
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Permission
 
@@ -45,3 +45,4 @@ admin.site.register(Seccion)
 admin.site.register(ReporteUsuario)
 admin.site.register(MensajeDirecto)
 admin.site.register(Chat)
+admin.site.register(Session)

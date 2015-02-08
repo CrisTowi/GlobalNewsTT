@@ -249,18 +249,13 @@ def nuevo_post(request):
 			nota.imagen = imagen
 
 
-			r = redis.StrictRedis(host='localhost', port=6379, db=1)
-
-			r.publish('otra', 'OOOOOOOTRA')
 
 			nota.longitud = longitud
 			nota.latitud = latitud
 
 			nota.save()
 
-			#Once comment has been created post it to the chat channel
-
-			print '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'" }'
+			r = redis.StrictRedis(host='localhost', port=6379, db=1)
 			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'" }')
 
 			return HttpResponseRedirect('/')
@@ -491,17 +486,24 @@ def get_chat(request):
 
 
 def get_puntos(request):
-
 	notas = list(Nota.objects.all().values())
 
 	return JsonResponse(notas, safe=False)
+
+
+def session_from_usuario(id_usuario):
+	sesiones = Session.objects.all()
+	print "En la funcion " + str(id_usuario)
+	for sesion in sesiones:
+		user_id = sesion.get_decoded().get('_auth_user_id')
+		if str(user_id) == str(id_usuario):
+			return sesion.session_key
 
 
 def nuevo_comentario(request):
 	contenido = request.GET['comentario']
 	id_post = request.GET['id_post']
 	id_usuario = request.GET['id_usuario']
-
 
 	usuario = Usuario.objects.get(id = id_usuario)
 	nota = Nota.objects.get(id = id_post)
@@ -514,13 +516,20 @@ def nuevo_comentario(request):
 
 	comentario.save()
 
+	key_sesion = session_from_usuario(nota.usuario.id)
+
+	print nota.usuario
+
+	r = redis.StrictRedis(host='localhost', port=6379, db=2)
+	mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + comentario.usuario.username + '", "contenido": "' + comentario.contenido + '", "nota_id": ' + str(comentario.nota.id) + ', "nota": "' + comentario.nota.titulo + '", "fecha": "' + naturaltime(comentario.fecha) + '" }'
+	r.publish('comentario', mensaje)
+
 	comentario_json = {'contenido': comentario.contenido, 'usuario': usuario.username, 'imagen': str(usuario.foto)}
 
 	return JsonResponse(comentario_json, safe=False)
 
 @csrf_exempt
 def nuevo_mensaje(request):
-
 	usuario_remitente = Usuario.objects.get(id = int(request.POST['usuario_consultor']))
 	usuario_destinatario = Usuario.objects.get(id = int(request.POST['usuario_chat']))
 	mensaje = request.POST['mensaje']
