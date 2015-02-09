@@ -2,10 +2,7 @@
 
 {% block js %}
 
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
-
 <script type="text/javascript">
-    var socket = io.connect("localhost:3000");
 
 $('.btn-abre-platica').on('click', function(e){
     e.preventDefault();
@@ -25,9 +22,6 @@ $('.btn-abre-platica').on('click', function(e){
     socket.emit('abrir_chat', id_chat);
 
     var mensaje_entrada = function(objeto){
-
-      console.log(objeto);
-
        var imagen_url = media_url + imagen_local
                 if(objeto.usuario_remitente == id_usuario){ 
         var imagen_url = media_url + imagen;
@@ -98,10 +92,23 @@ $('.btn-abre-platica').on('click', function(e){
       var id = $(this).data("id");
         $.get( "/eliminar/mensaje/", {id: id}, function(data){
           $('#chat').html("");
+          var n = noty({
+              text: 'Mensaje eliminado con éxico',
+              layout: 'bottomRight',
+              type: 'success',
+              timeout: 3500,
+              callback: { onClose: function() { /* Go to the URL i want to go */ }},
+              animation: {
+                  open: {height: 'toggle'}, // jQuery animate function property object
+                  close: {height: 'toggle'}, // jQuery animate function property object
+                  easing: 'swing', // easing
+                  speed: 500 // opening & closing animation speed
+              }
+          });
+          $(document).unbind("click", ".eliminar");
           obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local);
         });
     });
-
 });
 
 function obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local){
