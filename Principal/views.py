@@ -10,7 +10,6 @@ from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUs
 
 from django.template import RequestContext
 
-from django.shortcuts import render_to_response, get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
@@ -20,12 +19,17 @@ from django.http import JsonResponse
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from django.views.decorators.csrf import csrf_exempt
-
-from django.db.models import Count
-
 from django.contrib.sessions.models import Session
 
 import redis
+
+def session_from_usuario(id_usuario):
+	sesiones = Session.objects.all()
+	print "En la funcion " + str(id_usuario)
+	for sesion in sesiones:
+		user_id = sesion.get_decoded().get('_auth_user_id')
+		if str(user_id) == str(id_usuario):
+			return sesion.session_key
 
 #Viwesets para el API REST
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -491,15 +495,6 @@ def get_puntos(request):
 	return JsonResponse(notas, safe=False)
 
 
-def session_from_usuario(id_usuario):
-	sesiones = Session.objects.all()
-	print "En la funcion " + str(id_usuario)
-	for sesion in sesiones:
-		user_id = sesion.get_decoded().get('_auth_user_id')
-		if str(user_id) == str(id_usuario):
-			return sesion.session_key
-
-
 def nuevo_comentario(request):
 	contenido = request.GET['comentario']
 	id_post = request.GET['id_post']
@@ -518,7 +513,6 @@ def nuevo_comentario(request):
 
 	key_sesion = session_from_usuario(nota.usuario.id)
 
-	print nota.usuario
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=2)
 	mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + comentario.usuario.username + '", "contenido": "' + comentario.contenido + '", "nota_id": ' + str(comentario.nota.id) + ', "nota": "' + comentario.nota.titulo + '", "fecha": "' + naturaltime(comentario.fecha) + '" }'
@@ -595,6 +589,12 @@ def seguir(request, id):
 	usu.usuario_seguido = Usuario.objects.get(id = id)
 	usu.usuario_seguidor = Usuario.objects.get(id = request.user.id)
 
+	session_key = session_from_usuario(id)
+
+	r = redis.StrictRedis(host='localhost', port=6379, db=3)
+	mensaje = '{ "seguidor": "' + request.user.username + '", "seguidr_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
+	r.publish('nuevo_seguidor', mensaje)
+
 	usu.save()
 
 	return HttpResponseRedirect('/perfil/' + str(id))
@@ -634,15 +634,3 @@ def dar_de_baja_usuario(request, id):
 	usuario.delete()
 
 	return HttpResponseRedirect('/lista/reportes/usuario')
-
-@csrf_exempt
-def prueba(request):
-	session = Session.objects.get(session_key=request.POST.get('sessionid'))
-	user_id = session.get_decoded().get('_auth_user_id')
-	user = Usuario.objects.get(id = user_id)
-
-	print user
-
-	json_respuesta = {'mensaje': 'Mensaje'}
-
-	return JsonResponse(json_respuesta, safe=False)
