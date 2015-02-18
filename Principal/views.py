@@ -573,11 +573,11 @@ def like(request):
 	id_post = request.GET['id_post']
 	id_usuario = request.GET['id_usuario']
 
-	like = request.GET['like']
+	le_gusta = request.GET['like']
 	usuario = Usuario.objects.get(id = id_usuario)
 	nota = Nota.objects.get(id = id_post)
 
-	if like == 'true':
+	if le_gusta == 'true':
 		like = LikeNota.objects.get(usuario = usuario, nota = nota)
 		like.delete()
 	else:
@@ -585,7 +585,12 @@ def like(request):
 		like.nota = nota
 		like.usuario = usuario
 		like.save()
-		
+
+		key_sesion = session_from_usuario(nota.usuario.id)
+		r = redis.StrictRedis(host='localhost', port=6379, db=2)
+		mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
+		r.publish('me_gusta', mensaje)
+
 	respuesta = {'usuario': usuario.username, 'titulo': nota.titulo}
 	return JsonResponse(respuesta, safe=False)
 
@@ -606,7 +611,7 @@ def seguir(request, id):
 	session_key = session_from_usuario(id)
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=3)
-	mensaje = '{ "seguidor": "' + request.user.username + '", "seguidr_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
+	mensaje = '{ "seguidor": "' + request.user.username + '", "seguidor_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
 	r.publish('nuevo_seguidor', mensaje)
 
 	usu.save()

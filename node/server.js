@@ -39,6 +39,15 @@ var recibeMensaje = function(channel, message){
                 }
             }
             break;
+
+        case 'me_gusta':
+            for(i=0; i<usuarios.length; i++){
+                if(usuarios[i].session_id == datos.session_key){
+                    io.to(usuarios[i].socket_id).emit('me_gusta', datos);
+                }
+            }
+            break;
+
         case 'nuevo_seguidor':
             for(i=0; i<usuarios.length; i++){
                 if(usuarios[i].session_id == datos.session_key){
@@ -54,6 +63,7 @@ sub.subscribe('chat');
 sub.subscribe('publicacion');
 sub.subscribe('comentario');
 sub.subscribe('nuevo_seguidor');
+sub.subscribe('me_gusta');
 
 //Evento que recibe mensaje de redis
 sub.addListener('message', recibeMensaje);
