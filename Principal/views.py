@@ -25,7 +25,6 @@ import redis
 
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
-	print "En la funcion " + str(id_usuario)
 	for sesion in sesiones:
 		user_id = sesion.get_decoded().get('_auth_user_id')
 		if str(user_id) == str(id_usuario):
@@ -84,6 +83,7 @@ def lista_seguidos(request, id):
 
 def lista_seguidores(request, id):
 	seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
+
 
 	ctx = {'nombre_vista': 'Lista de Seguidores', 'seguidores': seguidores}
 	return render(request, 'lista_seguidores.html', ctx)
@@ -228,6 +228,7 @@ def nuevo_reporte_usuario(request):
 def nuevo_post(request):
 	p = True
 	ctx = {}
+	list_seguidores = '['
 	if request.method == 'POST':
 		form = NuevaNotaForm(request.POST, request.FILES)
 		if form.is_valid():
@@ -259,8 +260,21 @@ def nuevo_post(request):
 
 			nota.save()
 
+			seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = nota.usuario)
+
+			for seguidor in seguidores:
+				session_id = session_from_usuario(seguidor.usuario_seguidor.id)
+				if session_id:
+					list_seguidores = list_seguidores + '"' + session_id +'",'
+
+			if len(list_seguidores) == 1:
+				list_seguidores = "[]"
+			else:
+				list_seguidores = list_seguidores[:-1]
+				list_seguidores = list_seguidores + "]"
+
 			r = redis.StrictRedis(host='localhost', port=6379, db=1)
-			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'" }')
+			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'", "lista_usuarios": ' + list_seguidores + ' }')
 
 			return HttpResponseRedirect('/')
 	else:

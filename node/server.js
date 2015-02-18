@@ -13,7 +13,7 @@ var sub = redis.createClient();
 
 //Funcion que maneja cada evento enviado desde Django
 var recibeMensaje = function(channel, message){
-    var i;
+    var i,j;
     console.log(message);
     var datos = JSON.parse(message);
     switch (channel) {
@@ -22,7 +22,14 @@ var recibeMensaje = function(channel, message){
             break;
 
         case 'publicacion':
-            io.sockets.emit('nueva_publicacion', datos);
+
+            for(j=0; j<datos.lista_usuarios.length; j++){            
+                for(i=0; i<usuarios.length; i++){
+                    if(usuarios[i].session_id == datos.lista_usuarios[j]){
+                        io.to(usuarios[i].socket_id).emit('nueva_publicacion', datos);
+                    }
+                }
+            }
             break;
 
         case 'comentario':
