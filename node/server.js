@@ -55,9 +55,14 @@ io.sockets.on('connection', function (socket) {
 
     //Usuario conectado
     console.log('Conectado');
+    console.log('ENGINE:    ' + socket);
+
+    index_sessionid = socket.handshake.headers.cookie.indexOf('sessionid=');
 
     //Arreglo para guardar ids del usuario
-    var session_id = socket.handshake.headers.cookie.slice(-32);
+    var session_id = socket.handshake.headers.cookie.slice(index_sessionid + 10, index_sessionid + 10 +32);
+
+    //var session_id = socket.handshake.headers.cookie.slice(-32);
     obj_usuario = {
         'session_id': session_id,
         'socket_id': socket.id
