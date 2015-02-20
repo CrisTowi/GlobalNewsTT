@@ -173,19 +173,36 @@ def publicacion(request, id):
 	form = ReporteNotaForm()
 
 	publicacion = Nota.objects.get(id = id)
+
 	comentarios = Comentario.objects.filter(nota = publicacion)
 	like = False
 
 	num_likes = LikeNota.objects.filter(nota = publicacion).count()
 
-	if request.user.is_authenticated():
-		likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
-		if likes.count() > 0:
-			like = True
 
-	ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
-	return render(request, 'publicacion.html', ctx)
+	if publicacion.privacidad == False:
+		if request.user.is_authenticated():
+			likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
+			if likes.count() > 0:
+				like = True
 
+			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
+			return render(request, 'publicacion.html', ctx)
+
+		else:
+			return render(request, '404.html', {})
+
+	else:
+		if request.user.is_authenticated():
+			likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
+			if likes.count() > 0:
+				like = True
+
+			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
+			return render(request, 'publicacion.html', ctx)
+		else:
+			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
+			return render(request, 'publicacion.html', ctx)
 
 #Formularios
 
