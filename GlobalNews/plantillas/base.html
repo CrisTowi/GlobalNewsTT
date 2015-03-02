@@ -113,38 +113,32 @@
                         <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-alerts">
-                        {% for noti_comment in notis_comentarios %}
+                        {% for notificacion in notificaciones %}
+                        
+                        {% if notificacion.verb == 'nuevo_comentario' %}
                         <li>
-                            <a href="/publicacion/{{ noti_comment.target.id }}">
+                            <a href="/publicacion/{{ notificacion.target.id }}">
                                 <div>
-                                    <i class="fa fa-comment fa-fw"></i> {{ noti_comment.description }}
-                                    <span class="pull-right text-muted small">{{noti_comment.timestamp | naturaltime}}</span>
+                                    <i class="fa fa-comment fa-fw"></i> {{ notificacion.description }}
+                                    <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
                                 </div>
                             </a>
                         </li>
+                        {% elif notificacion.verb == 'nuevo_seguidor' %}
+                        <li>
+                            <a href="/perfil/{{notificacion.target.id}}">
+                                <div>
+                                    <i class="glyphicon glyphicon-ok-circle"></i> {{ notificacion.target.username }} te ha segido
+                                    <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
+                                </div>
+                            </a>
+                        </li>
+                        {% endif %}
                         <li class="divider"></li>
                         {% endfor %}
                         <li>
-                            <a href="#">
-                                <div>
-                                    <i class="glyphicon glyphicon-ok-circle"></i> 3 Nuevos Followers
-                                    <span class="pull-right text-muted small">Hace 12 minutos</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-tasks fa-fw"></i> Nuevas Tareas
-                                    <span class="pull-right text-muted small">Hace 4 minutos</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
                             <a class="text-center" href="#">
-                                <strong>Ver todas las alertas</strong>
+                                <strong>Ver todas las notificaciones</strong>
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </li>

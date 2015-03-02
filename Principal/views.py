@@ -641,10 +641,21 @@ def seguir(request, id):
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=3)
 	mensaje = '{ "seguidor": "' + request.user.username + '", "seguidor_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
+	
+	print mensaje
+
 	r.publish('nuevo_seguidor', mensaje)
 
 	usu.save()
 
+	notify.send(
+	        usu,
+	        description= usu.usuario_seguidor.username + ' te ha seguido ',
+	        recipient=usu.usuario_seguido,
+	        target=usu.usuario_seguidor,
+	        verb= 'nuevo_seguidor'
+	    )
+	
 	return HttpResponseRedirect('/perfil/' + str(id))
 
 

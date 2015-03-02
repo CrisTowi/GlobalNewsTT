@@ -31,9 +31,11 @@ def mensajes_directos_processor(request):
 	return {'chats_processor': chats}
 
 def notificaciones_processor(request):
-	notis_comentarios = Notification.objects.filter(recipient = request.user, verb = 'nuevo_comentario').unread()
-
-	return {'notis_comentarios': notis_comentarios}	
+	ctx = {}
+	if request.user.is_authenticated():
+		notificaciones= Notification.objects.filter(recipient = request.user).unread()[:5]
+		ctx = {'notificaciones': notificaciones}
+	return ctx 	
 
 def reportes(request):
 

@@ -40,6 +40,8 @@ socket.on('me_gusta', function(data){
 });
 
 socket.on('nuevo_seguidor', function(data){
+
+
     var n = noty({
         text: '<span class="texto_noty_seguidor" data-id_usuario="' + data.seguidor_id + '">¡Nuevo seguidor! <br>' + data.seguidor + ' te ha seguido </span>',
         layout: 'bottomRight',
