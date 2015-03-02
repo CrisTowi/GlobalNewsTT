@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from rest_framework import routers
 from django.contrib import admin
 from django.conf import settings
+import notifications
 from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet
 admin.autodiscover()
 
@@ -14,6 +15,7 @@ router.register(r'secciones', SeccionViewSet)
 
 
 urlpatterns = patterns('',
+    url('^inbox/notifications/', include(notifications.urls)),
 
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

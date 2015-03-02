@@ -105,44 +105,25 @@
                     <!-- /.dropdown-messages -->
                 </li>
                 {% endif %}
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-messages">
-                        {% for chat_processor in chats_processor %}
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <strong>{{ chat_processor.usuario_uno.username }}</strong>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        {% endfor %}
-                        <li>
-                            <a class="text-center" href="/lista/mensajes/">
-                                <strong>Leer Todos los Mensajes...</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-messages -->
+                <li>
+                    <a href="/lista/mensajes/"><i class="fa fa-envelope fa-fw"></i></a>
                 </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-alerts">
+                        {% for noti_comment in notis_comentarios %}
                         <li>
-                            <a href="#">
+                            <a href="/publicacion/{{ noti_comment.target.id }}">
                                 <div>
-                                    <i class="fa fa-comment fa-fw"></i> Nuevos Comentarios
-                                    <span class="pull-right text-muted small">Hace 4 minutos</span>
+                                    <i class="fa fa-comment fa-fw"></i> {{ noti_comment.description }}
+                                    <span class="pull-right text-muted small">{{noti_comment.timestamp | naturaltime}}</span>
                                 </div>
                             </a>
                         </li>
                         <li class="divider"></li>
+                        {% endfor %}
                         <li>
                             <a href="#">
                                 <div>

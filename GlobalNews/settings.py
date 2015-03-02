@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'django.contrib.humanize',
     'Principal',
+    'notifications',
 )
 
 ADMINS = (
@@ -144,4 +145,5 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "Principal.context_processors.novedades_processor",
 "Principal.context_processors.mensajes_directos_processor",
 "Principal.context_processors.reportes",
+"Principal.context_processors.notificaciones_processor",
 )

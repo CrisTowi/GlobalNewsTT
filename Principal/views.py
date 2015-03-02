@@ -23,6 +23,9 @@ from django.contrib.sessions.models import Session
 
 import redis
 
+from django.db.models.signals import post_save
+from notifications import notify
+
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
 	for sesion in sesiones:
@@ -548,6 +551,15 @@ def nuevo_comentario(request):
 	r = redis.StrictRedis(host='localhost', port=6379, db=2)
 	mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + comentario.usuario.username + '", "contenido": "' + comentario.contenido + '", "nota_id": ' + str(comentario.nota.id) + ', "nota": "' + comentario.nota.titulo + '", "fecha": "' + naturaltime(comentario.fecha) + '" }'
 	r.publish('comentario', mensaje)
+
+	if (request.user != nota.usuario):
+		notify.send(
+	            comentario,
+	            description= usuario.username + ' ha hecho un comentario nuevo en ' + comentario.nota.titulo,
+	            recipient=comentario.nota.usuario,
+	            target=nota,
+	            verb= 'nuevo_comentario'
+	        )
 
 	comentario_json = {'contenido': comentario.contenido, 'usuario': usuario.username, 'imagen': str(usuario.foto)}
 

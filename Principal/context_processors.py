@@ -1,5 +1,7 @@
-from Principal.models import Seccion, Nota, UsuarioSigueUsuario, Chat, ReporteUsuario, ReporteNota
+from Principal.models import Seccion, Nota, UsuarioSigueUsuario, Chat, ReporteUsuario, ReporteNota, Usuario
 from django.db.models import Q
+
+from notifications.models import Notification
 
 
 def secciones_processor(request):
@@ -23,15 +25,15 @@ def novedades_processor(request):
 	return {'novedades': novedades}
 
 def mensajes_directos_processor(request):
-
 	chats = []
-
 	if request.user.is_authenticated():
-
 		chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
-
-
 	return {'chats_processor': chats}
+
+def notificaciones_processor(request):
+	notis_comentarios = Notification.objects.filter(recipient = request.user, verb = 'nuevo_comentario').unread()
+
+	return {'notis_comentarios': notis_comentarios}	
 
 def reportes(request):
 
