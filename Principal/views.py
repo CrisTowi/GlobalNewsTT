@@ -3,6 +3,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
 from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccion,MensajeDirecto,UsuarioSigueUsuario,Comentario,LikeNota,Subseccion, UsuarioSigueSeccion
+
+from notifications.models import Notification
+
 from rest_framework import viewsets
 from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
 
@@ -133,6 +136,14 @@ def lista_secciones(request):
 
 	ctx = {'nombre_vista': 'Lista de Secciones', 'secciones': secciones}
 	return render(request, 'lista_secciones.html', ctx)		
+
+def lista_notificaciones(request):
+
+	lista_notificaciones= Notification.objects.filter(recipient = request.user)
+
+	ctx = {'nombre_vista': 'Lista de Notificaciones', 'lista_notificaciones': lista_notificaciones}
+
+	return render(request, 'lista_notificaciones.html', ctx)
 
 #Muestran info
 def index(request):

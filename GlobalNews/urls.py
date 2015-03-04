@@ -34,6 +34,9 @@ urlpatterns = patterns('',
     url(r'lista/nota/usuario/(?P<id>\d+)$', 'Principal.views.lista_publicaciones_usuario', name='lista_publicaciones_usuario'),
 
     url(r'lista/nota/seccion/(?P<id>\d+)$', 'Principal.views.lista_publicaciones_seccion', name='lista_publicaciones_seccion'),
+   
+    url(r'lista/notificaciones$', 'Principal.views.lista_notificaciones', name='lista_notificaciones'),
+
     url(r'lista/reportes/nota$', 'Principal.views.lista_reportes', name='lista_reportes'),
     url(r'lista/reportes/usuario$', 'Principal.views.lista_reportes_usuario', name='lista_reportes_usuario'),
     url(r'lista/usuarios/$', 'Principal.views.lista_usuarios', name='lista_usuarios'),
