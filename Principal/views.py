@@ -29,6 +29,8 @@ import redis
 from django.db.models.signals import post_save
 from notifications import notify
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
 	for sesion in sesiones:
@@ -139,7 +141,17 @@ def lista_secciones(request):
 
 def lista_notificaciones(request):
 
-	lista_notificaciones= Notification.objects.filter(recipient = request.user)
+	notificaciones= Notification.objects.filter(recipient = request.user)
+
+	paginator = Paginator(notificaciones, 10)
+ 	page = request.GET.get('page')
+ 	try:
+		lista_notificaciones = paginator.page(page)
+ 	except PageNotAnInteger:
+		lista_notificaciones = paginator.page(1)
+	except EmptyPage:
+		lista_notificaciones = paginator.page(paginator.num_pages)
+
 
 	ctx = {'nombre_vista': 'Lista de Notificaciones', 'lista_notificaciones': lista_notificaciones}
 

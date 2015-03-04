@@ -19,18 +19,36 @@
 	    </div>
     </a>
 		{% elif notificacion.verb == 'nuevo_comentario' %}
-		<a href="/publicacion/{{ notificacion.target.id }}">
 	    <div class="panel panel-primary">
 	      <div class="panel-heading">
 	        <h3 class="panel-title">Nuevo Comentario</h3>
 	      </div>
-	      <div class="panel-body">
-	        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }}
-	      </div>
+		    <div class="panel-body">
+					<a href="/publicacion/{{ notificacion.target.id }}">
+			        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
+	    		</a>
+	    		<span><a href="#" style="float: right;">  Leido</a>
+	    		<a href="#" style="float: right;">Eliminar  </a></span>
+		     </div>
 	    </div>
-    </a>
 		{% endif %}
 	{% endfor %}
+	
+	<div class="pagination">
+    <span class="step-links">
+        {% if lista_notificaciones.has_previous %}
+            <a href="?page={{ lista_notificaciones.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ lista_notificaciones.number }} of {{ lista_notificaciones.paginator.num_pages }}.
+        </span>
+
+        {% if lista_notificaciones.has_next %}
+            <a href="?page={{ lista_notificaciones.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+	</div>
 	</div>
 </div>
 {% endblock %}
