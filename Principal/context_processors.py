@@ -37,6 +37,12 @@ def notificaciones_processor(request):
 		ctx = {'notificaciones': notificaciones}
 	return ctx 	
 
+
+def usuarios_populares_processor(request):
+	usuarios_populares = Usuario.objects.all()[:5]
+
+	return {'usuarios_populares': usuarios_populares}	
+
 def reportes(request):
 
 	reportes_usuario = ReporteUsuario.objects.all()[:2]

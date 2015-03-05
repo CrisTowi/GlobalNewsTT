@@ -9,7 +9,7 @@
 	
 		{% if notificacion.verb == 'nuevo_seguidor' %}
 		<a href="/perfil/{{ notificacion.target.id }}">
-	    <div class="panel panel-primary">
+	    <div class="panel panel-success">
 	      <div class="panel-heading">
 	        <h3 class="panel-title">Nuevo Seguidor</h3>
 	      </div>
@@ -19,7 +19,7 @@
 	    </div>
     </a>
 		{% elif notificacion.verb == 'nuevo_comentario' %}
-	    <div class="panel panel-primary">
+	    <div class="panel panel-info">
 	      <div class="panel-heading">
 	        <h3 class="panel-title">Nuevo Comentario</h3>
 	      </div>
@@ -27,28 +27,22 @@
 					<a href="/publicacion/{{ notificacion.target.id }}">
 			        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
 	    		</a>
-	    		<span><a href="#" style="float: right;">  Leido</a>
-	    		<a href="#" style="float: right;">Eliminar  </a></span>
+	    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="#">Eliminar</a></p>
 		     </div>
 	    </div>
 		{% endif %}
 	{% endfor %}
-	
-	<div class="pagination">
-    <span class="step-links">
-        {% if lista_notificaciones.has_previous %}
-            <a href="?page={{ lista_notificaciones.previous_page_number }}">previous</a>
-        {% endif %}
 
-        <span class="current">
-            Page {{ lista_notificaciones.number }} of {{ lista_notificaciones.paginator.num_pages }}.
-        </span>
-
-        {% if lista_notificaciones.has_next %}
-            <a href="?page={{ lista_notificaciones.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-	</div>
+  <ul class="pager">
+		{% if lista_notificaciones.has_previous %}
+      <li class="previous"><a href="?page={{ lista_notificaciones.previous_page_number }}">&larr; Anterior</a>
+      </li>
+		{% endif %}
+		{% if lista_notificaciones.has_next %}
+			<li class="next"><a href="?page={{ lista_notificaciones.next_page_number }}">Siguiente &rarr;</a>
+      </li>
+		{% endif %}
+  </ul>
 	</div>
 </div>
 {% endblock %}

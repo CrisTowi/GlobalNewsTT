@@ -96,7 +96,7 @@ ALLOWED_HOSTS = ['*']
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'es-mx'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Mexico_City'
 
@@ -146,4 +146,5 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "Principal.context_processors.mensajes_directos_processor",
 "Principal.context_processors.reportes",
 "Principal.context_processors.notificaciones_processor",
+'Principal.context_processors.usuarios_populares_processor',
 )

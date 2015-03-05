@@ -198,7 +198,7 @@
                         <a href="#"><i class=""></i> Publicaciones<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="/nuevo/nota/"><i class="glyphicon glyphicon-plus-sign"></i>Nueva Publicación</a>
+                                <a href="/nuevo/nota/"><i class="glyphicon glyphicon-plus-sign"></i> Nueva Publicación</a>
                             </li>
                             <li>
                                 <a href="/lista/nota/usuario/{{ user.id }}"><i class="glyphicon glyphicon-th-list"></i>  Mis Publicaciones</a>
@@ -308,48 +308,22 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <ul class="chat">
+                                {% for usuario_popular in usuarios_populares %}
                                 <li class="left clearfix">
                                     <a href="/perfil/{{ user.id }}">
                                         <span class="chat-img pull-left">
-                                            <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" />
+                                            <img src="{{ MEDIA_URL }}{{ usuario_popular.foto }}" width="70px" height="70px" alt="User Avatar" />
                                         </span>
                                         <div class="chat-body clearfix">
                                             <div class="header">
-                                                <strong class="primary-font">Christian Consuelo</strong> 
+                                                <strong class="primary-font">{{ usuario_popular.username }}</strong> 
                                             </div>
                                             <br>
-                                            <span>Añadido hace 1 año</span>
+                                            <span>{{ usuario_popular.added | naturaltime }}</span>
                                         </div>
                                     </a>
                                 </li>
-                                <li class="left clearfix">
-                                    <a href="/perfil/">
-                                        <span class="chat-img pull-left">
-                                            <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" />
-                                        </span>
-                                        <div class="chat-body clearfix">
-                                            <div class="header">
-                                                <strong class="primary-font">Mar Escoto Diana</strong> 
-                                            </div>
-                                            <br>
-                                            <span>Añadido hace 3 meses</span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="left clearfix">
-                                    <a href="/perfil/">
-                                        <span class="chat-img pull-left">
-                                            <img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar"/>
-                                        </span>
-                                        <div class="chat-body clearfix">
-                                            <div class="header">
-                                                <strong class="primary-font">Ricardo Moreno</strong> 
-                                            </div>
-                                            <br>
-                                            <span>Añadido hace 2 semanas</span>
-                                        </div>
-                                    </a>
-                                </li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>

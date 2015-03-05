@@ -26,7 +26,6 @@ from django.contrib.sessions.models import Session
 
 import redis
 
-from django.db.models.signals import post_save
 from notifications import notify
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -61,13 +60,31 @@ class SeccionViewSet(viewsets.ModelViewSet):
 
 #Listas
 def lista_reportes(request):
-	reportes_nota = ReporteNota.objects.all()
+	reportes = ReporteNota.objects.all()
+
+	paginator = Paginator(reportes, 10)
+ 	page = request.GET.get('page')
+ 	try:
+		reportes_nota = paginator.page(page)
+ 	except PageNotAnInteger:
+		reportes_nota = paginator.page(1)
+	except EmptyPage:
+		reportes_nota = paginator.page(paginator.num_pages)
 
 	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas'}
 	return render(request, 'reportes.html', ctx)
 
 def lista_reportes_usuario(request):
-	reportes_usuario = ReporteUsuario.objects.all()
+	reportes = ReporteUsuario.objects.all()
+
+	paginator = Paginator(reportes, 10)
+ 	page = request.GET.get('page')
+ 	try:
+		reportes_usuario = paginator.page(page)
+ 	except PageNotAnInteger:
+		reportes_usuario = paginator.page(1)
+	except EmptyPage:
+		reportes_usuario = paginator.page(paginator.num_pages)
 
 	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario'}
 	return render(request, 'reportes_usuarios.html', ctx)
@@ -142,7 +159,6 @@ def lista_secciones(request):
 def lista_notificaciones(request):
 
 	notificaciones= Notification.objects.filter(recipient = request.user)
-
 	paginator = Paginator(notificaciones, 10)
  	page = request.GET.get('page')
  	try:

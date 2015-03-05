@@ -14,6 +14,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 	correo = models.CharField(max_length=45)
 	foto = models.ImageField(upload_to = 'usuarios', null = True, blank = True)
 	estado = models.CharField(max_length=45)
+	added = models.DateTimeField(auto_now_add=True)
 
 	activo = models.BooleanField(default=True, help_text='Activa un usuario para poder usar el sistema')
 	administrador = models.BooleanField(default=False, help_text='Que usuarios se les permite entrar al administrador')
