@@ -124,6 +124,15 @@
                                 </div>
                             </a>
                         </li>
+                        {% elif notificacion.verb == 'nuevo_like' %}
+                        <li>
+                            <a href="/publicacion/{{ notificacion.target.id }}">
+                                <div>
+                                    <i class="fa fa-comment fa-fw"></i> {{ notificacion.description }}
+                                    <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
+                                </div>
+                            </a>
+                        </li>
                         {% elif notificacion.verb == 'nuevo_seguidor' %}
                         <li>
                             <a href="/perfil/{{notificacion.target.id}}">

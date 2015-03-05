@@ -22,10 +22,12 @@
     {% endfor %}
     <!-- pager -->
     <ul class="pager">
-        <li class="previous"><a href="#">&larr; Anterior</a>
-        </li>
-        <li class="next"><a href="#">Siguiente &rarr;</a>
-        </li>
+    {% if notas.has_previous %}
+        <li class="previous"><a href="?page={{ notas.previous_page_number }}">&larr; Anterior</a></li>
+    {% endif %}
+    {% if notas.has_next %}
+        <li class="next"><a href="?page={{ notas.next_page_number }}">Siguiente &rarr;</a></li>
+    {% endif %}
     </ul>
     <!-- /.panel -->
 </div>

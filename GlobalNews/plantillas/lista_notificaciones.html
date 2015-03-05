@@ -30,6 +30,18 @@
 	    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="#">Eliminar</a></p>
 		     </div>
 	    </div>
+			{% elif notificacion.verb == 'nuevo_like' %}
+		    <div class="panel panel-warning">
+		      <div class="panel-heading">
+		        <h3 class="panel-title">Nuevo Like</h3>
+		      </div>
+			    <div class="panel-body">
+						<a href="/publicacion/{{ notificacion.target.id }}">
+				        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
+		    		</a>
+		    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="#">Eliminar</a></p>
+			     </div>
+		    </div>
 		{% endif %}
 	{% endfor %}
 

@@ -121,13 +121,21 @@ def lista_publicaciones(request):
 
 def lista_publicaciones_usuario(request, id):
 	usuario = Usuario.objects.get(id = id)
-	notas = Nota.objects.filter(usuario = usuario)
+	lista_notas = Nota.objects.filter(usuario = usuario)
+
+	paginator = Paginator(lista_notas, 4)
+ 	page = request.GET.get('page')
+ 	try:
+		notas = paginator.page(page)
+ 	except PageNotAnInteger:
+		notas = paginator.page(1)
+	except EmptyPage:
+		notas = paginator.page(paginator.num_pages)
 
 	ctx = {'nombre_vista': 'Lista de Noticias', 'notas': notas}
 	return render(request, 'lista_publicaciones.html', ctx)
 
 def lista_publicaciones_seccion(request, id):
-
 	seccion = Seccion.objects.get(id = id)
 	subseccion = Subseccion.objects.filter(seccion = seccion)
 
@@ -137,11 +145,19 @@ def lista_publicaciones_seccion(request, id):
 			follow = True
 		else:
 			follow = False
-
 	else:
 		follow = False
 
-	notas = Nota.objects.filter(subseccion = subseccion)
+	lista_notas = Nota.objects.filter(subseccion = subseccion)
+
+	paginator = Paginator(lista_notas, 4)
+ 	page = request.GET.get('page')
+ 	try:
+		notas = paginator.page(page)
+ 	except PageNotAnInteger:
+		notas = paginator.page(1)
+	except EmptyPage:
+		notas = paginator.page(paginator.num_pages)
 
 	ctx = {'nombre_vista': 'Lista de Publicaciones en ' + seccion.nombre , 'notas': notas, 'seccion': seccion, 'follow': follow}
 	return render(request, 'lista_publicaciones_seccion.html', ctx)	
@@ -658,6 +674,15 @@ def like(request):
 		r = redis.StrictRedis(host='localhost', port=6379, db=2)
 		mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
 		r.publish('me_gusta', mensaje)
+
+		notify.send(
+	            like,
+	            description= usuario.username + ' le ha gustado ' + nota.titulo,
+	            recipient=nota.usuario,
+	            target=nota,
+	            verb= 'nuevo_like'
+	        )
+
 
 	respuesta = {'usuario': usuario.username, 'titulo': nota.titulo}
 	return JsonResponse(respuesta, safe=False)
