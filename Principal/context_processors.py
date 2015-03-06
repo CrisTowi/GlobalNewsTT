@@ -37,17 +37,15 @@ def notificaciones_processor(request):
 		ctx = {'notificaciones': notificaciones}
 	return ctx 	
 
-
 def usuarios_populares_processor(request):
 	usuarios_populares = Usuario.objects.all()[:5]
 
 	return {'usuarios_populares': usuarios_populares}	
 
 def reportes(request):
-
-	reportes_usuario = ReporteUsuario.objects.all()[:2]
-	reportes_nota = ReporteNota.objects.all()[:2]
+	reportes_usuario = ReporteUsuario.objects.all().order_by('-id')[:2]
+	reportes_nota = ReporteNota.objects.all().order_by('-id')[:2]
 
 	print reportes_nota
 
-	return {'reportes_usuario': reportes_usuario, 'reportes_nota': reportes_nota}
+	return {'reportes_usuario_cp': reportes_usuario, 'reportes_nota_cp': reportes_nota}

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 
@@ -471,9 +471,6 @@ def editar_perfil(request, id):
 	ctx = {'form':form}
 	return render(request,'nuevo_usuario.html',ctx)
 
-
-
-
 @login_required(login_url='/login')
 def editar_post(request, id):
 	p = True
@@ -703,12 +700,13 @@ def seguir(request, id):
 
 	session_key = session_from_usuario(id)
 
-	r = redis.StrictRedis(host='localhost', port=6379, db=3)
-	mensaje = '{ "seguidor": "' + request.user.username + '", "seguidor_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
-	
-	print mensaje
+	if session_key:
+		r = redis.StrictRedis(host='localhost', port=6379, db=3)
+		mensaje = '{ "seguidor": "' + request.user.username + '", "seguidor_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
+		
+		print mensaje
 
-	r.publish('nuevo_seguidor', mensaje)
+		r.publish('nuevo_seguidor', mensaje)
 
 	usu.save()
 

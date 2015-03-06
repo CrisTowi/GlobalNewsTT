@@ -53,13 +53,13 @@
                         <i class="glyphicon glyphicon-exclamation-sign"></i> <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-messages">
-                        {% for reporte_usuario in reportes_usuario %}
+                        {% for reporte_usuario in reportes_usuario_cp %}
                         <li>
-                            <a href="#">
+                            <a href="/lista/reportes/usuario">
                                 <div>
                                     <strong>{{ reporte_usuario.usuario_reportado.username }}</strong>
                                     <span class="pull-right text-muted">
-                                        <em>Ayer</em>
+                                        <em>{{ reporte_usuario.fecha | naturaltime }}</em>
                                     </span>
                                 </div>
                                 <div>{{ reporte_usuario.descripcion }}</div>
@@ -81,13 +81,13 @@
                         <i class="glyphicon glyphicon-exclamation-sign"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-messages">
-                        {% for reporte_nota in reportes_nota %}
+                        {% for reporte_nota in reportes_nota_cp %}
                         <li>
-                            <a href="#">
+                            <a href="/lista/reportes/nota">
                                 <div>
                                     <strong>{{ reporte_nota.nota.titulo }}</strong>
                                     <span class="pull-right text-muted">
-                                        <em>Ayer</em>
+                                        <em>{{ reporte_nota.fecha | naturaltime }}</em>
                                     </span>
                                 </div>
                                 <div>{{ reporte_nota.descripcion }}</div>
@@ -299,7 +299,7 @@
                                             </small>
                                         </div>
                                         <p>
-                                            {{ nota.descripcion|slice:":100"|add:" ..." }}
+                                            {{ nota.descripcion|slice:":50"|add:" ..." }}
                                         </p>
                                     </div>
                                 </li>                               
