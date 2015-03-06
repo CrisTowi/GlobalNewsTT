@@ -77,7 +77,9 @@ urlpatterns = patterns('',
     url(r'seguir/seccion/(?P<id>\d+)$', 'Principal.views.seguir_seccion', name='seguir_seccion'),
     url(r'unfollow/seccion/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir_seccion', name='dejar_de_seguir_seccion'),
     
-
+    #Notificaciones
+    url(r'eliminar/notificacion/(?P<id>\d+)$', 'Principal.views.eliminar_notificacion', name='eliminar_notificacion'),
+    url(r'leer/notificacion/(?P<id>\d+)$', 'Principal.views.leer_notificacion', name='leer_notificacion'),
 
     #Movil
     url(r'nuevo/post/$', 'Principal.views.nuevo_post_movil', name='nuevo_post_movil'),

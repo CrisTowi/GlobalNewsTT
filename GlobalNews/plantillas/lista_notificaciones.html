@@ -8,16 +8,17 @@
 	{% for notificacion in lista_notificaciones %}
 	
 		{% if notificacion.verb == 'nuevo_seguidor' %}
-		<a href="/perfil/{{ notificacion.target.id }}">
 	    <div class="panel panel-success">
 	      <div class="panel-heading">
 	        <h3 class="panel-title">Nuevo Seguidor</h3>
 	      </div>
 	      <div class="panel-body">
-	        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }}
+	      	<a href="/perfil/{{ notificacion.target.id }}">
+	        	{{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }}
+	        </a>
+	    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="/eliminar/notificacion/{{ notificacion.id }}">Eliminar</a></p>
 	      </div>
 	    </div>
-    </a>
 		{% elif notificacion.verb == 'nuevo_comentario' %}
 	    <div class="panel panel-info">
 	      <div class="panel-heading">
@@ -27,21 +28,21 @@
 					<a href="/publicacion/{{ notificacion.target.id }}">
 			        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
 	    		</a>
-	    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="#">Eliminar</a></p>
+	    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="/eliminar/notificacion/{{ notificacion.id }}">Eliminar</a></p>
 		     </div>
 	    </div>
-			{% elif notificacion.verb == 'nuevo_like' %}
-		    <div class="panel panel-warning">
-		      <div class="panel-heading">
-		        <h3 class="panel-title">Nuevo Like</h3>
-		      </div>
-			    <div class="panel-body">
-						<a href="/publicacion/{{ notificacion.target.id }}">
-				        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
-		    		</a>
-		    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="#">Eliminar</a></p>
-			     </div>
-		    </div>
+		{% elif notificacion.verb == 'nuevo_like' %}
+	    <div class="panel panel-warning">
+	      <div class="panel-heading">
+	        <h3 class="panel-title">Nuevo Like</h3>
+	      </div>
+		    <div class="panel-body">
+					<a href="/publicacion/{{ notificacion.target.id }}">
+			        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
+	    		</a>
+	    		<p style="float: right;"><a href="#" >Leido</a>&nbsp;&nbsp;&nbsp;<a href="/eliminar/notificacion/{{ notificacion.id }}">Eliminar</a></p>
+		     </div>
+	    </div>
 		{% endif %}
 	{% endfor %}
 

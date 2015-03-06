@@ -755,3 +755,12 @@ def dar_de_baja_usuario(request, id):
 	usuario.delete()
 
 	return HttpResponseRedirect('/lista/reportes/usuario')
+
+
+#Notificaciones
+def eliminar_notificacion(request, id):
+	notificacion = Notification.objects.get(id = id)
+	notificacion.delete()
+
+	return HttpResponseRedirect('/lista/notificaciones')
+
