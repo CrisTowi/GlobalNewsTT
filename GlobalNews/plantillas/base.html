@@ -319,7 +319,7 @@
                             <ul class="chat">
                                 {% for usuario_popular in usuarios_populares %}
                                 <li class="left clearfix">
-                                    <a href="/perfil/{{ user.id }}">
+                                    <a href="/perfil/{{ usuario_popular.id }}">
                                         <span class="chat-img pull-left">
                                             <img src="{{ MEDIA_URL }}{{ usuario_popular.foto }}" width="70px" height="70px" alt="User Avatar" />
                                         </span>

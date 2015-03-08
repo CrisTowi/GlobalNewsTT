@@ -11,24 +11,27 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-5">
-                    <img class="img-responsive" src="{{ MEDIA_URL }}{{ usuario.foto }}">
+                    <img class="img-responsive" src="{{ MEDIA_URL }}{{ perfil.foto }}">
                 </div>
                 <div class="col-lg-7">
-                    <h3>Username: </h3> <span style="font-size: 20px">{{ usuario.username }}</span>
-                    <h3>Nombre: </h3> <span style="font-size: 20px">{{ usuario.nombre }}</span>
-                    <h3>Apellido Paterno: </h3> <span style="font-size: 20px">{{ usuario.ap_paterno }}</span>
-                    <h3>Apellido Materno: </h3> <span style="font-size: 20px">{{ usuario.ap_materno }}</span>
-                    {% if user.id == usuario.id %}
+                    <h3>Username: </h3> <span style="font-size: 20px">{{ perfil.username }}</span>
+                    <h3>Nombre: </h3> <span style="font-size: 20px">{{ perfil.nombre }}</span>
+                    <h3>Apellido Paterno: </h3> <span style="font-size: 20px">{{ perfil.ap_paterno }}</span>
+                    <h3>Apellido Materno: </h3> <span style="font-size: 20px">{{ perfil.ap_materno }}</span>
                     <br><br>
-                    <a class="btn btn-success" href="/editar/usuario/{{ usuario.id }}">Editar</a>
+                    <a href="/lista/seguidores/{{ perfil.id }}">{{ numero_seguidores }} Seguidores</a> &nbsp;&nbsp;&nbsp;
+                    <a href="/lista/seguidos/{{ perfil.id }}">{{ numero_siguiendo }} Siguiendo</a>
+                    {% if user.id == perfil.id %}
+                    <br><br>
+                    <a class="btn btn-success" href="/editar/perfil/{{ perfil.id }}">Editar</a>
                     {% else %}
                     <br><br><br><br>
-                    <a class="btn btn-success" href="/lista/nota/usuario/{{ usuario.id }}">Publicaciones</a>
+                    <a class="btn btn-success" href="/lista/nota/usuario/{{ perfil.id }}">Publicaciones</a>
                     {% if user.is_authenticated %}
                         {% if follow %}
-                            <a href="/unfollow/{{ usuario.id }}" class="btn btn-danger">Dejar de Seguir</a>
+                            <a href="/unfollow/{{ perfil.id }}" class="btn btn-danger">Dejar de Seguir</a>
                         {% else %}
-                            <a href="/seguir/{{ usuario.id }}" class="btn btn-success">Seguir</a>
+                            <a href="/seguir/{{ perfil.id }}" class="btn btn-success">Seguir</a>
                         {% endif %}
                     <br><br>
                     <a href="#" data-toggle="modal" data-target="#ModalDenunciar">Denunciar</a>
@@ -48,7 +51,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">{{ usuario.username }}</h4>
+        <h4 class="modal-title" id="myModalLabel">{{ perfil.username }}</h4>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -80,12 +83,12 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Reportar: {{ usuario.username }}</h4>
+        <h4 class="modal-title" id="myModalLabel">Reportar: {{ perfil.username }}</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="POST" action="/nuevo_reporte_usuario/" enctype="multipart/form-data">{% csrf_token %}
+        <form role="form" method="POST" action="/nuevo_reporte_perfil/" enctype="multipart/form-data">{% csrf_token %}
             {{ form.as_p }}
-            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+            <input type="hidden" name="perfil_id" value="{{ perfil.id }}">
             <br>
             <br>
           <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

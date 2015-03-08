@@ -211,10 +211,15 @@ def perfil(request, id):
 
 	form = ReporteUsuarioForm()
 
-	usuario = Usuario.objects.get(id = id)
+	perfil = Usuario.objects.get(id = id)
+	num_siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = perfil).count()
+	num_seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = perfil).count()
+
+	print num_siguiendo
+	print num_seguidores
 
 	if request.user.is_authenticated():
-		usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = usuario, usuario_seguidor = request.user)
+		usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = perfil, usuario_seguidor = request.user)
 		if usu:
 			follow = True
 		else:
@@ -223,7 +228,7 @@ def perfil(request, id):
 	else:
 		follow = False
 
-	ctx = {'usuario': usuario, 'follow': follow, 'form': form}
+	ctx = {'perfil': perfil, 'follow': follow, 'form': form, 'numero_siguiendo': num_siguiendo, 'numero_seguidores': num_seguidores}
 	return render(request, 'perfil.html', ctx)
 
 def publicacion(request, id):
@@ -764,3 +769,11 @@ def eliminar_notificacion(request, id):
 
 	return HttpResponseRedirect('/lista/notificaciones')
 
+def leer_notificacion(request, id):
+	notificacion = Notification.objects.get(id = id)
+	notificacion.unread = False
+
+	notificacion.save()
+
+
+	return HttpResponseRedirect('/lista/notificaciones')
