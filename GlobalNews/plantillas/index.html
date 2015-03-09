@@ -18,8 +18,13 @@
                 {% else %}
                 <li>               
                 {% endif %}
-                    <div class="timeline-badge"><i class="fa fa-check"></i>
+                    {% if noticia.usuario == user %}
+                    <div class="timeline-badge success">
                     </div>
+                    {% else %}
+                    <div class="timeline-badge info">
+                    </div>                    
+                    {% endif %}
                     <div class="timeline-panel">
                         <div class="timeline-heading">
                             <a href="/publicacion/{{ noticia.id }}"><h4 class="timeline-title">{{ noticia.titulo }}</h4></a>
@@ -55,6 +60,14 @@
                     </div>
                 </li>
                 {% endfor %}
+                <ul class="pager">
+                {% if noticias.has_previous %}
+                    <li class="previous"><a href="?page={{ noticias.previous_page_number }}">&larr; Anterior</a></li>
+                {% endif %}
+                {% if noticias.has_next %}
+                    <li class="next"><a href="?page={{ noticias.next_page_number }}">Siguiente &rarr;</a></li>
+                {% endif %}
+                </ul>
                 <li>
                     <div class="timeline-badge danger"><i class="fa fa-credit-card"></i>
                     </div>

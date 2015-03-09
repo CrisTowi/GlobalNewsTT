@@ -62,7 +62,7 @@ class SeccionViewSet(viewsets.ModelViewSet):
 def lista_reportes(request):
 	reportes = ReporteNota.objects.all()
 
-	paginator = Paginator(reportes, 10)
+	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
  	try:
 		reportes_nota = paginator.page(page)
@@ -77,7 +77,7 @@ def lista_reportes(request):
 def lista_reportes_usuario(request):
 	reportes = ReporteUsuario.objects.all()
 
-	paginator = Paginator(reportes, 10)
+	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
  	try:
 		reportes_usuario = paginator.page(page)
@@ -199,10 +199,20 @@ def index(request):
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
 
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-		noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
+		lista_noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
 
 	else:
-		noticias = Nota.objects.all()
+		lista_noticias = Nota.objects.all()
+
+
+	paginator = Paginator(lista_noticias, 6)
+ 	page = request.GET.get('page')
+ 	try:
+		noticias = paginator.page(page)
+ 	except PageNotAnInteger:
+		noticias = paginator.page(1)
+	except EmptyPage:
+		noticias = paginator.page(paginator.num_pages)
 
 	ctx = {'noticias': noticias}
 	return render(request, 'index.html', ctx)
