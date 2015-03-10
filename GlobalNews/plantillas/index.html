@@ -12,166 +12,61 @@
         <!-- /.panel-heading -->
         <div class="panel-body">
             <ul class="timeline" id="timeline">
-                {% for noticia in noticias %}
-                {% if forloop.counter|divisibleby:2 %}
-                <li class="timeline-inverted">
+            {% for noticia in noticias %}
+            {% if forloop.counter|divisibleby:2 %}
+            <li class="timeline-inverted">
+            {% else %}
+            <li>               
+            {% endif %}
+                {% if noticia.usuario == user %}
+                <div class="timeline-badge success">
+                </div>
                 {% else %}
-                <li>               
+                <div class="timeline-badge info">
+                </div>                    
                 {% endif %}
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <a href="/publicacion/{{ noticia.id }}"><h4 class="timeline-title">{{ noticia.titulo }}</h4></a>
+                        <a href="/perfil/{{ noticia.usuario.id }}"><h5>Por {{ noticia.usuario.username }}</h5></a>
+                        <p>
+                            <small class="text-muted"><i class="fa fa-time"></i>{{ noticia.fecha|naturaltime|capfirst }}</small>
+
+                        </p>
+                    </div>
+                    <div class="timeline-body">
+                        <p>{{ noticia.descripcion|slice:":140"|add:" ..." }}</p>
+                    </div>
+
                     {% if noticia.usuario == user %}
-                    <div class="timeline-badge success">
-                    </div>
-                    {% else %}
-                    <div class="timeline-badge info">
-                    </div>                    
+                        <hr>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-cog"></i> 
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="/editar/nota/{{ noticia.id }}">Editar</a>
+                                </li>
+                                <li><a href="#">Hacer alguna otra cosa</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="#" onClick="obtieneIdNoticia({{ noticia.id }});" data-toggle="modal" data-target="#ModalEliminarPost">Eliminar</a>
+                                </li>
+                            </ul>
+                        </div>
                     {% endif %}
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <a href="/publicacion/{{ noticia.id }}"><h4 class="timeline-title">{{ noticia.titulo }}</h4></a>
-                            <a href="/perfil/{{ noticia.usuario.id }}"><h5>Por {{ noticia.usuario.username }}</h5></a>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i>{{ noticia.fecha|naturaltime|capfirst }}</small>
 
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>{{ noticia.descripcion|slice:":140"|add:" ..." }}</p>
-                        </div>
-
-                        {% if noticia.usuario == user %}
-                            <hr>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-cog"></i> 
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="/editar/nota/{{ noticia.id }}">Editar</a>
-                                    </li>
-                                    <li><a href="#">Hacer alguna otra cosa</a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li><a href="#" onClick="obtieneIdNoticia({{ noticia.id }});" data-toggle="modal" data-target="#ModalEliminarPost">Eliminar</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        {% endif %}
-
-                    </div>
-                </li>
-                {% endfor %}
-                <ul class="pager">
-                {% if noticias.has_previous %}
-                    <li class="previous"><a href="?page={{ noticias.previous_page_number }}">&larr; Anterior</a></li>
-                {% endif %}
-                {% if noticias.has_next %}
-                    <li class="next"><a href="?page={{ noticias.next_page_number }}">Siguiente &rarr;</a></li>
-                {% endif %}
-                </ul>
-                <li>
-                    <div class="timeline-badge danger"><i class="fa fa-credit-card"></i>
-                    </div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <h4 class="timeline-title">Evento de Timeline</h4>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i> Hace 11 horas</small>
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel justo eu mi scelerisque vulputate. Aliquam in metus eu lectus aliquet egestas.</p>
-                        </div>
-                    </div>
-                </li>
-                <li class="timeline-inverted">
-                    <div class="timeline-badge warning"><i class="fa fa-credit-card"></i>
-                    </div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <h4 class="timeline-title">Evento de Timeline</h4>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i> Hace 11 horas</small>
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel justo eu mi scelerisque vulputate. Aliquam in metus eu lectus aliquet egestas.</p>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="timeline-badge danger"><i class="fa fa-credit-card"></i>
-                    </div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <h4 class="timeline-title">Evento de Timeline</h4>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i> Hace 11 horas</small>
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel justo eu mi scelerisque vulputate. Aliquam in metus eu lectus aliquet egestas.</p>
-                        </div>
-                    </div>
-                </li>
-                <li class="timeline-inverted">
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <h4 class="timeline-title">Evento de Timeline</h4>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i> Hace 11 horas</small>
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel justo eu mi scelerisque vulputate. Aliquam in metus eu lectus aliquet egestas.</p>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="timeline-badge info"><i class="fa fa-save"></i>
-                    </div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <h4 class="timeline-title">Evento de Timeline</h4>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i> Hace 11 horas</small>
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel justo eu mi scelerisque vulputate. Aliquam in metus eu lectus aliquet egestas.</p>
-                            <hr>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-cog"></i> 
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">Editar</a>
-                                    </li>
-                                    <li><a href="#">Hacer alguna otra cosa</a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Eliminar</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="timeline-inverted">
-                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
-                    </div>
-                    <div class="timeline-panel">
-                        <div class="timeline-heading">
-                            <h4 class="timeline-title">Evento de Timeline</h4>
-                            <p>
-                                <small class="text-muted"><i class="fa fa-time"></i> Hace 11 horas</small>
-                            </p>
-                        </div>
-                        <div class="timeline-body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel justo eu mi scelerisque vulputate. Aliquam in metus eu lectus aliquet egestas.</p>
-                        </div>
-                    </div>
-                </li>
+                </div>
+            </li>
+            {% endfor %}
+            <ul class="pager">
+            {% if noticias.has_previous %}
+                <li class="previous"><a href="?page={{ noticias.previous_page_number }}">&larr; Anterior</a></li>
+            {% endif %}
+            {% if noticias.has_next %}
+                <li class="next"><a href="?page={{ noticias.next_page_number }}">Siguiente &rarr;</a></li>
+            {% endif %}
             </ul>
         </div>
         <!-- /.panel-body -->

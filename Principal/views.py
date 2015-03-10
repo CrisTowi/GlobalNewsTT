@@ -103,7 +103,7 @@ def lista_mensajes(request):
 def lista_seguidos(request, id):
 	lista_siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = id)
 
-	paginator = Paginator(lista_siguiendo, 1)
+	paginator = Paginator(lista_siguiendo, 9)
  	page = request.GET.get('page')
  	try:
 		siguiendo = paginator.page(page)
