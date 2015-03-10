@@ -101,14 +101,31 @@ def lista_mensajes(request):
 	return render(request, 'lista_mensajes.html', ctx)
 
 def lista_seguidos(request, id):
-	siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = id)
+	lista_siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = id)
+
+	paginator = Paginator(lista_siguiendo, 1)
+ 	page = request.GET.get('page')
+ 	try:
+		siguiendo = paginator.page(page)
+ 	except PageNotAnInteger:
+		siguiendo = paginator.page(1)
+	except EmptyPage:
+		siguiendo = paginator.page(paginator.num_pages)
 
 	ctx = {'nombre_vista': 'Lista de Seguidos', 'siguiendo': siguiendo}
 	return render(request, 'lista_siguiendo.html', ctx)
 
 def lista_seguidores(request, id):
-	seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
+	lista_seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
 
+	paginator = Paginator(lista_seguidores, 9)
+ 	page = request.GET.get('page')
+ 	try:
+		seguidores = paginator.page(page)
+ 	except PageNotAnInteger:
+		seguidores = paginator.page(1)
+	except EmptyPage:
+		seguidores = paginator.page(paginator.num_pages)
 
 	ctx = {'nombre_vista': 'Lista de Seguidores', 'seguidores': seguidores}
 	return render(request, 'lista_seguidores.html', ctx)
