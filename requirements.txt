@@ -3,7 +3,7 @@ Pillow==2.5.3
 Pygments==1.6
 argparse==1.2.1
 bpython==0.13.1
-distribute==0.6.24
+distribute==0.7.3
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-model-utils==2.2
