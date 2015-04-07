@@ -1,4 +1,4 @@
-from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion
+from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario
 from rest_framework import serializers
 
 
@@ -6,6 +6,10 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Usuario
         fields = ('url','username','ap_paterno','ap_materno','correo','foto','estado', )
+
+class UsuarioSigueUsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsuarioSigueUsuario
 
 class NotaSerializer(serializers.ModelSerializer):
 

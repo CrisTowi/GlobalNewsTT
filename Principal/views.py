@@ -7,7 +7,7 @@ from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccio
 from notifications.models import Notification
 
 from rest_framework import viewsets
-from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer
+from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer,UsuarioSigueUsuarioSerializer
 
 from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm, ReporteNotaForm, ReporteUsuarioForm
 
@@ -57,6 +57,10 @@ class ReporteNotaViewSet(viewsets.ModelViewSet):
 class SeccionViewSet(viewsets.ModelViewSet):
     queryset = Seccion.objects.all()
     serializer_class = SeccionSerializer	
+
+class UsuarioSigueUsuarioViewSet(viewsets.ModelViewSet):
+		queryset = UsuarioSigueUsuario.objects.all()
+		serializer_class = UsuarioSigueUsuarioSerializer
 
 #Listas
 def lista_reportes(request):

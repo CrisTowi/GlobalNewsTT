@@ -3,7 +3,7 @@ from rest_framework import routers
 from django.contrib import admin
 from django.conf import settings
 import notifications
-from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet
+from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet,UsuarioSigueUsuarioViewSet
 admin.autodiscover()
 
 router = routers.DefaultRouter()
@@ -12,6 +12,7 @@ router.register(r'notas', NotaViewSet)
 router.register(r'reportesusuario', ReporteUsuarioViewSet)
 router.register(r'reportesnota', ReporteNotaViewSet)
 router.register(r'secciones', SeccionViewSet)
+router.register(r'usuario_sigue_usuario', UsuarioSigueUsuarioViewSet)
 
 
 urlpatterns = patterns('',
