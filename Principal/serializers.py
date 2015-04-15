@@ -1,11 +1,11 @@
-from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario
+from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario, Comentario
 from rest_framework import serializers
 
 
 class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('url','username','ap_paterno','ap_materno','correo','foto','estado', )
+        fields = ('url','username','nombre','ap_paterno','ap_materno','correo','foto','estado', )
 
 class UsuarioSigueUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,15 +17,16 @@ class NotaSerializer(serializers.ModelSerializer):
     fecha = serializers.Field(source='formato_fecha')
     seccion = serializers.Field(source='subseccion.seccion.id')
     likes = serializers.Field(source='num_likes')
+    comentarios = serializers.Field(source='get_comentarios')
     
     class Meta:
         model = Nota
         fields = ('id','usuario','seccion','subseccion','titulo','descripcion','imagen',
-        					'fecha','longitud','latitud','likes','privacidad', )
+        					'fecha','longitud','latitud','likes','privacidad','comentarios', )
 
 class ComentarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Nota
+        model = Comentario
         fields = ('url','usuario','nota','contenido','fecha',)
 
 class ReporteUsuarioSerializer(serializers.HyperlinkedModelSerializer):

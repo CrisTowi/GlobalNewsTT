@@ -70,6 +70,18 @@ class Nota(models.Model):
 	latitud = models.FloatField()
 	privacidad = models.BooleanField(default=True)
 
+	def get_comentarios(self):
+		comentarios_return = []
+		comentarios = Comentario.objects.filter(nota = self)
+		for comentario in comentarios:
+			obj = {'usuario': comentario.usuario.id, 
+					'fecha': comentario.fecha, 
+					'nota': comentario.nota.id, 
+					'contenido': comentario.contenido
+					}
+			comentarios_return.append(obj)
+		return comentarios_return
+
 	def formato_fecha(self):
 		return naturaltime(self.fecha)
 
