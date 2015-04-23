@@ -1,4 +1,4 @@
-from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario, Comentario
+from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario, Comentario, UsuarioSigueSeccion
 from rest_framework import serializers
 
 
@@ -10,6 +10,10 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
 class UsuarioSigueUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsuarioSigueUsuario
+
+class UsuarioSigueSeccionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsuarioSigueSeccion
 
 class NotaSerializer(serializers.ModelSerializer):
 
