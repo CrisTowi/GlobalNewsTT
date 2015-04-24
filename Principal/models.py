@@ -4,6 +4,8 @@ from managers import UsuarioManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
+from django.core import serializers
+
 # Create your models here
 class Usuario(AbstractBaseUser, PermissionsMixin):
 
@@ -85,9 +87,10 @@ class Nota(models.Model):
 	def formato_fecha(self):
 		return naturaltime(self.fecha)
 
-	def num_likes(self):
-		return LikeNota.objects.filter(nota = self).count()
+	def get_likes(self):
+		likes = LikeNota.objects.filter(nota = self).values('id', 'usuario')
 
+		return likes
 	def __unicode__(self):
 		return self.titulo
 
