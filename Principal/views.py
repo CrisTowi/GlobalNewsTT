@@ -222,17 +222,8 @@ def lista_notificaciones(request):
 #Muestran info
 def index(request):
 
-	if request.user.is_authenticated():
 
-		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
-
-		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
-
-		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-		lista_noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
-
-	else:
-		lista_noticias = Nota.objects.all()
+	lista_noticias = Nota.objects.all()
 
 
 	paginator = Paginator(lista_noticias, 6)
