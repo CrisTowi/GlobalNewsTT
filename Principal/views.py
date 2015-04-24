@@ -221,8 +221,6 @@ def lista_notificaciones(request):
 
 #Muestran info
 def index(request):
-
-
 	lista_noticias = Nota.objects.all()
 
 
