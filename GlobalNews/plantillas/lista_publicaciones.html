@@ -12,6 +12,7 @@
             {% endlocaltime %}
         <hr>
             <h3>{{ nota.titulo }}</h3>
+            <a href="/lista/nota/seccion/{{ nota.subseccion.seccion.id }}">Nota de {{ nota.subseccion.seccion.nombre }}</a>
         <hr>
         <img src="{{ MEDIA_URL }}{{ nota.imagen }}" class="img-responsive" width="250px">
         <hr>

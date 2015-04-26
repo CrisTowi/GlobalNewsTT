@@ -56,7 +56,7 @@ class NuevaNotaForm(forms.Form):
 
     titulo      = forms.CharField(label='Titulo', widget=forms.TextInput(attrs={'placeholder': 'Titulo', 'class':'form-control'}))
     descripcion = forms.CharField(label='Descripcion',widget=forms.Textarea(attrs={'placeholder': 'Descripcion', 'class':'form-control'}))
-    imagen      = forms.ImageField(label='Imagen', required=False)
+    imagen      = forms.ImageField(label='Imagen', required=True)
     subseccion  = forms.ModelChoiceField(label='Subseccion', queryset=Subseccion.objects.all(), empty_label="(Vacio)")
     privacidad  = forms.ChoiceField(choices=PRIVACIDAD_CHOISE, widget=forms.RadioSelect())
     latitud     = forms.DecimalField(label='Latitud', widget=forms.HiddenInput(attrs={'placeholder': 'Latitud', 'class':'form-control'}))

@@ -151,7 +151,7 @@ def lista_publicaciones(request):
 
 def lista_publicaciones_usuario(request, id):
 	usuario = Usuario.objects.get(id = id)
-	lista_notas = Nota.objects.filter(usuario = usuario)
+	lista_notas = Nota.objects.filter(usuario = usuario).order_by('-fecha')
 
 	paginator = Paginator(lista_notas, 4)
  	page = request.GET.get('page')
@@ -178,7 +178,7 @@ def lista_publicaciones_seccion(request, id):
 	else:
 		follow = False
 
-	lista_notas = Nota.objects.filter(subseccion = subseccion)
+	lista_notas = Nota.objects.filter(subseccion = subseccion).order_by('-fecha')
 
 	paginator = Paginator(lista_notas, 4)
  	page = request.GET.get('page')
@@ -221,7 +221,18 @@ def lista_notificaciones(request):
 
 #Muestran info
 def index(request):
-	lista_noticias = Nota.objects.all()
+
+	if request.user.is_authenticated():
+
+		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
+
+		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
+
+		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
+		lista_noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
+
+	else:
+		lista_noticias = Nota.objects.all()
 
 
 	paginator = Paginator(lista_noticias, 6)
@@ -600,8 +611,9 @@ def get_chat(request):
 	usuario = request.GET.get('usuario_consultor', None)
 	usuario_chat = request.GET.get('usuario_chat', None)
 
-	mensajes = list(MensajeDirecto.objects.filter(Q(usuario_remitente = usuario, usuario_destinatario = usuario_chat) | Q(usuario_remitente = usuario_chat, usuario_destinatario = usuario)).values())
+	mensajes = list(MensajeDirecto.objects.filter(Q(usuario_remitente = usuario, usuario_destinatario = usuario_chat) | Q(usuario_remitente = usuario_chat, usuario_destinatario = usuario)).values().order_by('-fecha'))
 
+	print(type(mensajes));
 
 	for mensaje in mensajes:
 		mensaje['fecha'] = naturaltime(mensaje['fecha']);

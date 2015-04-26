@@ -57,13 +57,14 @@
         <section class="comentarios" id="comentarios">
           {% for comentario in comentarios %}
           <div class="media">
-            <a class="media-left media-middle" href="#">
+            <a class="media-left media-middle" href="/perfil/{{ comentario.usuario.id }}">
               <img src="{{ MEDIA_URL }}{{ comentario.usuario.foto }}" width="50">
             </a>
             <div class="media-body">
               <h4 class="media-heading">{{ comentario.usuario.username }}</h4>
               {{ comentario.contenido }}
             </div>
+            <hr>
           </div>
           {% endfor %}
         </section>
