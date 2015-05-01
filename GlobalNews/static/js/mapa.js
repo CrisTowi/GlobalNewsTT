@@ -7,13 +7,13 @@ function initialize(){
 
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
-              lat = position.coords.latitude;
-              lon = position.coords.longitude;
-                  var mapProp = {
-
-            center:new google.maps.LatLng(lat,lon),
-            zoom:13,
-            mapTypeId:google.maps.MapTypeId.ROADMAP
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+            var mapProp = {
+              center:new google.maps.LatLng(lat,lon),
+              zoom:13,
+              mapTypeId:google.maps.MapTypeId.ROADMAP,
+              disableDefaultUI: true
             };
               map=new google.maps.Map(document.getElementById("googleMap")
             ,mapProp);

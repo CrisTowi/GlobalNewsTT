@@ -68,6 +68,7 @@ urlpatterns = patterns('',
     url(r'puntos/$', 'Principal.views.get_puntos', name='get_puntos'),
 
     url(r'nuevo/comentario/$', 'Principal.views.nuevo_comentario', name='nuevo_comentario'),
+    url(r'eliminar/comentario/(?P<id>\d+)$', 'Principal.views.eliminar_comentario', name='eliminar_comentario'),
     url(r'like/$', 'Principal.views.like', name='like'),
 
     url(r'nuevo/mensaje/$', 'Principal.views.nuevo_mensaje', name='nuevo_mensaje'),

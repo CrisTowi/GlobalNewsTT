@@ -659,9 +659,16 @@ def nuevo_comentario(request):
 	            verb= 'nuevo_comentario'
 	        )
 
-	comentario_json = {'contenido': comentario.contenido, 'usuario': usuario.username, 'imagen': str(usuario.foto)}
+	comentario_json = {'comentario_id': comentario.id, 'contenido': comentario.contenido, 'usuario': usuario.username, 'imagen': str(usuario.foto)}
 
 	return JsonResponse(comentario_json, safe=False)
+
+def eliminar_comentario(request, id):
+	comentario = Comentario.objects.get(id = id)
+	nota_id = comentario.nota.id
+	comentario.delete()	
+
+	return HttpResponseRedirect('/publicacion/' + str(nota_id))
 
 @csrf_exempt
 def nuevo_mensaje(request):
