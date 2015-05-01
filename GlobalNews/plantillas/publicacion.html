@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load tz %}
+{% load humanize %}
 
 {% block contenido %}
 <div class="col-lg-9">
@@ -62,10 +64,10 @@
             </a>
             <div class="media-body">
               <h4 class="media-heading">{{ comentario.usuario.username }}</h4>
-              {{ comentario.contenido }}
+              {{ comentario.contenido }} - {{ comentario.fecha | naturaltime }}
             </div>
           </div>
-          {% if user == comentario.usuario %}
+          {% if user == comentario.usuario or user == publicacion.usuario %}
             <a href="/eliminar/comentario/{{ comentario.id }}">Eliminar</a>
           {% endif %}
           {% endfor %}
@@ -155,6 +157,7 @@
 {% block js %}
 
 <script type="text/javascript">
+
   $('#btn-enviar').on('click', function(){
     var comentario = $('#comentario').val();
     var id_post = $('#id-post').val();
@@ -166,6 +169,21 @@
       $('#comentario').val("");
     });
   });
+
+  $('#comentario').keypress(function(e) {
+    if(e.which == 13) {
+      var comentario = $('#comentario').val();
+      var id_post = $('#id-post').val();
+      var id_user = $('#id-user').val();
+      $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
+        var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><br><br><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div><a href='/eliminar/comentario/"+ data.comentario_id +"'>Eliminar</a><hr>");
+        html.hide();
+        html.prependTo($('#comentarios')).show("slow");
+        $('#comentario').val("");
+      });      
+    }
+  });
+
 
   $('#btn-like').on('click', function(){
     var id_post = $('#id-post').val();

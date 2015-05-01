@@ -277,7 +277,7 @@ def publicacion(request, id):
 
 	publicacion = Nota.objects.get(id = id)
 
-	comentarios = Comentario.objects.filter(nota = publicacion)
+	comentarios = Comentario.objects.filter(nota = publicacion).order_by('-fecha')
 	like = False
 
 	num_likes = LikeNota.objects.filter(nota = publicacion).count()
