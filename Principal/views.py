@@ -13,6 +13,7 @@ from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUs
 
 from django.template import RequestContext
 
+from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required
 
@@ -221,7 +222,7 @@ def lista_notificaciones(request):
 
 #Muestran info
 def index(request):
-
+	last_day = datetime.today() - timedelta(days=1)
 	if request.user.is_authenticated():
 
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
@@ -229,10 +230,10 @@ def index(request):
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
 
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-		lista_noticias = Nota.objects.filter(Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)).order_by('-id')
+		lista_noticias = Nota.objects.filter((Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)), fecha__gte=last_day).order_by('-id')
 
 	else:
-		lista_noticias = Nota.objects.all()
+		lista_noticias = Nota.objects.filter(fecha__gte = last_day)
 
 
 	paginator = Paginator(lista_noticias, 6)
@@ -622,7 +623,9 @@ def get_chat(request):
 
 
 def get_puntos(request):
-	notas = list(Nota.objects.all().values())
+	last_day = datetime.today() - timedelta(days=1)
+
+	notas = list(Nota.objects.filter(fecha__gte = last_day).values())
 
 	return JsonResponse(notas, safe=False)
 

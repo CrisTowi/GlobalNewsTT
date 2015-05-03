@@ -34,11 +34,13 @@
     		<div class="col-md-11"> <textarea class="form-control" placeholder="Comentario" id="comentario"></textarea> </div>
     	</div>
     	<br>
+      <div>
         {% if user != publicacion.usuario %}
 
           <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#ModalDenunciar">Denunciar</a>
           <a href="#" class="btn btn-info" data-toggle="modal" data-target="#ModalCompartir">Compartir</a>
         {% else %}
+          <div id="alert-comentario" class="alert alert-danger" role="alert">¡No puedes enviar un comentario vacio!</div>
           <button class="btn btn-danger" data-toggle="modal" data-target="#ModalEliminarPost">Eliminar</button>
           <a href="/editar/nota/{{ publicacion.id }}">Editar</a>
         {% endif %}
@@ -53,8 +55,8 @@
         {% endif %}
         <br>
         <br>
-
       {% endif %}
+      </div>
 
         <section class="comentarios" id="comentarios">
           {% for comentario in comentarios %}
@@ -158,21 +160,16 @@
 
 <script type="text/javascript">
 
+  var alerta = $('#alert-comentario');
+  alerta.hide();
   $('#btn-enviar').on('click', function(){
     var comentario = $('#comentario').val();
-    var id_post = $('#id-post').val();
-    var id_user = $('#id-user').val();
-    $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
-      var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><br><br><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div><a href='/eliminar/comentario/"+ data.comentario_id +"'>Eliminar</a><hr>");
-      html.hide();
-      html.prependTo($('#comentarios')).show("slow");
-      $('#comentario').val("");
-    });
-  });
-
-  $('#comentario').keypress(function(e) {
-    if(e.which == 13) {
-      var comentario = $('#comentario').val();
+    if (comentario == '') {
+      alerta.fadeIn('slow');
+      setTimeout(function() {
+        alerta.fadeOut('slow');
+      }, 3000);
+    } else {
       var id_post = $('#id-post').val();
       var id_user = $('#id-user').val();
       $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
@@ -180,7 +177,29 @@
         html.hide();
         html.prependTo($('#comentarios')).show("slow");
         $('#comentario').val("");
-      });      
+      });
+    }
+  });
+
+  $('#comentario').keypress(function(e) {
+    if(e.which == 13) {
+      var comentario = $('#comentario').val();
+      if (comentario == '') {
+        alerta.fadeIn('slow');
+        setTimeout(function() {
+          alerta.fadeOut('slow');
+          $('#comentario').val('');
+        }, 3000);
+      } else {
+        var id_post = $('#id-post').val();
+        var id_user = $('#id-user').val();
+        $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
+          var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><br><br><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div><a href='/eliminar/comentario/"+ data.comentario_id +"'>Eliminar</a><hr>");
+          html.hide();
+          html.prependTo($('#comentarios')).show("slow");
+          $('#comentario').val("");
+        });
+      }    
     }
   });
 

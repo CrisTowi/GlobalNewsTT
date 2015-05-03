@@ -6,6 +6,8 @@
 
 $('.btn-abre-platica').on('click', function(e){
     e.preventDefault();
+    var alerta = $('#alerta-mensaje');
+    alerta.hide();
 
     $("#btn-enviar").off('click');
     $('#chat').html("");
@@ -80,11 +82,16 @@ $('.btn-abre-platica').on('click', function(e){
 
     obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local);
     $('#btn-enviar').on('click', function(){
-
         var mensaje = $('#mensaje').val();
-        var info = {usuario_consultor: usuario , usuario_chat: id_usuario, mensaje: mensaje, id_chat: id_chat};
-
-        socket.emit('nuevo_mensaje_chat', info);
+        if (mensaje == '') {
+          alerta.fadeIn('slow');
+          setTimeout(function() {
+            alerta.fadeOut('slow');
+          }, 3000);
+        } else {
+          var info = {usuario_consultor: usuario , usuario_chat: id_usuario, mensaje: mensaje, id_chat: id_chat};
+          socket.emit('nuevo_mensaje_chat', info);
+        }
     });
 
     $(document).on("click", ".eliminar", function(){
@@ -226,6 +233,7 @@ $.ajax({
             </div>
         </div>
       </div>
+      <div id="alerta-mensaje" class="alert alert-danger" role="alert">¡No puedes enviar un mensaje vacio!</div>
     </div>
   </div>
 </div>

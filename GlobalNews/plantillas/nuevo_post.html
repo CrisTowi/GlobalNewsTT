@@ -114,11 +114,11 @@ $('#abrir_mapa').on('click', function(e){
             // Cuando presionas un marcador te envia a la nota
             google.maps.event.addListener(map, "click", function(data)
             {
-                latitud = data.latLng.k;
-                longitud = data.latLng.D;
+                latitud = data.latLng.A;
+                longitud = data.latLng.F;
                 deleteMarkers();
                 addMarker(new google.maps.LatLng(latitud,longitud));
-                console.log(markers);
+                console.log(data);
                 $('#id_latitud').val(latitud);
                 $('#id_longitud').val(longitud);
             });
