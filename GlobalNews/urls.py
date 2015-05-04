@@ -66,6 +66,7 @@ urlpatterns = patterns('',
     #Vistas en AJAX
     url(r'chat/$', 'Principal.views.get_chat', name='get_chat'),
     url(r'puntos/$', 'Principal.views.get_puntos', name='get_puntos'),
+    url(r'get/chat/(?P<id>\d+)$', 'Principal.views.get_chat_id', name='get_chat_id'),
 
     url(r'nuevo/comentario/$', 'Principal.views.nuevo_comentario', name='nuevo_comentario'),
     url(r'eliminar/comentario/(?P<id>\d+)$', 'Principal.views.eliminar_comentario', name='eliminar_comentario'),

@@ -614,12 +614,34 @@ def get_chat(request):
 
 	mensajes = list(MensajeDirecto.objects.filter(Q(usuario_remitente = usuario, usuario_destinatario = usuario_chat) | Q(usuario_remitente = usuario_chat, usuario_destinatario = usuario)).values().order_by('-fecha'))
 
-	print(type(mensajes));
-
 	for mensaje in mensajes:
 		mensaje['fecha'] = naturaltime(mensaje['fecha']);
 
 	return JsonResponse(mensajes, safe=False)
+
+def get_chat_id(request, id):
+	usuario = request.user
+	usuario_chat = Usuario.objects.get(id = id)
+
+	print(usuario)
+	print(usuario_chat)
+
+	chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
+	chats = chats.filter(Q(usuario_uno = usuario_chat) | Q(usuario_dos = usuario_chat))		
+
+
+	if (chats):
+		return JsonResponse({'id': chats.get().id})	
+	else:
+		chat = Chat()
+		chat.usuario_uno = usuario
+		chat.usuario_dos = usuario_chat
+
+		chat.save()
+		return JsonResponse({'id': chat.id})
+
+
+
 
 
 def get_puntos(request):

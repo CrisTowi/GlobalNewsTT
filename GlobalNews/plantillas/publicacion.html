@@ -12,7 +12,7 @@
     		<div class="col-xs-7">
     			<strong>Autor: </strong> <a href="/perfil/{{ publicacion.usuario.id }}">{{ publicacion.usuario.username }}</a>
     			<br><br>
-    			<a href="/lista/nota/seccion/{{ publicacion.subseccion.seccion.id }}">{{ publicacion.subseccion.seccion }}</a>
+    			<a href="/lista/nota/seccion/{{ publicacion.subseccion.seccion.id }}"><h4>Noticia de {{ publicacion.subseccion.seccion }}</h4></a>
 
     			<h3>{{ publicacion.titulo }}</h3>
           <h4>{{ num_likes }} Me gusta</h4>
@@ -21,7 +21,9 @@
     	<br>
     	<br>
     	<div class="texto_publicacion">
-    		{{ publicacion.descripcion }}
+        <p align="justify">
+    		  {{ publicacion.descripcion | linebreaks }}
+        </p>
     	</div>
       <input type="hidden" id="id-post" value="{{ publicacion.id }}">
       <input type="hidden" id="id-user" value="{{ user.id }}">
@@ -157,7 +159,6 @@
 {% endblock %}
 
 {% block js %}
-
 <script type="text/javascript">
 
   var alerta = $('#alert-comentario');

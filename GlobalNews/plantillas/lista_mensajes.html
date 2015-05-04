@@ -20,8 +20,11 @@ $('.btn-abre-platica').on('click', function(e){
     var media_url = $('#media_url').val();
     var imagen_local = "{{ user.foto }}"
 
+    $('#nombre-usuario-chat').html(username_chat);
     var id_chat = $(this).data("chat");
     socket.emit('abrir_chat', id_chat);
+
+
 
     var mensaje_entrada = function(objeto){
        var imagen_url = media_url + imagen_local
@@ -217,7 +220,7 @@ $.ajax({
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Mensajes con: CrisTowi</h4>
+        <h4 class="modal-title" id="myModalLabel">Mensajes con: <span id="nombre-usuario-chat"></span></h4>
       </div>
       <div class="modal-body">
         <ul class="chat" id="chat">

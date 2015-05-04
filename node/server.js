@@ -13,11 +13,11 @@ var sub = redis.createClient();
 
 //Funcion que maneja cada evento enviado desde Django
 var recibeMensaje = function(channel, message){
-    console.log(message);
     var i,j;
     var datos = JSON.parse(message);
     switch (channel) {
         case 'chat':
+            console.log(datos);
             io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
             break;
 
@@ -41,10 +41,8 @@ var recibeMensaje = function(channel, message){
             break;
 
         case 'me_gusta':
-            console.log('A alguien le gusta');
             for(i=0; i<usuarios.length; i++){
                 if(usuarios[i].session_id == datos.session_key){
-                    console.log('Encotramos al amigo');
                     io.to(usuarios[i].socket_id).emit('me_gusta', datos);
                 }
             }
@@ -85,7 +83,6 @@ io.sockets.on('connection', function (socket) {
     };
 
     usuarios.push(obj_usuario);
-    console.log(usuarios);
     //COnfigurar las cookies para comunicarse con Django
     io.set('authorization', function(data, accept){
         if(data.headers.cookie){
@@ -97,6 +94,8 @@ io.sockets.on('connection', function (socket) {
 
     //Arir chat
     socket.on('abrir_chat', function(id_chat){
+        console.log('Abrio el chat');
+        console.log(id_chat);
         canal_chat = 'chat_' + id_chat;
         socket.join(canal_chat);
     });
