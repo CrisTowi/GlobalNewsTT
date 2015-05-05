@@ -442,7 +442,7 @@ def ver_usuario(request, username):
 	usuarios = Usuario.objects.filter(username = username)
 	if (usuarios):
 		usuario = usuarios.get()
-		respuesta = {'usuario': usuario.username}
+		respuesta = {'username': usuario.username, 'nombre': usuario.nombre,'apellidos': usuario.ap_paterno + ' ' + usuario.ap_materno, 'foto': str(usuario.foto)}
 	else:
 		respuesta = {'mensaje': 'El usuario no existe'}
 
