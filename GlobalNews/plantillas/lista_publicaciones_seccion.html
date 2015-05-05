@@ -26,7 +26,7 @@
         <hr>
         <img width="200px" src="{{ MEDIA_URL }}{{ nota.imagen }}" class="img-responsive">
         <hr>
-        <p> {{ nota.descripcion }} </p>
+        <p> {{ nota.descripcion|slice:":400"|add:" ..." }} </p>
         <a class="btn btn-primary" href="/publicacion/{{ nota.id }}">Leer más <span class="glyphicon glyphicon-chevron-right"></span></a>
         <hr>
     </div>

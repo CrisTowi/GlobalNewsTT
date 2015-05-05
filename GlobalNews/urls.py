@@ -3,7 +3,7 @@ from rest_framework import routers
 from django.contrib import admin
 from django.conf import settings
 import notifications
-from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet,UsuarioSigueUsuarioViewSet,ComentarioViewSet,UsuarioSigueSeccionViewSet
+from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet,UsuarioSigueUsuarioViewSet,ComentarioViewSet,UsuarioSigueSeccionViewSet,SubseccionViewSet
 admin.autodiscover()
 
 router = routers.DefaultRouter()
@@ -12,6 +12,7 @@ router.register(r'notas', NotaViewSet)
 router.register(r'reportesusuario', ReporteUsuarioViewSet)
 router.register(r'reportesnota', ReporteNotaViewSet)
 router.register(r'secciones', SeccionViewSet)
+router.register(r'subseccion', SubseccionViewSet)
 router.register(r'usuario_sigue_usuario', UsuarioSigueUsuarioViewSet)
 router.register(r'usuario_sigue_seccion', UsuarioSigueSeccionViewSet)
 router.register(r'comentario', ComentarioViewSet)
@@ -91,6 +92,7 @@ urlpatterns = patterns('',
 
     url(r'nuevo_reporte_nota/$', 'Principal.views.nuevo_reporte_post', name='nuevo_reporte_post'),
     url(r'nuevo_reporte_usuario/$', 'Principal.views.nuevo_reporte_usuario', name='nuevo_reporte_usuario'),
+    url(r'ver/usuario/(?P<username>\w+)/$', 'Principal.views.ver_usuario', name='ver_usuario'),
 
     #Administracion
     url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),

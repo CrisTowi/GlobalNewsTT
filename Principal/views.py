@@ -7,7 +7,7 @@ from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccio
 from notifications.models import Notification
 
 from rest_framework import viewsets
-from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer,UsuarioSigueUsuarioSerializer,ComentarioSerializer, UsuarioSigueSeccionSerializer
+from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer,UsuarioSigueUsuarioSerializer,ComentarioSerializer, UsuarioSigueSeccionSerializer, SubseccionSerializer
 
 from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm, ReporteNotaForm, ReporteUsuarioForm
 
@@ -60,17 +60,21 @@ class SeccionViewSet(viewsets.ModelViewSet):
     serializer_class = SeccionSerializer	
 
 class UsuarioSigueUsuarioViewSet(viewsets.ModelViewSet):
-		queryset = UsuarioSigueUsuario.objects.all()
-		serializer_class = UsuarioSigueUsuarioSerializer
+	queryset = UsuarioSigueUsuario.objects.all()
+	serializer_class = UsuarioSigueUsuarioSerializer
 
 
 class UsuarioSigueSeccionViewSet(viewsets.ModelViewSet):
-		queryset = UsuarioSigueSeccion.objects.all()
-		serializer_class = UsuarioSigueSeccionSerializer
+	queryset = UsuarioSigueSeccion.objects.all()
+	serializer_class = UsuarioSigueSeccionSerializer
 
 class ComentarioViewSet(viewsets.ModelViewSet):
-		queryset = Comentario.objects.all()
-		serializer_class = ComentarioSerializer
+	queryset = Comentario.objects.all()
+	serializer_class = ComentarioSerializer
+
+class SubseccionViewSet(viewsets.ModelViewSet):
+	queryset = Subseccion.objects.all()
+	serializer_class = SubseccionSerializer
 
 #Listas
 def lista_reportes(request):
@@ -431,6 +435,16 @@ def nuevo_post_movil(request):
 	nota.save()
 
 	respuesta = {'id_nota': nota.id}
+
+	return JsonResponse(respuesta, safe=False)
+
+def ver_usuario(request, username):
+	usuarios = Usuario.objects.filter(username = username)
+	if (usuarios):
+		usuario = usuarios.get()
+		respuesta = {'usuario': usuario.username}
+	else:
+		respuesta = {'mensaje': 'El usuario no existe'}
 
 	return JsonResponse(respuesta, safe=False)
 

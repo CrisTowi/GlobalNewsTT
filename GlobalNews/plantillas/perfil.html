@@ -23,7 +23,7 @@
                     <a href="/lista/seguidos/{{ perfil.id }}">{{ numero_siguiendo }} Siguiendo</a>
                     {% if user.id == perfil.id %}
                     <br><br>
-                    <a class="btn btn-success" href="/editar/perfil/{{ perfil.id }}">Editar</a>
+                    <a class="btn btn-success" href="/editar/usuario/{{ perfil.id }}">Editar</a>
                     {% else %}
                     <br><br><br><br>
                     <a class="btn btn-success" href="/lista/nota/usuario/{{ perfil.id }}">Publicaciones</a>
