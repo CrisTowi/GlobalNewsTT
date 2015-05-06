@@ -79,10 +79,17 @@ io.sockets.on('connection', function (socket) {
     //var session_id = socket.handshake.headers.cookie.slice(-32);
     obj_usuario = {
         'session_id': session_id,
-        'socket_id': socket.id
+        'socket_id': socket.id,
+        coords: {
+            lat: socket.handshake.query.lat,
+            lon: socket.handshake.query.lon
+        }
     };
 
     usuarios.push(obj_usuario);
+
+    console.log(usuarios);
+
     //COnfigurar las cookies para comunicarse con Django
     io.set('authorization', function(data, accept){
         if(data.headers.cookie){

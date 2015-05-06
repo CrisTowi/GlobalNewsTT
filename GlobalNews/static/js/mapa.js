@@ -3,12 +3,17 @@ function initialize(){
     var lat, lon;
     var im = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
     
-    $.get('/puntos', function(data){
-
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
             lat = position.coords.latitude;
             lon = position.coords.longitude;
+
+            parameters = {
+              lat: lat,
+              lon: lon
+            }
+
+            $.get('/puntos', parameters ,function(data){
             var mapProp = {
               center:new google.maps.LatLng(lat,lon),
               zoom:13,
@@ -38,11 +43,10 @@ function initialize(){
               title: 'Mi Ubicación',
               icon: im
             });
-
+          });
         });
       }
 
-    });
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);

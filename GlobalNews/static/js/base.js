@@ -1,6 +1,19 @@
 var host = "localhost";
 
-var socket = io.connect(host + ":3000");
+
+
+if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position){
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+
+        parameters = {
+          lat: lat,
+          lon: lon
+        }
+        var socket = io.connect(host + ":3000", {query:parameters});
+    });
+}
 
 //Cuando llegue un nuevo mensaje
 socket.on('nuevo_comentario', function(data){

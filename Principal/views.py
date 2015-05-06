@@ -31,6 +31,8 @@ from notifications import notify
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+import Principal.helper as helper
+
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
 	for sesion in sesiones:
@@ -277,16 +279,11 @@ def perfil(request, id):
 	return render(request, 'perfil.html', ctx)
 
 def publicacion(request, id):
-
 	form = ReporteNotaForm()
-
 	publicacion = Nota.objects.get(id = id)
-
 	comentarios = Comentario.objects.filter(nota = publicacion).order_by('-fecha')
 	like = False
-
 	num_likes = LikeNota.objects.filter(nota = publicacion).count()
-
 
 	if publicacion.privacidad == False:
 		if request.user.is_authenticated():
@@ -378,12 +375,11 @@ def nuevo_post(request):
 			nota.privacidad = p
 			nota.imagen = imagen
 
-
-
 			nota.longitud = longitud
 			nota.latitud = latitud
 
 			nota.save()
+			helper.guardar_nota(nota)
 
 			seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = nota.usuario)
 
@@ -433,6 +429,8 @@ def nuevo_post_movil(request):
 	nota.latitud = latitud
 
 	nota.save()
+	helper.guardar_nota(nota)
+
 
 	respuesta = {'id_nota': nota.id}
 
@@ -660,10 +658,10 @@ def get_chat_id(request, id):
 
 def get_puntos(request):
 	last_day = datetime.today() - timedelta(days=1)
-
 	notas = list(Nota.objects.filter(fecha__gte = last_day).values())
+	notas_result = helper.obtener_notas_loc(request.GET['lon'] ,request.GET['lat'], notas)
 
-	return JsonResponse(notas, safe=False)
+	return JsonResponse(notas_result, safe=False)
 
 
 def nuevo_comentario(request):
@@ -772,7 +770,6 @@ def like(request):
 	            verb= 'nuevo_like'
 	        )
 
-
 	respuesta = {'usuario': usuario.username, 'titulo': nota.titulo}
 	return JsonResponse(respuesta, safe=False)
 
@@ -828,9 +825,7 @@ def seguir_seccion(request, id):
 def dejar_de_seguir_seccion(request, id):
 	seccion = Seccion.objects.get(id = id)
 	usuario = request.user
-
 	uss = UsuarioSigueSeccion.objects.get(seccion = seccion, usuario = usuario)
-
 	uss.delete()
 
 	return HttpResponseRedirect('/lista/nota/seccion/' + str(id))
@@ -861,6 +856,5 @@ def leer_notificacion(request, id):
 	notificacion.unread = False
 
 	notificacion.save()
-
 
 	return HttpResponseRedirect('/lista/notificaciones')
