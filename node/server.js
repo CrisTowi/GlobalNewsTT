@@ -4,6 +4,8 @@ var server = http.createServer().listen(3000);
 var io = require('socket.io').listen(server);
 var cookie_reader = require('cookie');
 var querystring = require('querystring');
+var MongoClient = require('mongodb').MongoClient;
+
 var host = 'localhost';
 var usuarios = [];
 
@@ -17,7 +19,6 @@ var recibeMensaje = function(channel, message){
     var datos = JSON.parse(message);
     switch (channel) {
         case 'chat':
-            console.log(datos);
             io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
             break;
 
@@ -69,7 +70,8 @@ sub.subscribe('me_gusta');
 sub.addListener('message', recibeMensaje);
 
 io.sockets.on('connection', function (socket) {
-
+MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
+    if(err) throw err;
     //Usuario conectado
     index_sessionid = socket.handshake.headers.cookie.indexOf('sessionid=');
 
@@ -87,8 +89,19 @@ io.sockets.on('connection', function (socket) {
     };
 
     usuarios.push(obj_usuario);
-
-    console.log(usuarios);
+        var doc = {
+            '_id': obj_usuario.socket_id,
+            "loc" : {
+                "type" : "Point",
+                "coordinates" : [
+                Number(obj_usuario.coords.lon),
+                Number(obj_usuario.coords.lat)
+                ]
+            }
+        }
+        db.collection('usuarios').insert(doc, function(err, inserted) {
+            if(err) throw err;
+        });
 
     //COnfigurar las cookies para comunicarse con Django
     io.set('authorization', function(data, accept){
@@ -138,5 +151,10 @@ io.sockets.on('connection', function (socket) {
                 usuarios.splice(i, 1);
             }
         }
+        console.log(this.id);
+        db.collection('usuarios').remove({"_id": String(this.id)}, function(err, removed) {
+            if(err) throw err;
+        });
     });
+});
 });
