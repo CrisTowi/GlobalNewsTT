@@ -119,6 +119,7 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
         db.collection('usuarios').insert(doc, function(err, inserted) {
             if(err) throw err;
         });
+        console.log(doc);
 
         //COnfigurar las cookies para comunicarse con Django
         io.set('authorization', function(data, accept){
