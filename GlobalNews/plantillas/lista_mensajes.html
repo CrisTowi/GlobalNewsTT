@@ -1,186 +1,5 @@
 {% extends 'base.html' %}
 
-{% block js %}
-
-<script type="text/javascript">
-
-$('.btn-abre-platica').on('click', function(e){
-    e.preventDefault();
-    var alerta = $('#alerta-mensaje');
-    alerta.hide();
-
-    $("#btn-enviar").off('click');
-    $('#chat').html("");
-
-    var id_usuario = $(this).data("usuario");
-    var username_chat = $(this).data("username");
-    var imagen = $(this).data("imagen");
-    var username_local = "{{ user.username }}";
-    var usuario = $('#input_usuario').val();
-    var media_url = $('#media_url').val();
-    var imagen_local = "{{ user.foto }}"
-
-    $('#nombre-usuario-chat').html(username_chat);
-    var id_chat = $(this).data("chat");
-    socket.emit('abrir_chat', id_chat);
-
-
-
-    var mensaje_entrada = function(objeto){
-       var imagen_url = media_url + imagen_local
-                if(objeto.usuario_remitente == id_usuario){ 
-        var imagen_url = media_url + imagen;
-        var template = $('<li class="left clearfix"> \
-                            <span class="chat-img pull-left"> \
-                                <img src=" ' + imagen_url + ' " alt="User Avatar" width="50px" class="img-circle" /> \
-                            </span> \
-                            <div class="chat-body clearfix"> \
-                                <div class="header"> \
-                                    <strong class="primary-font">' + username_chat + '</strong> \
-                                    <small class="pull-right text-muted"> \
-                                        <i class="fa fa-clock-o fa-fw"></i> ' + objeto.fecha + ' \
-                                    </small> \
-                                </div> \
-                                <p> \
-                                    ' + objeto.contenido + ' \
-                                </p> \
-                            </div> \
-                        </li>');
-                } else {
-        var imagen_url = media_url + imagen_local
-        var template = $('<li class="right clearfix"> \
-                            <span class="chat-img pull-right"> \
-                                <img src="' + imagen_url + '" alt="User Avatar" width="50px" class="img-circle" /> \
-                            </span> \
-                            <div class="chat-body clearfix"> \
-                                <div class="header"> \
-                                    <small class=" text-muted"> \
-                                        <i class="fa fa-clock-o fa-fw"></i>' + objeto.fecha + '</small> \
-                                    <strong class="pull-right primary-font">' + username_local + '</strong> \
-                                </div> \
-                                <p> \
-                                    '+ objeto.contenido +' \
-                                </p> \
-                                <a href="#" class="eliminar" data-id="' + objeto.id + '">Eliminar</a> \
-                            </div> \
-                        </li>');
-                }
-
-
-
-           template.hide();
-           $('#chat').append(template);
-           template.show('slow');
-
-
-           $('#mensaje').val('');      
-    }
-
-    socket.addEventListener('mensaje_entrada', mensaje_entrada);
-
-
-    $('#ModalMD').on('hidden.bs.modal', function () {
-        socket.removeEventListener('mensaje_entrada', mensaje_entrada);
-    });
-
-    obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local);
-    $('#btn-enviar').on('click', function(){
-        var mensaje = $('#mensaje').val();
-        if (mensaje == '') {
-          alerta.fadeIn('slow');
-          setTimeout(function() {
-            alerta.fadeOut('slow');
-          }, 3000);
-        } else {
-          var info = {usuario_consultor: usuario , usuario_chat: id_usuario, mensaje: mensaje, id_chat: id_chat};
-          socket.emit('nuevo_mensaje_chat', info);
-        }
-    });
-
-    $(document).on("click", ".eliminar", function(){
-      event.preventDefault();
-      var id = $(this).data("id");
-        $.get( "/eliminar/mensaje/", {id: id}, function(data){
-          $('#chat').html("");
-          var n = noty({
-              text: 'Mensaje eliminado con éxico',
-              layout: 'bottomRight',
-              type: 'success',
-              timeout: 3500,
-              callback: { onClose: function() { /* Go to the URL i want to go */ }},
-              animation: {
-                  open: {height: 'toggle'}, // jQuery animate function property object
-                  close: {height: 'toggle'}, // jQuery animate function property object
-                  easing: 'swing', // easing
-                  speed: 500 // opening & closing animation speed
-              }
-          });
-          $(document).unbind("click", ".eliminar");
-          obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local);
-        });
-    });
-});
-
-function obtenerChat(id_usuario, username_chat, imagen, username_local, usuario, media_url, imagen_local){
-$.ajax({
-          url: "{% url 'get_chat' %}",
-          type: "GET", //send it through get method
-          data: {usuario_consultor: usuario , usuario_chat: id_usuario},
-          success: function(response) {
-    
-            $.each(response, function(i, objeto){
-
-
-
-                if(objeto.usuario_remitente_id == id_usuario){ 
-        var imagen_url = media_url + imagen;
-        var template = '<li class="left clearfix"> \
-                            <span class="chat-img pull-left"> \
-                                <img src=" ' + imagen_url + ' " alt="User Avatar" width="50px" class="img-circle" /> \
-                            </span> \
-                            <div class="chat-body clearfix"> \
-                                <div class="header"> \
-                                    <strong class="primary-font">' + username_chat + '</strong> \
-                                    <small class="pull-right text-muted"> \
-                                        <i class="fa fa-clock-o fa-fw"></i> ' + objeto.fecha + ' \
-                                    </small> \
-                                </div> \
-                                <p> \
-                                    ' + objeto.contenido + ' \
-                                </p> \
-                            </div> \
-                        </li>';
-                } else {
-        var imagen_url = media_url + imagen_local
-        var template = '<li class="right clearfix"> \
-                            <span class="chat-img pull-right"> \
-                                <img src="' + imagen_url + '" alt="User Avatar" width="50px" class="img-circle" /> \
-                            </span> \
-                            <div class="chat-body clearfix"> \
-                                <div class="header"> \
-                                    <small class=" text-muted"> \
-                                        <i class="fa fa-clock-o fa-fw"></i>' + objeto.fecha + '</small> \
-                                    <strong class="pull-right primary-font">' + username_local + '</strong> \
-                                </div> \
-                                <p> \
-                                    '+ objeto.contenido +' \
-                                </p> \
-                                <a href="#" class="eliminar" data-id="' + objeto.id + '">Eliminar</a> \
-                            </div> \
-                        </li>';
-                }
-            $('#chat').prepend(template);
-        });
-      }
-});
-}
-
-
-</script>
-{% endblock %}
-
-    
-
 {% block contenido %}
 <div class="col-lg-9">
   <div class="row">    
@@ -188,7 +7,7 @@ $.ajax({
     <div class="col-sm-6 col-md-4">
 
       {% if chat.usuario_uno == user %}
-        <a href="#" data-toggle="modal" class="btn-abre-platica" data-chat="{{ chat.id }}" id="btn-abre-platica" data-usuario="{{ chat.usuario_dos.id }}" data-imagen="{{ chat.usuario_dos.foto }}" data-username="{{ chat.usuario_dos.username }}" data-target="#ModalMD">
+        <a href="#" data-toggle="modal" class="btn-abre-platica" data-chat="{{ chat.id }}" id="btn-abre-platica" data-usuario="{{ chat.usuario_dos.id }}" data-imagen="{{ chat.usuario_dos.foto }}" data-username="{{ chat.usuario_dos.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD">
           <div class="thumbnail">
             <img src="{{ MEDIA_URL }}{{ chat.usuario_dos.foto }}" style="width: 300px; height: 200px;">
             <div class="caption">
@@ -197,7 +16,7 @@ $.ajax({
           </div>
         </a>
       {% else %}
-        <a href="#" data-toggle="modal" class="btn-abre-platica" data-chat="{{ chat.id }}"  id="btn-abre-platica" data-usuario="{{ chat.usuario_uno.id }}" data-imagen="{{ chat.usuario_uno.foto }}" data-username="{{ chat.usuario_uno.username }}" data-target="#ModalMD">
+        <a href="#" data-toggle="modal" class="btn-abre-platica" data-chat="{{ chat.id }}"  id="btn-abre-platica" data-usuario="{{ chat.usuario_uno.id }}" data-imagen="{{ chat.usuario_uno.foto }}" data-username="{{ chat.usuario_uno.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD">
           <div class="thumbnail">
             <img src="{{ MEDIA_URL }}{{ chat.usuario_uno.foto }}" style="width: 300px; height: 200px;">
             <div class="caption">
