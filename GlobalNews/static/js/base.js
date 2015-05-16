@@ -27,11 +27,16 @@ if (navigator.geolocation) {
             var usuario = $('#input_usuario').val();
             var media_url = $('#media_url').val();
             var imagen_local = $(this).data("userfoto");
+            var id_chat = "";
+
+            $.get( "/get/chat/" + id_usuario, function(data){
+                id_chat = data.id;
+                socket.emit('abrir_chat', id_chat);
+            });
 
             $('#nombre-usuario-chat').html(username_chat);
             var id_chat = $(this).data("chat");
             socket.emit('abrir_chat', id_chat);
-
 
 
             var mensaje_entrada = function(objeto){
@@ -287,15 +292,17 @@ if (navigator.geolocation) {
             $('.texto_noty').on('click', function(){
                 window.location.href = '/publicacion/' + $(this).data('id_nota');
             });
-            var marker1 = new google.maps.Marker({
-                position: new google.maps.LatLng(data.latitud,data.longitud),
-                map: map,
-                title: data.titulo,
-                url: '/publicacion/' + data.id
+            if (google != undefined) {
+                var marker1 = new google.maps.Marker({
+                    position: new google.maps.LatLng(data.latitud,data.longitud),
+                    map: map,
+                    title: data.titulo,
+                    url: '/publicacion/' + data.id
+                    });
+                    google.maps.event.addListener(marker1, 'click', function() {
+                    window.location.href = this.url;
                 });
-                google.maps.event.addListener(marker1, 'click', function() {
-                window.location.href = this.url;
-            });
+            }
         });
         socket.on('nueva_publicacion_localizacion', function(data){
 
@@ -342,17 +349,20 @@ if (navigator.geolocation) {
                 }
             });
             $('.texto_noty').on('click', function(){
-                window.location.href = '/publicacion/' + $(this).data('id_nota');
+                window.location.href = '/publicacion/geolocalizacion/' + $(this).data('id_nota');
             });
-            var marker1 = new google.maps.Marker({
-                position: new google.maps.LatLng(data.latitud,data.longitud),
-                map: map,
-                title: data.titulo,
-                url: '/publicacion/' + data.id
+            if (google != undefined) {            
+                var marker1 = new google.maps.Marker({
+                    position: new google.maps.LatLng(data.latitud,data.longitud),
+                    map: map,
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                    title: data.titulo,
+                    url: '/publicacion/geolocalizacion/' + data.id
+                    });
+                    google.maps.event.addListener(marker1, 'click', function() {
+                    window.location.href = this.url;
                 });
-                google.maps.event.addListener(marker1, 'click', function() {
-                window.location.href = this.url;
-            });
+            }
         });
     });
 }

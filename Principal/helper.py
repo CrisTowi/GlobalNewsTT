@@ -21,7 +21,7 @@ def obtener_notas_loc(lng, lat, notas):
 		    'coordinates': [
 		        float(lng),
 		        float(lat)]},
-		maxDistance= 5000,
+		maxDistance= 11000,
 		spherical=True,
 		num=10)
 
@@ -30,4 +30,5 @@ def obtener_notas_loc(lng, lat, notas):
 			if (resultado['obj']['_id'] == nota['id']):
 				notas_result.append(nota)
 
+	print(notas_result)
 	return notas_result

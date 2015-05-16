@@ -230,14 +230,10 @@ def lista_notificaciones(request):
 def index(request):
 	last_day = datetime.today() - timedelta(days=1)
 	if request.user.is_authenticated():
-
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
-
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
-
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
 		lista_noticias = Nota.objects.filter((Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)), fecha__gte=last_day).order_by('-id')
-
 	else:
 		lista_noticias = Nota.objects.filter(fecha__gte = last_day)
 
@@ -261,9 +257,6 @@ def perfil(request, id):
 	perfil = Usuario.objects.get(id = id)
 	num_siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = perfil).count()
 	num_seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = perfil).count()
-
-	print num_siguiendo
-	print num_seguidores
 
 	if request.user.is_authenticated():
 		usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = perfil, usuario_seguidor = request.user)
@@ -309,8 +302,38 @@ def publicacion(request, id):
 			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
 			return render(request, 'publicacion.html', ctx)
 
-#Formularios
+def publicacion_geolocalizacion(request, id):
+	form = ReporteNotaForm()
+	publicacion = Nota.objects.get(id = id)
+	comentarios = Comentario.objects.filter(nota = publicacion).order_by('-fecha')
+	like = False
+	num_likes = LikeNota.objects.filter(nota = publicacion).count()
 
+	if publicacion.privacidad == False:
+		if request.user.is_authenticated():
+			likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
+			if likes.count() > 0:
+				like = True
+
+			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
+			return render(request, 'publicacion_geolocalizacion.html', ctx)
+		else:
+			return render(request, '404.html', {})
+
+	else:
+		if request.user.is_authenticated():
+			likes = LikeNota.objects.filter(nota = publicacion, usuario = request.user)
+			if likes.count() > 0:
+				like = True
+
+			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
+			return render(request, 'publicacion_geolocalizacion.html', ctx)
+		else:
+			ctx = {'publicacion': publicacion, 'comentarios': comentarios, 'like': like, 'num_likes': num_likes, 'form': form}
+			return render(request, 'publicacion_geolocalizacion.html', ctx)
+
+
+#Formularios
 def nuevo_reporte_post(request):
 
 	usuario = request.user
@@ -407,9 +430,6 @@ def nuevo_post(request):
 
 @csrf_exempt
 def nuevo_post_movil(request):
-
-	print request.POST
-
 	usuario_id = int(request.POST['usuario'])
 	titulo = request.POST['titulo']
 	descripcion = request.POST['descripcion']
@@ -635,12 +655,8 @@ def get_chat_id(request, id):
 	usuario = request.user
 	usuario_chat = Usuario.objects.get(id = id)
 
-	print(usuario)
-	print(usuario_chat)
-
 	chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
 	chats = chats.filter(Q(usuario_uno = usuario_chat) | Q(usuario_dos = usuario_chat))		
-
 
 	if (chats):
 		return JsonResponse({'id': chats.get().id})	
@@ -652,16 +668,32 @@ def get_chat_id(request, id):
 		chat.save()
 		return JsonResponse({'id': chat.id})
 
-
-
-
-
 def get_puntos(request):
 	last_day = datetime.today() - timedelta(days=1)
+
+	if request.user.is_authenticated():
+		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
+		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
+		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
+		lista_noticias = Nota.objects.filter((Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)), fecha__gte=last_day).order_by('-id')
+	else:
+		lista_noticias = Nota.objects.filter(fecha__gte = last_day)
+
+
+	lista_noticias = list(lista_noticias.values())	
+	print lista_noticias
+
+
+
 	notas = list(Nota.objects.filter(fecha__gte = last_day).values())
 	notas_result = helper.obtener_notas_loc(request.GET['lon'] ,request.GET['lat'], notas)
 
-	return JsonResponse(notas_result, safe=False)
+	result = {
+		'lista_noticias': lista_noticias,
+		'notas_result': notas_result
+	}
+
+	return JsonResponse(result, safe=False)
 
 
 def nuevo_comentario(request):
@@ -792,8 +824,6 @@ def seguir(request, id):
 	if session_key:
 		r = redis.StrictRedis(host='localhost', port=6379, db=3)
 		mensaje = '{ "seguidor": "' + request.user.username + '", "seguidor_id": ' + str(request.user.id) + ', "session_key":"' + session_key + '"}'
-		
-		print mensaje
 
 		r.publish('nuevo_seguidor', mensaje)
 

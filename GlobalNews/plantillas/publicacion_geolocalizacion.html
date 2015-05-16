@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load tz %}
+{% load humanize %}
+
+{% block contenido %}
+<div class="col-lg-9">
+    <!-- /.panel -->
+    	<div class="row">
+    		<div class="col-xs-5">
+    			<img width="300px" src="{{ MEDIA_URL }}{{ publicacion.imagen }}">
+    		</div>
+    		<div class="col-xs-7">
+    			<strong>Autor: </strong> <a href="/perfil/{{ publicacion.usuario.id }}">{{ publicacion.usuario.username }}</a>
+    			<br><br>
+    			<a href="/lista/nota/seccion/{{ publicacion.subseccion.seccion.id }}"><h4>Noticia de {{ publicacion.subseccion.seccion }}</h4></a>
+
+    			<h3>{{ publicacion.titulo }}</h3>
+          <h4>{{ num_likes }} Me gusta</h4>
+    		</div>
+    	</div>
+    	<br>
+    	<br>
+    	<div class="texto_publicacion">
+        <p align="justify">
+    		  {{ publicacion.descripcion | linebreaks }}
+        </p>
+    	</div>
+      <input type="hidden" id="id-post" value="{{ publicacion.id }}">
+      <input type="hidden" id="id-user" value="{{ user.id }}">
+    	<br>
+      <div id="mapa">
+          <div id="googleMap"></div>
+      </div>
+    	<br>
+    	<br>
+      {% if user.is_authenticated %}
+    	<div class="row">
+    		<div class="col-md-1"><button class="btn btn-success" id="btn-enviar">Enviar</button></div>
+    		<div class="col-md-11"> <textarea class="form-control" placeholder="Comentario" id="comentario"></textarea> </div>
+    	</div>
+    	<br>
+      <div>
+        {% if user != publicacion.usuario %}
+
+          <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#ModalDenunciar">Denunciar</a>
+          <a href="#" class="btn btn-info" data-toggle="modal" data-target="#ModalCompartir">Compartir</a>
+        {% else %}
+          <div id="alert-comentario" class="alert alert-danger" role="alert">¡No puedes enviar un comentario vacio!</div>
+          <button class="btn btn-danger" data-toggle="modal" data-target="#ModalEliminarPost">Eliminar</button>
+          <a href="/editar/nota/{{ publicacion.id }}">Editar</a>
+        {% endif %}
+        {% if like %}
+        <button type="button" class="btn btn-primary btn-lg" id="btn-dislike">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+        </button>    
+        {% else %}
+        <button type="button" class="btn btn-default btn-lg" id="btn-like">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+        </button>   
+        {% endif %}
+        <br>
+        <br>
+      </div>
+      {% endif %}
+
+        <section class="comentarios" id="comentarios">
+          {% for comentario in comentarios %}
+          <div class="media">
+            <a class="media-left media-middle" href="/perfil/{{ comentario.usuario.id }}">
+              <img src="{{ MEDIA_URL }}{{ comentario.usuario.foto }}" width="50">
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">{{ comentario.usuario.username }}</h4>
+              {{ comentario.contenido }} - {{ comentario.fecha | naturaltime }}
+            </div>
+          </div>
+          {% if user == comentario.usuario or user == publicacion.usuario %}
+            <a href="/eliminar/comentario/{{ comentario.id }}">Eliminar</a>
+          {% endif %}
+          {% endfor %}
+          <hr>
+        </section>
+
+    <!-- /.panel -->
+</div>
+<!-- /.col-lg-8 -->
+
+<!-- Modal -->
+<div class="modal fade" id="ModalCompartir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Titulo</h4>
+      </div>
+      <div class="modal-body">
+      <div class="row">
+    		<div class="col-xs-5">
+    			<img src="{{ STATIC_URL }}img/ballena.jpg">
+    		</div>
+    		<div class="col-xs-7">
+    			<strong>Autor: </strong> <a href="/perfil/">Christian</a>
+    			<br><br>
+    			<a class="tag">Politica</a>
+    		</div>
+    	</div>
+    	<br>
+    	<br>
+    	<div class="texto_publicacion">
+    		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">Compartir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalEliminarPost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Eliminar Publicación</h4>
+      </div>
+      <div class="modal-body">
+        <h3>¿Seguro que desea eliminar la publicación?</h3>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <a href="/eliminar/nota/{{ publicacion.id }}" class="btn btn-danger">Eliminar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDenunciar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Reporte: {{ publicacion.titulo }}</h4>
+      </div>
+      <div class="modal-body">
+        <form role="form" method="POST" action="/nuevo_reporte_nota/" enctype="multipart/form-data">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="publicacion_id" value="{{ publicacion.id }}">
+            <br>
+            <br>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Denunciar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
+</script>
+
+<script type="text/javascript">
+
+  var alerta = $('#alert-comentario');
+  var latitud = "{{ publicacion.latitud }}";
+  var longitud = "{{ publicacion.longitud }}";
+
+  alerta.hide();
+  $('#btn-enviar').on('click', function(){
+    var comentario = $('#comentario').val();
+    if (comentario == '') {
+      alerta.fadeIn('slow');
+      setTimeout(function() {
+        alerta.fadeOut('slow');
+      }, 3000);
+    } else {
+      var id_post = $('#id-post').val();
+      var id_user = $('#id-user').val();
+      $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
+        var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><br><br><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div><a href='/eliminar/comentario/"+ data.comentario_id +"'>Eliminar</a><hr>");
+        html.hide();
+        html.prependTo($('#comentarios')).show("slow");
+        $('#comentario').val("");
+      });
+    }
+  });
+
+  $('#comentario').keypress(function(e) {
+    if(e.which == 13) {
+      var comentario = $('#comentario').val();
+      if (comentario == '') {
+        alerta.fadeIn('slow');
+        setTimeout(function() {
+          alerta.fadeOut('slow');
+          $('#comentario').val('');
+        }, 3000);
+      } else {
+        var id_post = $('#id-post').val();
+        var id_user = $('#id-user').val();
+        $.get( "/nuevo/comentario", { comentario: comentario, id_post: id_post, id_usuario: id_user }, function(data){
+          var html = $("<div class='media'><a class='media-left media-middle' href='#'><img src='{{ MEDIA_URL }}" + data.imagen + "' width='50'></a><br><br><div class='media-body'><h4 class='media-heading'>" + data.usuario + "</h4>" + data.contenido + "</div></div><a href='/eliminar/comentario/"+ data.comentario_id +"'>Eliminar</a><hr>");
+          html.hide();
+          html.prependTo($('#comentarios')).show("slow");
+          $('#comentario').val("");
+        });
+      }    
+    }
+  });
+
+
+  $('#btn-like').on('click', function(){
+    var id_post = $('#id-post').val();
+    var id_user = $('#id-user').val();
+    $.get( "/like", { id_post: id_post, id_usuario: id_user, like: false }, function(data){
+      location.replace("/publicacion/" + id_post);
+    });
+  });
+
+  $('#btn-dislike').on('click', function(){
+    var id_post = $('#id-post').val();
+    var id_user = $('#id-user').val();
+    $.get( "/like", { id_post: id_post, id_usuario: id_user, like: true }, function(data){
+      location.replace("/publicacion/" + id_post);
+    });
+  });
+
+  $('#googleMap').height(300);
+    var lat, lon;
+
+    // Obtiene la localizaçión del usuario
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position){
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+                var mapProp = {
+          center:new google.maps.LatLng(lat,lon),
+          zoom:13,
+          mapTypeId:google.maps.MapTypeId.ROADMAP,
+          disableDefaultUI: true
+          };
+          map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+          latitud = latitud.replace(',', '.');
+          longitud = longitud.replace(',', '.');
+
+          var im = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+          var userPos = new google.maps.LatLng(lat,lon);
+          var notaPos = new google.maps.LatLng(Number(latitud), Number(longitud));
+          var userMarker = new google.maps.Marker({
+            position: userPos,
+            map: map,
+            title: 'Mi Ubicación',
+            icon: im
+          });
+
+          var publicacionMarker = new google.maps.Marker({
+            position: notaPos,
+            map: map,
+            title: 'Ubicacion de la nota',
+            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+          });          
+
+          var flightPlanCoordinates = [
+            userPos,
+            notaPos
+          ];
+          var flightPath = new google.maps.Polyline({
+            path: flightPlanCoordinates,
+            title: 'Distancia entre tú y la noticia',
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+          });
+
+          flightPath.setMap(map);
+
+          // Cuando presionas un marcador te envia a la nota
+          google.maps.event.addListener(map, "click", function(data)
+          {
+              latitud = data.latLng.A;
+              longitud = data.latLng.F;
+              deleteMarkers();
+              addMarker(new google.maps.LatLng(latitud,longitud));
+              console.log(data);
+              $('#id_latitud').val(latitud);
+              $('#id_longitud').val(longitud);
+          });
+    });
+  }  
+
+</script>
+
+{% endblock %}

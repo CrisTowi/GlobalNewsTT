@@ -33,6 +33,7 @@ urlpatterns = patterns('',
 
     url(r'perfil/(?P<id>\d+)$', 'Principal.views.perfil', name='perfil'),
     url(r'publicacion/(?P<id>\d+)$', 'Principal.views.publicacion', name='publicacion'),
+    url(r'publicacion/geolocalizacion/(?P<id>\d+)$', 'Principal.views.publicacion_geolocalizacion', name='publicacion_geolocalizacion'),
 
     url(r'lista/nota/$', 'Principal.views.lista_publicaciones', name='lista_publicaciones'),
     url(r'lista/nota/usuario/(?P<id>\d+)$', 'Principal.views.lista_publicaciones_usuario', name='lista_publicaciones_usuario'),
