@@ -672,6 +672,7 @@ def get_puntos(request):
 	last_day = datetime.today() - timedelta(days=1)
 
 	if request.user.is_authenticated():
+		print 'EN ESTA'
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
@@ -681,9 +682,6 @@ def get_puntos(request):
 
 
 	lista_noticias = list(lista_noticias.values())	
-	print lista_noticias
-
-
 
 	notas = list(Nota.objects.filter(fecha__gte = last_day).values())
 	notas_result = helper.obtener_notas_loc(request.GET['lon'] ,request.GET['lat'], notas)

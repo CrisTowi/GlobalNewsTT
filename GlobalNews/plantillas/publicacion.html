@@ -11,8 +11,8 @@
     		</div>
     		<div class="col-xs-7">
     			<strong>Autor: </strong> <a href="/perfil/{{ publicacion.usuario.id }}">{{ publicacion.usuario.username }}</a>
-    			<br><br>
-    			<a href="/lista/nota/seccion/{{ publicacion.subseccion.seccion.id }}"><h4>Noticia de {{ publicacion.subseccion.seccion }}</h4></a>
+          <br><br>
+    			<a href="/lista/nota/seccion/{{ publicacion.subseccion.seccion.id }}"><h4 style="display: inline;">Noticia de {{ publicacion.subseccion.seccion }}</h4></a> - <a href="geolocalizacion/{{ publicacion.id }}"><h4 style="display: inline;">Versión con Mapa</h4></a>
 
     			<h3>{{ publicacion.titulo }}</h3>
           <h4>{{ num_likes }} Me gusta</h4>

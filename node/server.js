@@ -40,21 +40,25 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
                         }
                     }
                 }
-                db.collection('usuarios').geoNear(Number(datos.longitud), Number(datos.latitud), 
-                    {
-                        maxDistance: 0.0005,
-                        spherical: true,
-                        distanceMultiplier: 6371
-                    }, function(err, result) {
-                    if(err) return console.dir(err)
+                db.command({
+                    geoNear: 'usuarios', 
+                    near: {
+                        "type":"Point",
+                        "coordinates":[Number(datos.longitud),Number(datos.latitud)]}, 
+                        spherical: true, 
+                        num: 1000,   
+                        maxDistance: 7000
+                    }, function(err, results){
+                    if(err){
+                        return console.dir(err);
+                    }
+                    else{
+                        results.results.map(function(resultado){
+                            io.to(resultado.obj._id).emit('nueva_publicacion_localizacion', datos);
+                        });
+                    }
+                });
 
-                    result.results.map(function(resultado){
-                        console.dir(resultado.obj.loc.coordinates);
-                        console.dir(Number(datos.longitud));
-                        console.dir(Number(datos.latitud));
-                        io.to(resultado.obj._id).emit('nueva_publicacion_localizacion', datos);
-                    });
-                }); 
                 break;
 
             case 'comentario':
@@ -119,7 +123,6 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
         db.collection('usuarios').insert(doc, function(err, inserted) {
             if(err) throw err;
         });
-        console.log(doc);
 
         //COnfigurar las cookies para comunicarse con Django
         io.set('authorization', function(data, accept){
