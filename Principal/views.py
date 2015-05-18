@@ -354,8 +354,10 @@ def nuevo_reporte_post(request):
 
 def nuevo_reporte_usuario(request):
 
+	print request.POST
+
 	usuario_reportador = request.user
-	usuario_reportado = Usuario.objects.get(id = int(request.POST['usuario_id']))
+	usuario_reportado = Usuario.objects.get(id = int(request.POST['perfil_id']))
 	tipo = request.POST['razon']
 	descripcion = request.POST['descripcion']
 
@@ -787,18 +789,19 @@ def like(request):
 		like.usuario = usuario
 		like.save()
 
-		key_sesion = session_from_usuario(nota.usuario.id)
-		r = redis.StrictRedis(host='localhost', port=6379, db=2)
-		mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
-		r.publish('me_gusta', mensaje)
+		if (nota.usuario.id != request.user.id):
+			key_sesion = session_from_usuario(nota.usuario.id)
+			r = redis.StrictRedis(host='localhost', port=6379, db=2)
+			mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
+			r.publish('me_gusta', mensaje)
 
-		notify.send(
-	            like,
-	            description= usuario.username + ' le ha gustado ' + nota.titulo,
-	            recipient=nota.usuario,
-	            target=nota,
-	            verb= 'nuevo_like'
-	        )
+			notify.send(
+		            like,
+		            description= usuario.username + ' le ha gustado ' + nota.titulo,
+		            recipient=nota.usuario,
+		            target=nota,
+		            verb= 'nuevo_like'
+		        )
 
 	respuesta = {'usuario': usuario.username, 'titulo': nota.titulo}
 	return JsonResponse(respuesta, safe=False)

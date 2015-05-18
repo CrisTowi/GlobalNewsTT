@@ -54,6 +54,7 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
                     }
                     else{
                         results.results.map(function(resultado){
+                            datos.dis = resultado.dis;
                             io.to(resultado.obj._id).emit('nueva_publicacion_localizacion', datos);
                         });
                     }
@@ -70,6 +71,8 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
                 break;
 
             case 'me_gusta':
+                console.log(datos);
+                console.log(usuarios);
                 for(i=0; i<usuarios.length; i++){
                     if(usuarios[i].session_id == datos.session_key){
                         io.to(usuarios[i].socket_id).emit('me_gusta', datos);
@@ -143,7 +146,7 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
         socket.on('nuevo_mensaje_chat', function(data){
 
             valores = querystring.stringify(data);
-
+            console.log(data);
             var options = {
                 host: host,
                 port: 8000,

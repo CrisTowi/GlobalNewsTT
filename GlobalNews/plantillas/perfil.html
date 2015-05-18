@@ -87,7 +87,7 @@
         <h4 class="modal-title" id="myModalLabel">Reportar: {{ perfil.username }}</h4>
       </div>
       <div class="modal-body">
-        <form role="form" method="POST" action="/nuevo_reporte_perfil/" enctype="multipart/form-data">{% csrf_token %}
+        <form role="form" method="POST" action="/nuevo_reporte_usuario/" enctype="multipart/form-data">{% csrf_token %}
             {{ form.as_p }}
             <input type="hidden" name="perfil_id" value="{{ perfil.id }}">
             <br>

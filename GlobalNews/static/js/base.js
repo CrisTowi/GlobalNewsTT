@@ -29,14 +29,13 @@ if (navigator.geolocation) {
             var imagen_local = $(this).data("userfoto");
             var id_chat = "";
 
+            $('#nombre-usuario-chat').html(username_chat);
+            var id_chat = $(this).data("chat");
+
             $.get( "/get/chat/" + id_usuario, function(data){
                 id_chat = data.id;
                 socket.emit('abrir_chat', id_chat);
             });
-
-            $('#nombre-usuario-chat').html(username_chat);
-            var id_chat = $(this).data("chat");
-            socket.emit('abrir_chat', id_chat);
 
 
             var mensaje_entrada = function(objeto){
@@ -307,6 +306,7 @@ if (navigator.geolocation) {
         socket.on('nueva_publicacion_localizacion', function(data){
 
             var ubicacion = '';
+            console.log('Nueva publicacion geolocalizacion')
 
             if(left_right == 1){
                 ubicacion = ' class="timeline-inverted"';
@@ -357,7 +357,7 @@ if (navigator.geolocation) {
                     map: map,
                     icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                     title: data.titulo,
-                    url: '/publicacion/geolocalizacion/' + data.id
+                    url: '/publicacion/geolocalizacion/' + data.id + '?dis=' + (data.dis.toFixed(2))
                     });
                     google.maps.event.addListener(marker1, 'click', function() {
                     window.location.href = this.url;

@@ -25,9 +25,11 @@ def obtener_notas_loc(lng, lat, notas):
 		spherical=True,
 		num=10)
 
+
 	for resultado in result['results']:
 		for nota in notas:
 			if (resultado['obj']['_id'] == nota['id']):
+				nota['dis'] = resultado['dis']
 				notas_result.append(nota)
 
 	print(notas_result)

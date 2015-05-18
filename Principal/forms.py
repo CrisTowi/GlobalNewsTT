@@ -71,7 +71,6 @@ class ReporteUsuarioForm(forms.Form):
     razon  = forms.ChoiceField(label='Razón', choices=RAZON_REPORTE_CHOISE, widget=forms.RadioSelect())
     descripcion = forms.CharField(label='Descripcion',widget=forms.Textarea(attrs={'placeholder': 'Descripcion', 'class':'form-control'}))
 
-
 class NuevoUsuarioForm(forms.Form):
 
     username    = forms.CharField(label='Username', widget=forms.TextInput(attrs={'placeholder': 'Username', 'class':'form-control'}))

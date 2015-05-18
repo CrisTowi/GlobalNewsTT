@@ -32,8 +32,8 @@
                 <td><a href="/publicacion/{{ reporte.nota.id }}">{{ reporte.nota.titulo }}</a></td>
                 <td>{{ reporte.descripcion }}</td>
                 <td><a id="abrir_eliminar" class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
-                <td><a class="glyphicon glyphicon-edit" data-toggle="modal" data-target="#ModalDenunciar" href="#"></a></td>
-            </tr>              
+                <td><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
@@ -73,35 +73,33 @@
 <!-- /.col-lg-8 -->
 
 <!-- Modal -->
-<div class="modal fade" id="ModalDenunciar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="ModalMD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Titulo</h4>
+        <h4 class="modal-title" id="myModalLabel">Mensajes con: <span id="nombre-usuario-chat"></span></h4>
       </div>
       <div class="modal-body">
-                <form role="form">
-                    <div class="form-group">
-                        <label>Titulo del Reporte</label>
-                        <input class="form-control" placeholder="Titulo">
-                        <p class="help-block">Ejemplo: Noticia Falsa</p>
-                    </div>
-                    <div class="form-group">
-                        <label>Texto</label>
-                        <textarea class="form-control" rows="10"></textarea>
-                        <p class="help-block">La explicación para dar de baja.</p>
-                    </div>
-                    <br>
-                </form>
+        <ul class="chat" id="chat">
+        </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">Contactar</button>
+        <div class="row">
+            <div class="col-md-2">
+                <button class="btn btn-success" id="btn-enviar">Enviar</button>
+            </div>
+            <div class="col-md-10">
+                <input type="text" id="mensaje" class="form-control" placeholder="Mensaje...">
+            </div>
+        </div>
       </div>
+      <div id="alerta-mensaje" class="alert alert-danger" role="alert">¡No puedes enviar un mensaje vacio!</div>
     </div>
   </div>
 </div>
+<input type="hidden" id="input_usuario" value="{{ user.id }}"></input>
+<input type="hidden" id="media_url" value="{{ MEDIA_URL }}"></input>
 
 {% endblock %}
 
