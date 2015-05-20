@@ -642,6 +642,13 @@ def logout_usuario(request):
 
 
 #Ajax
+
+def lista_seguidores_ajax(request, id):
+	lista_seguidores = list(UsuarioSigueUsuario.objects.filter(usuario_seguido = id).values())
+
+	return JsonResponse(lista_seguidores, safe=False)
+
+
 def get_chat(request):
 	usuario = request.GET.get('usuario_consultor', None)
 	usuario_chat = request.GET.get('usuario_chat', None)

@@ -76,6 +76,8 @@ urlpatterns = patterns('',
 
     url(r'nuevo/mensaje/$', 'Principal.views.nuevo_mensaje', name='nuevo_mensaje'),
     url(r'eliminar/mensaje/$', 'Principal.views.eliminar_mensaje', name='eliminar_mensaje'),
+    url(r'lista/seguidores/ajax/(?P<id>\d+)$', 'Principal.views.lista_seguidores_ajax', name='lista_seguidores_ajax'),
+
 
     #Seguir y dejar de Seguir
     url(r'unfollow/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),
