@@ -27,11 +27,12 @@ class NotaSerializer(serializers.ModelSerializer):
     subseccion = serializers.ReadOnlyField(source='subseccion.id')
     likes = serializers.ReadOnlyField(source='get_likes')
     comentarios = serializers.ReadOnlyField(source='get_comentarios')
+    imagen_usuario = serializers.ReadOnlyField(source='get_imagen_usuario')
     
     class Meta:
         model = Nota
         fields = ('id','usuario','seccion','subseccion','titulo','descripcion','imagen',
-                            'fecha','longitud','latitud','likes','privacidad','comentarios', )
+                            'fecha','longitud','latitud','likes','privacidad','comentarios','imagen_usuario' )
 
 class ComentarioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

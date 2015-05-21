@@ -91,6 +91,12 @@ class Nota(models.Model):
 		likes = LikeNota.objects.filter(nota = self).values('id', 'usuario')
 
 		return likes
+
+	def get_imagen_usuario(self):
+		imagen = str(self.usuario.foto)
+
+		return imagen
+
 	def __unicode__(self):
 		return self.titulo
 
