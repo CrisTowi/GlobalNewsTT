@@ -33,6 +33,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import Principal.helper as helper
 
+from django.db.models import Count
+
+MAX_REPORTES = 5
+
+
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
 	for sesion in sesiones:
@@ -80,7 +85,7 @@ class SubseccionViewSet(viewsets.ModelViewSet):
 
 #Listas
 def lista_reportes(request):
-	reportes = ReporteNota.objects.all()
+	reportes = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -95,7 +100,7 @@ def lista_reportes(request):
 	return render(request, 'reportes.html', ctx)
 
 def lista_reportes_usuario(request):
-	reportes = ReporteUsuario.objects.all()
+	reportes = list(ReporteUsuario.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -335,7 +340,6 @@ def publicacion_geolocalizacion(request, id):
 
 #Formularios
 def nuevo_reporte_post(request):
-
 	usuario = request.user
 	nota = Nota.objects.get(id = int(request.POST['publicacion_id']))
 	tipo = request.POST['razon']
@@ -348,6 +352,11 @@ def nuevo_reporte_post(request):
 	reporte_nota.descripcion = descripcion
 
 	reporte_nota.save()
+
+	num_reportes = ReporteNota.objects.filter(nota = nota).count()
+
+	if (num_reportes >= MAX_REPORTES):
+		print ('Muy reportado')
 
 	return HttpResponseRedirect('/')
 
@@ -846,7 +855,6 @@ def seguir(request, id):
 	    )
 	
 	return HttpResponseRedirect('/perfil/' + str(id))
-
 
 def seguir_seccion(request, id):
 	usuario = request.user
