@@ -34,6 +34,7 @@ def notificaciones_processor(request):
 	ctx = {}
 	if request.user.is_authenticated():
 		notificaciones= Notification.objects.filter(recipient = request.user).unread()[:5]
+		print notificaciones.count()
 		ctx = {'notificaciones': notificaciones}
 	return ctx 	
 

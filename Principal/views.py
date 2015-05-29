@@ -35,8 +35,7 @@ import Principal.helper as helper
 
 from django.db.models import Count
 
-MAX_REPORTES = 5
-
+MAX_REPORTES = 1
 
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
@@ -353,30 +352,37 @@ def nuevo_reporte_post(request):
 
 	reporte_nota.save()
 
-	num_reportes = ReporteNota.objects.filter(nota = nota).count()
-
-	if (num_reportes >= MAX_REPORTES):
-		print ('Muy reportado')
-
 	return HttpResponseRedirect('/')
 
 
 def nuevo_reporte_usuario(request):
-
-	print request.POST
-
 	usuario_reportador = request.user
 	usuario_reportado = Usuario.objects.get(id = int(request.POST['perfil_id']))
 	tipo = request.POST['razon']
 	descripcion = request.POST['descripcion']
 
-	reporte_usaurio = ReporteUsuario()
-	reporte_usaurio.usuario_reportador = usuario_reportador
-	reporte_usaurio.usuario_reportado = usuario_reportado
-	reporte_usaurio.tipo = tipo
-	reporte_usaurio.descripcion = descripcion
+	reporte_usuario = ReporteUsuario()
+	reporte_usuario.usuario_reportador = usuario_reportador
+	reporte_usuario.usuario_reportado = usuario_reportado
+	reporte_usuario.tipo = tipo
+	reporte_usuario.descripcion = descripcion
 
-	reporte_usaurio.save()
+	reporte_usuario.save()
+	num_reportes = ReporteUsuario.objects.filter(usuario_reportado = usuario_reportado).count()
+	key_sesion = session_from_usuario(usuario_reportado.id)
+
+	if (num_reportes >= MAX_REPORTES):
+		r = redis.StrictRedis(host='localhost', port=6379, db=0)
+		r.publish('usuario_reportado', '{"session_key": "' + key_sesion + '" }')
+
+		notify.send(
+	            reporte_usuario,
+	            description= reporte_usuario.usuario_reportado.username + ' ha sido reportado mas de '+str(MAX_REPORTES)+' veces ',
+	            recipient=reporte_usuario.usuario_reportado,
+	            target=reporte_usuario.usuario_reportador,
+	            verb= 'usuario_reportado'
+	        )
+
 
 	return HttpResponseRedirect('/')
 
@@ -690,7 +696,6 @@ def get_puntos(request):
 	last_day = datetime.today() - timedelta(days=1)
 
 	if request.user.is_authenticated():
-		print 'EN ESTA'
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)

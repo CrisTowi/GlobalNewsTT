@@ -114,7 +114,6 @@
                     </a>
                     <ul class="dropdown-menu dropdown-alerts">
                         {% for notificacion in notificaciones %}
-                        
                         {% if notificacion.verb == 'nuevo_comentario' %}
                         <li>
                             <a href="/publicacion/{{ notificacion.target.id }}">
@@ -138,6 +137,15 @@
                             <a href="/perfil/{{notificacion.target.id}}">
                                 <div>
                                     <i class="glyphicon glyphicon-ok-circle"></i> {{ notificacion.target.username }} te ha segido
+                                    <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
+                                </div>
+                            </a>
+                        </li>
+                        {% elif notificacion.verb == 'usuario_reportado' %}
+                        <li>
+                            <a href="/perfil/{{notificacion.target.id}}">
+                                <div>
+                                    <i class="glyphicon glyphicon-eye-open"></i> Haz sidoo reportado y estas en proceso de valoración
                                     <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
                                 </div>
                             </a>

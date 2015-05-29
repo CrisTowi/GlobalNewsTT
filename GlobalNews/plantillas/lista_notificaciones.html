@@ -55,6 +55,22 @@
 	        {% endif %}
 		     </div>
 	    </div>
+		{% elif notificacion.verb == 'usuario_reportado' %}
+	    <div class="panel panel-danger">
+	      <div class="panel-heading">
+	        <h3 class="panel-title">Haz sido reportado y estas en proceso de valoración</h3>
+	      </div>
+		    <div class="panel-body">
+					<a href="/publicacion/{{ notificacion.target.id }}">
+			        {{ notificacion.description }} - {{ notificacion.timestamp | naturaltime }} 
+	    		</a>
+	        {% if notificacion.unread == True %}
+	    			<p style="float: right;"><a href="leer/notificacion/{{ notificacion.id }}">No Leido</a>&nbsp;&nbsp;&nbsp;<a href="/eliminar/notificacion/{{ notificacion.id }}">Eliminar</a></p>
+	        {% else %}
+	    			<p style="float: right;">Leido &nbsp;&nbsp;&nbsp;<a href="/eliminar/notificacion/{{ notificacion.id }}">Eliminar</a></p>
+	        {% endif %}
+		     </div>
+	    </div>
 		{% endif %}
 	{% endfor %}
 
