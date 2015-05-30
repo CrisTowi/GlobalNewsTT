@@ -143,9 +143,18 @@
                         </li>
                         {% elif notificacion.verb == 'usuario_reportado' %}
                         <li>
-                            <a href="/perfil/{{notificacion.target.id}}">
+                            <a href="/lista/notificaciones">
                                 <div>
                                     <i class="glyphicon glyphicon-eye-open"></i> Haz sidoo reportado y estas en proceso de valoración
+                                    <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
+                                </div>
+                            </a>
+                        </li>
+                        {% elif notificacion.verb == 'nota_reportada' %}
+                        <li>
+                            <a href="/publicacion/{{notificacion.target.id}}">
+                                <div>
+                                    <i class="glyphicon glyphicon-eye-open"></i> Tu nota ha sido reportada y estas en proceso de valoración
                                     <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
                                 </div>
                             </a>

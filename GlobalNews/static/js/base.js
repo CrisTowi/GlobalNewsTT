@@ -263,8 +263,26 @@ if (navigator.geolocation) {
                 window.location.href = '/lista/notificaciones'
             });
         });
-        
 
+        socket.on('nota_reportada', function(data){
+            var n = noty({
+                text: '<span class="texto_noty_reportado">La nota '+ data.nota +' sido reportado varias veces. Revisa tu contenido </span>',
+                layout: 'bottomRight',
+                type: 'error',
+                timeout: 3500,
+                callback: { onClose: function() { /* Go to the URL i want to go */ }},
+                animation: {
+                    open: {height: 'toggle'}, // jQuery animate function property object
+                    close: {height: 'toggle'}, // jQuery animate function property object
+                    easing: 'swing', // easing
+                    speed: 500 // opening & closing animation speed
+                }
+            });
+            $('.texto_noty_reportado').on('click', function(){
+                window.location.href = '/publicacion/' + nota_id
+            });
+        });        
+        
         socket.on('nueva_publicacion', function(data){
 
             var ubicacion = '';

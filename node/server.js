@@ -23,6 +23,7 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
     sub.subscribe('nuevo_seguidor');
     sub.subscribe('me_gusta');
     sub.subscribe('usuario_reportado');
+    sub.subscribe('nota_reportada');
 
     //Funcion que maneja cada evento enviado desde Django
     var recibeMensaje = function(channel, message){
@@ -92,6 +93,14 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
                     if(usuarios[i].session_id == datos.session_key){
                         console.log(usuarios[i].socket_id);
                         io.to(usuarios[i].socket_id).emit('usuario_reportado', datos);
+                    }
+                }
+                break;
+
+            case 'nota_reportada':
+                for(i=0; i<usuarios.length; i++){
+                    if(usuarios[i].session_id == datos.session_key){
+                        io.to(usuarios[i].socket_id).emit('nota_reportada', datos);
                     }
                 }
                 break;

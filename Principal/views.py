@@ -351,6 +351,21 @@ def nuevo_reporte_post(request):
 	reporte_nota.descripcion = descripcion
 
 	reporte_nota.save()
+	num_reportes = ReporteNota.objects.filter(nota = nota).count()
+	key_sesion = session_from_usuario(nota.usuario.id)
+
+	if (num_reportes >= MAX_REPORTES):
+		r = redis.StrictRedis(host='localhost', port=6379, db=0)
+		r.publish('nota_reportada', '{"session_key": "' + key_sesion + '", "nota_id": "' +str(nota.id)+ '", "nota": "'+ nota.titulo +'" }')
+
+		notify.send(
+	            reporte_nota,
+	            description= str(nota) + ' ha sido reportada mas de '+str(MAX_REPORTES)+' veces ',
+	            recipient=nota.usuario,
+	            target=nota,
+	            verb= 'nota_reportada'
+	        )
+
 
 	return HttpResponseRedirect('/')
 
