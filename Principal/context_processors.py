@@ -1,8 +1,8 @@
-from Principal.models import Seccion, Nota, UsuarioSigueUsuario, Chat, ReporteUsuario, ReporteNota, Usuario
+from Principal.models import Seccion, Nota, UsuarioSigueUsuario, Chat, ReporteUsuario, ReporteNota, Usuario, LikeNota
 from django.db.models import Q
 
 from notifications.models import Notification
-
+from datetime import datetime, timedelta
 
 def secciones_processor(request):
 	secciones = Seccion.objects.all()
@@ -20,8 +20,16 @@ def seguidores_siguiendo_publicaciones_processor(request):
 	return {'num_notas': num_notas, 'num_siguiendo': num_siguiendo, 'num_seguidores': num_seguidores}
 
 def novedades_processor(request):
-	novedades = Nota.objects.all().order_by('-fecha')[:4]
+	last_day = datetime.today() - timedelta(days=1)	
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	lista_likes = []
 
+
+	for publicacion in novedades:
+		num_likes = LikeNota.objects.filter(nota = publicacion).count()
+		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
+
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
 	return {'novedades': novedades}
 
 def mensajes_directos_processor(request):

@@ -8,7 +8,7 @@ from Principal.models import Subseccion, Nota
 from models import Usuario
 User = get_user_model()
 
-PRIVACIDAD_CHOISE = [('publico','Publico'),
+PRIVACIDAD_CHOISE = [('publico','Público'),
         ('privado','Privado')]
 
 

@@ -145,7 +145,7 @@
                         <li>
                             <a href="/lista/notificaciones">
                                 <div>
-                                    <i class="glyphicon glyphicon-eye-open"></i> Haz sidoo reportado y estas en proceso de valoración
+                                    <i class="glyphicon glyphicon-eye-open"></i> Haz sido reportado y estas en proceso de valoración
                                     <span class="pull-right text-muted small">{{notificacion.timestamp | naturaltime}}</span>
                                 </div>
                             </a>
@@ -301,19 +301,19 @@
                                     <span class="chat-img pull-left">           
                                 {% endif %}
                                 
-                                        <img src="{{ MEDIA_URL }}{{ nota.imagen }}" width="50px" alt="User Avatar" class="img-circle" />
+                                        <img src="{{ MEDIA_URL }}{{ nota.nota.imagen }}" width="50px" alt="User Avatar" class="img-circle" />
                                     </span>
                                     <div class="chat-body clearfix">
                                         <div class="header">
-                                            <a href="/publicacion/{{ nota.id }}">
-                                            <strong class="primary-font">{{ nota.titulo }}</strong> 
+                                            <a href="/publicacion/{{ nota.nota.id }}">
+                                            <strong class="primary-font">{{ nota.nota.titulo }}</strong> 
                                             </a>
                                             <small class="pull-right text-muted">
-                                                <i class="fa fa-clock-o fa-fw"></i> {{ nota.fecha|naturaltime|capfirst }}
+                                                <i class="fa fa-clock-o fa-fw"></i> {{ nota.nota.fecha|naturaltime|capfirst }}
                                             </small>
                                         </div>
                                         <p>
-                                            {{ nota.descripcion|slice:":50"|add:" ..." }}
+                                            {{ nota.nota.descripcion|slice:":50"|add:" ..." }}
                                         </p>
                                     </div>
                                 </li>                               
