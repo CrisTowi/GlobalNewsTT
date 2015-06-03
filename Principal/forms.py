@@ -15,11 +15,13 @@ PRIVACIDAD_CHOISE = [('publico','Público'),
 RAZON_REPORTE_CHOISE =  [('agresivo', 'Agresivo'),
         ('contenido_inapropiado', 'Contenido Inapropiado')]
 
+def hasNumbers(inputString):
+    return any(char.isdigit() for char in inputString)
+
 class CrearUsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Verifica contraseña", widget=forms.PasswordInput)
     imagen    = forms.ImageField(label='Imagen', required=False)
-
 
     class Meta:
         model = Usuario
@@ -93,6 +95,13 @@ class NuevoUsuarioForm(forms.Form):
             raise forms.ValidationError('Los dos passwords deben ser iguales')
         return password2
 
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get("nombre")
+        if hasNumbers(nombre):
+            raise forms.ValidationError("No puedes poner números en el nombre")
+        else:
+            return nombre
+
 class EditarUsuarioForm(forms.Form):
 
     username    = forms.CharField(label='Username', widget=forms.TextInput(attrs={'placeholder': 'Username', 'class':'form-control'}))
@@ -117,5 +126,3 @@ class LoginForm(forms.Form):
 
     username  = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Username', 'class':'form-control'}))
     password  = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class':'form-control'}))
-
-
