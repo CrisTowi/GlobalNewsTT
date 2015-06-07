@@ -488,16 +488,6 @@ def nuevo_post_movil(request):
 
 	return JsonResponse(respuesta, safe=False)
 
-def ver_usuario(request, username):
-	usuarios = Usuario.objects.filter(username = username)
-	if (usuarios):
-		usuario = usuarios.get()
-		respuesta = {'username': usuario.username, 'nombre': usuario.nombre,'apellidos': usuario.ap_paterno + ' ' + usuario.ap_materno, 'foto': str(usuario.foto)}
-	else:
-		respuesta = {'mensaje': 'El usuario no existe'}
-
-	return JsonResponse(respuesta, safe=False)
-
 
 def nuevo_usuario(request):
 	ctx = {}
@@ -673,11 +663,45 @@ def logout_usuario(request):
 
 #Ajax
 
+def ver_usuario(request, username):
+	usuarios = Usuario.objects.filter(username = username)
+	if (usuarios):
+		usuario = usuarios.get()
+		respuesta = {'id_usuario': usuario.id,'username': usuario.username, 'nombre': usuario.nombre,'apellidos': usuario.ap_paterno + ' ' + usuario.ap_materno, 'foto': str(usuario.foto)}
+	else:
+		respuesta = {'mensaje': 'El usuario no existe'}
+
+	return JsonResponse(respuesta, safe=False)
+
+
+@csrf_exempt
+def lista_notas_usuarios_ajax(request, username):
+	usuarios = Usuario.objects.filter(username = username)
+	if (usuarios):
+		usuario = usuarios.get()
+		respuesta = list(Nota.objects.filter(usuario=usuario).order_by('-fecha').values())
+	else:
+		respuesta = {'mensaje': 'El usuario no existe'}
+
+	return JsonResponse(respuesta, safe=False)
+
+@csrf_exempt
+def lista_notas_seccion_ajax(request, id):
+	seccion = Seccion.objects.get(id = id)
+	subseccion = Subseccion.objects.filter(seccion = seccion)
+
+	respuesta = list(Nota.objects.filter(subseccion=subseccion).order_by('-fecha').values())
+	return JsonResponse(respuesta, safe=False)
+
 def lista_seguidores_ajax(request, id):
 	lista_seguidores = list(UsuarioSigueUsuario.objects.filter(usuario_seguido = id).values())
 
 	return JsonResponse(lista_seguidores, safe=False)
 
+def lista_seguidos_ajax(request, id):
+	lista_seguidos = list(UsuarioSigueUsuario.objects.filter(usuario_seguidor = id).values())
+
+	return JsonResponse(lista_seguidos, safe=False)	
 
 def get_chat(request):
 	usuario = request.GET.get('usuario_consultor', None)

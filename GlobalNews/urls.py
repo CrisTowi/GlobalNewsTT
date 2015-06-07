@@ -77,7 +77,11 @@ urlpatterns = patterns('',
     url(r'nuevo/mensaje/$', 'Principal.views.nuevo_mensaje', name='nuevo_mensaje'),
     url(r'eliminar/mensaje/$', 'Principal.views.eliminar_mensaje', name='eliminar_mensaje'),
     url(r'lista/seguidores/ajax/(?P<id>\d+)$', 'Principal.views.lista_seguidores_ajax', name='lista_seguidores_ajax'),
+    url(r'lista/seguidos/ajax/(?P<id>\d+)$', 'Principal.views.lista_seguidos_ajax', name='lista_seguidos_ajax'),
 
+    url(r'lista/notas/usuario/ajax/(?P<username>\w+)/$', 'Principal.views.lista_notas_usuarios_ajax', name='lista_notas_usuarios_ajax'),
+
+    url(r'lista/notas/seccion/ajax/(?P<id>\d+)$', 'Principal.views.lista_notas_seccion_ajax', name='lista_notas_seccion_ajax'),
 
     #Seguir y dejar de Seguir
     url(r'unfollow/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),
