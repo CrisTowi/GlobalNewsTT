@@ -72,7 +72,7 @@ WSGI_APPLICATION = 'GlobalNews.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-#DATABASES = {
+DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': 'db',                      # Or path to database file if using sqlite3.
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'GlobalNews.wsgi.application'
 #         'HOST': '',                
 #         'PORT': '',
 #     }
-#}
+}
 
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
