@@ -356,7 +356,7 @@ def nuevo_reporte_post(request):
 
 	if (num_reportes >= MAX_REPORTES):
 		r = redis.StrictRedis(host='localhost', port=6379, db=0)
-		r.publish('nota_reportada', '{"session_key": "' + key_sesion + '", "nota_id": "' +str(nota.id)+ '", "nota": "'+ nota.titulo +'" }')
+		r.publish('nota_reportada', '{"session_key": "' + str(key_sesion) + '", "nota_id": "' +str(nota.id)+ '", "nota": "'+ nota.titulo +'" }')
 
 		notify.send(
 	            reporte_nota,
@@ -388,7 +388,7 @@ def nuevo_reporte_usuario(request):
 
 	if (num_reportes >= MAX_REPORTES):
 		r = redis.StrictRedis(host='localhost', port=6379, db=0)
-		r.publish('usuario_reportado', '{"session_key": "' + key_sesion + '" }')
+		r.publish('usuario_reportado', '{"session_key": "' + str(key_sesion) + '" }')
 
 		notify.send(
 	            reporte_usuario,
@@ -661,8 +661,23 @@ def logout_usuario(request):
 	return HttpResponseRedirect('/login/')
 
 
-#Ajax
+def encuentra_nota(request):
+	palabra = request.GET['q']
+	lista_noticias = Nota.objects.filter(Q(descripcion__contains=palabra) | Q(titulo__contains=palabra) | Q(titulo__contains=palabra)).order_by('-id')
 
+	paginator = Paginator(lista_noticias, 6)
+ 	page = request.GET.get('page')
+ 	try:
+		noticias = paginator.page(page)
+ 	except PageNotAnInteger:
+		noticias = paginator.page(1)
+	except EmptyPage:
+		noticias = paginator.page(paginator.num_pages)
+
+	ctx = {'noticias': noticias}
+	return render(request, 'index.html', ctx)
+
+#Ajax
 def ver_usuario(request, username):
 	usuarios = Usuario.objects.filter(username = username)
 	if (usuarios):
@@ -776,7 +791,7 @@ def nuevo_comentario(request):
 
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=2)
-	mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + comentario.usuario.username + '", "contenido": "' + comentario.contenido + '", "nota_id": ' + str(comentario.nota.id) + ', "nota": "' + comentario.nota.titulo + '", "fecha": "' + naturaltime(comentario.fecha) + '" }'
+	mensaje = '{ "session_key": "' + str(key_sesion) + '", "usuario": "' + comentario.usuario.username + '", "contenido": "' + comentario.contenido + '", "nota_id": ' + str(comentario.nota.id) + ', "nota": "' + comentario.nota.titulo + '", "fecha": "' + naturaltime(comentario.fecha) + '" }'
 	r.publish('comentario', mensaje)
 
 	if (request.user != nota.usuario):
@@ -852,7 +867,7 @@ def like(request):
 		if (nota.usuario.id != request.user.id):
 			key_sesion = session_from_usuario(nota.usuario.id)
 			r = redis.StrictRedis(host='localhost', port=6379, db=2)
-			mensaje = '{ "session_key": "' + key_sesion + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
+			mensaje = '{ "session_key": "' + str(key_sesion) + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
 			r.publish('me_gusta', mensaje)
 
 			notify.send(
@@ -920,7 +935,7 @@ def dejar_de_seguir_seccion(request, id):
 
 	return HttpResponseRedirect('/lista/nota/seccion/' + str(id))
 
-
+#Administracion
 def dar_de_baja_nota(request, id):
 	nota = Nota.objects.get(id = id)
 	nota.delete()

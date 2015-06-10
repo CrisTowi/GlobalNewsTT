@@ -65,6 +65,8 @@ urlpatterns = patterns('',
     url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root': settings.STATIC_ROOT}),
 
 
+    url(r'busca/nota/$', 'Principal.views.encuentra_nota', name='encuentra_nota'),
+
     #Vistas en AJAX
     url(r'chat/$', 'Principal.views.get_chat', name='get_chat'),
     url(r'puntos/$', 'Principal.views.get_puntos', name='get_puntos'),
@@ -103,5 +105,6 @@ urlpatterns = patterns('',
 
     #Administracion
     url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),
+    url(r'dardebaja/usuario/(?P<id>\d+)$', 'Principal.views.dar_de_baja_usuario', name='dar_de_baja_usuario'),
 
 )

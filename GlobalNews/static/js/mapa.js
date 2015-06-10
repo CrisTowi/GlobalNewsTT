@@ -37,8 +37,6 @@ function initialize(){
 
               }
 
-              console.log(data.notas_result);
-
               for(i=0; i<data.notas_result.length; i++){
                 var marker1 = new google.maps.Marker({
                 position: new google.maps.LatLng(data.notas_result[i].latitud,data.notas_result[i].longitud),

@@ -345,7 +345,6 @@ if (navigator.geolocation) {
         socket.on('nueva_publicacion_localizacion', function(data){
 
             var ubicacion = '';
-            console.log('Nueva publicacion geolocalizacion')
 
             if(left_right == 1){
                 ubicacion = ' class="timeline-inverted"';

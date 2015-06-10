@@ -62,7 +62,6 @@
             <h4>¿Deseas dar de baja esta noticia?</h4>
         </div>
       </div>
-      <input type="hidden" id="id_nota_dar_de_baja">
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         <a id="btn-dardebaja" href="#" class="btn btn-danger">Dar de baja</a>
@@ -110,7 +109,6 @@
     $('#abrir_eliminar').on('click', function(e){
       e.preventDefault();
       var id_nota = $(this).data('id');
-      $('#id_nota_dar_de_baja').val(id_nota);
 
       $('#btn-dardebaja').attr('href', '/dardebaja/nota/' + id_nota);
 

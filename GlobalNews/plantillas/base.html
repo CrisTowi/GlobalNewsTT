@@ -205,17 +205,19 @@
         <nav class="navbar-default navbar-static-side col-lg-1" role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav" id="side-menu">
+                    <form action="/busca/nota/" method="GET">
                     <li class="sidebar-search">
                         <div class="input-group custom-search-form">
-                            <input type="text" class="form-control" placeholder="Buscar...">
+                            <input type="text" name="q" class="form-control" placeholder="Buscar...">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
+                                <button class="btn btn-default" type="submit">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
                         </div>
                         <!-- /input-group -->
                     </li>
+                    </form>
                     {% if user.is_authenticated %}
                     <li>
                         <a href="#"><i class=""></i> Publicaciones<span class="fa arrow"></span></a>

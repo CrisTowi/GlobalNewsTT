@@ -21,7 +21,6 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Reporte</th>
-                <th>Estado</th>
                 <th>Eliminar</th>
                 <th>Contactar</th>
             </tr>
@@ -32,8 +31,7 @@
                 <td>{{ reporte.usuario_reportado.id }}</td>
                 <td><a href="/perfil/{{ reporte.usuario_reportado.id }}">{{ reporte.usuario_reportado.username }}</a></td>
                 <td>{{ reporte.descripcion }}</td>
-                <td><a class="glyphicon glyphicon-minus" href="#"></a></td>
-                <td><a class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" href="#"></a></td>
+                <td><a class="glyphicon glyphicon-trash" id="abrir_eliminar" data-toggle="modal" data-id="{{ reporte.usuario_reportado.id }}" data-target="#myModal" href="#"></a></td>
                 <td>
                   <a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica" data-usuario="{{ reporte.usuario_reportado.id }}" data-imagen="{{ reporte.usuario_reportado.foto }}" data-username="{{ reporte.usuario_reportado.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a>
 
@@ -64,12 +62,12 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <h4>¿Deseas dar de baja esta noticia?</h4>
+            <h4>¿Deseas dar de baja a este usuario?</h4>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-danger">Dar de baja</button>
+        <a id="btn-dardebaja" href="#" class="btn btn-danger">Dar de baja</a>
       </div>
     </div>
   </div>
@@ -139,4 +137,20 @@
 
 <input type="hidden" id="input_usuario" value="{{ user.id }}"></input>
 <input type="hidden" id="media_url" value="{{ MEDIA_URL }}"></input>
+{% endblock %}
+
+{% block js %}
+  
+  <script type="text/javascript">
+
+    $('#abrir_eliminar').on('click', function(e){
+      e.preventDefault();
+      var id_usuario = $(this).data('id');
+
+      $('#btn-dardebaja').attr('href', '/dardebaja/usuario/' + id_usuario);
+
+    });  
+
+  </script>
+
 {% endblock %}

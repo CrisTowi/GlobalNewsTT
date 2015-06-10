@@ -42,7 +42,6 @@ def notificaciones_processor(request):
 	ctx = {}
 	if request.user.is_authenticated():
 		notificaciones= Notification.objects.filter(recipient = request.user).unread()[:5]
-		print notificaciones.count()
 		ctx = {'notificaciones': notificaciones}
 	return ctx 	
 
@@ -54,7 +53,5 @@ def usuarios_populares_processor(request):
 def reportes(request):
 	reportes_usuario = ReporteUsuario.objects.all().order_by('-id')[:2]
 	reportes_nota = ReporteNota.objects.all().order_by('-id')[:2]
-
-	print reportes_nota
 
 	return {'reportes_usuario_cp': reportes_usuario, 'reportes_nota_cp': reportes_nota}
