@@ -1,4 +1,4 @@
-from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario, Comentario, UsuarioSigueSeccion, Subseccion
+from Principal.models import Usuario, Nota, ReporteUsuario, ReporteNota, Seccion, UsuarioSigueUsuario, Comentario, UsuarioSigueSeccion, Subseccion, Chat, MensajeDirecto
 from rest_framework import serializers
 
 
@@ -54,3 +54,10 @@ class SeccionSerializer(serializers.HyperlinkedModelSerializer):
         model = Seccion
         fields = ('url','nombre','imagen',)
 
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+
+class MensajeDirectoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MensajeDirecto

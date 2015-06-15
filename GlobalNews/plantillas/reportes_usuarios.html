@@ -134,7 +134,44 @@
     </div>
   </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="ModalPendientes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">¡Tienes reportes que tienen más de 1 semana!</h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Reporte</th>
+                    <th>Eliminar</th>
+                    <th>Contactar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reporte in reportes_pasados %}
+                <tr>
+                    <td>{{ reporte.usuario_reportado.id }}</td>
+                    <td><a href="/perfil/{{ reporte.usuario_reportado.id }}">{{ reporte.usuario_reportado.username }}</a></td>
+                    <td>{{ reporte.descripcion }}</td>
+                    <td><a class="glyphicon glyphicon-trash" id="abrir_eliminar" data-toggle="modal" data-id="{{ reporte.usuario_reportado.id }}" data-target="#myModal" href="#"></a></td>
+                    <td>
+                      <a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica-inicio" data-usuario="{{ reporte.usuario_reportado.id }}" data-imagen="{{ reporte.usuario_reportado.foto }}" data-username="{{ reporte.usuario_reportado.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a>
 
+                    </td>
+                </tr>    
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 <input type="hidden" id="input_usuario" value="{{ user.id }}"></input>
 <input type="hidden" id="media_url" value="{{ MEDIA_URL }}"></input>
 {% endblock %}
@@ -142,14 +179,36 @@
 {% block js %}
   
   <script type="text/javascript">
+    var cerrado = false;
+
+    if (('{{reportes_pasados}}').length > 2){
+      $('#ModalPendientes').modal('show'); 
+    }
 
     $('#abrir_eliminar').on('click', function(e){
       e.preventDefault();
       var id_usuario = $(this).data('id');
-
+      $('#ModalPendientes').modal('hide'); 
       $('#btn-dardebaja').attr('href', '/dardebaja/usuario/' + id_usuario);
 
-    });  
+    });
+
+    $('#ModalPendientes').on('hide.bs.modal', function () {
+      cerrado = true;
+    })    
+
+    $('#btn-abre-platica-inicio').on('click', function(e){
+      e.preventDefault();
+      console.log('Cerrado');
+      $('#ModalPendientes').modal('hide'); 
+      cerrado = false;
+    });
+    
+    $('#ModalMD').on('hide.bs.modal', function () {
+      if (!cerrado) {
+        $('#ModalPendientes').modal('show'); 
+      }
+    })
 
   </script>
 

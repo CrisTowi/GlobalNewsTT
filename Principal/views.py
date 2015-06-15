@@ -7,7 +7,7 @@ from Principal.models import Chat,Usuario,Nota,ReporteUsuario,ReporteNota,Seccio
 from notifications.models import Notification
 
 from rest_framework import viewsets
-from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer,UsuarioSigueUsuarioSerializer,ComentarioSerializer, UsuarioSigueSeccionSerializer, SubseccionSerializer
+from Principal.serializers import UsuarioSerializer,NotaSerializer,ReporteUsuarioSerializer,ReporteNotaSerializer,SeccionSerializer,UsuarioSigueUsuarioSerializer,ComentarioSerializer, UsuarioSigueSeccionSerializer, SubseccionSerializer, ChatSerializer, MensajeDirectoSerializer
 
 from Principal.forms import NuevaNotaForm, NuevoUsuarioForm, LoginForm, EditarUsuarioForm, ReporteNotaForm, ReporteUsuarioForm
 
@@ -35,7 +35,8 @@ import Principal.helper as helper
 
 from django.db.models import Count
 
-MAX_REPORTES = 1
+MAX_REPORTES = 5
+CADUCA_REPORTES = 7
 
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
@@ -69,7 +70,6 @@ class UsuarioSigueUsuarioViewSet(viewsets.ModelViewSet):
 	queryset = UsuarioSigueUsuario.objects.all()
 	serializer_class = UsuarioSigueUsuarioSerializer
 
-
 class UsuarioSigueSeccionViewSet(viewsets.ModelViewSet):
 	queryset = UsuarioSigueSeccion.objects.all()
 	serializer_class = UsuarioSigueSeccionSerializer
@@ -82,9 +82,18 @@ class SubseccionViewSet(viewsets.ModelViewSet):
 	queryset = Subseccion.objects.all()
 	serializer_class = SubseccionSerializer
 
+class ChatViewSet(viewsets.ModelViewSet):
+	queryset = Chat.objects.all()
+	serializer_class = ChatSerializer
+
+class MensajeDirectoViewSet(viewsets.ModelViewSet):
+	queryset = MensajeDirecto.objects.all()
+	serializer_class = MensajeDirectoSerializer
+
 #Listas
 def lista_reportes(request):
 	reportes = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
+	last_date = datetime.today() - timedelta(days=CADUCA_REPORTES)
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -95,11 +104,15 @@ def lista_reportes(request):
 	except EmptyPage:
 		reportes_nota = paginator.page(paginator.num_pages)
 
-	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas'}
+	reportes_pasados = ReporteNota.objects.filter(fecha__lte = last_date)
+
+	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados}
 	return render(request, 'reportes.html', ctx)
 
 def lista_reportes_usuario(request):
 	reportes = list(ReporteUsuario.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
+	last_date = datetime.today() - timedelta(days=CADUCA_REPORTES)
+
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -110,7 +123,9 @@ def lista_reportes_usuario(request):
 	except EmptyPage:
 		reportes_usuario = paginator.page(paginator.num_pages)
 
-	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario'}
+	reportes_pasados = ReporteUsuario.objects.filter(fecha__lte = last_date)
+
+	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario', 'reportes_pasados': reportes_pasados}
 	return render(request, 'reportes_usuarios.html', ctx)
 
 def lista_usuarios(request):
@@ -684,6 +699,29 @@ def encuentra_nota(request):
 	return render(request, 'index.html', ctx)
 
 #Ajax
+def chats_usuario(request, id):
+	user = Usuario.objects.get(id=id)
+	chats = list(Chat.objects.filter(Q(usuario_uno = user) | Q(usuario_dos = user)).values())
+
+	return JsonResponse(chats, safe=False)
+
+def novedades(request):
+	last_day = datetime.today() - timedelta(days=1)	
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	lista_likes = []
+
+	for publicacion in novedades:
+		num_likes = LikeNota.objects.filter(nota = publicacion).count()
+		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
+
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
+
+	return JsonResponse(novedades, safe=False)
+
+def usuarios_populares(request):
+	usuarios_populares = list(Usuario.objects.all()[:5].values())
+	return JsonResponse(usuarios_populares, safe=False)
+
 def ver_usuario(request, username):
 	usuarios = Usuario.objects.filter(username = username)
 	if (usuarios):
@@ -693,7 +731,6 @@ def ver_usuario(request, username):
 		respuesta = {'mensaje': 'El usuario no existe'}
 
 	return JsonResponse(respuesta, safe=False)
-
 
 @csrf_exempt
 def lista_notas_usuarios_ajax(request, username):

@@ -3,7 +3,7 @@ from rest_framework import routers
 from django.contrib import admin
 from django.conf import settings
 import notifications
-from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet,UsuarioSigueUsuarioViewSet,ComentarioViewSet,UsuarioSigueSeccionViewSet,SubseccionViewSet
+from Principal.views import UsuarioViewSet, NotaViewSet, ReporteUsuarioViewSet,ReporteNotaViewSet,SeccionViewSet,UsuarioSigueUsuarioViewSet,ComentarioViewSet,UsuarioSigueSeccionViewSet,SubseccionViewSet,ChatViewSet,MensajeDirectoViewSet
 admin.autodiscover()
 
 router = routers.DefaultRouter()
@@ -16,7 +16,8 @@ router.register(r'subseccion', SubseccionViewSet)
 router.register(r'usuario_sigue_usuario', UsuarioSigueUsuarioViewSet)
 router.register(r'usuario_sigue_seccion', UsuarioSigueSeccionViewSet)
 router.register(r'comentario', ComentarioViewSet)
-
+router.register(r'chat', ChatViewSet)
+router.register(r'mensaje_directo', MensajeDirectoViewSet)
 
 urlpatterns = patterns('',
     url('^inbox/notifications/', include(notifications.urls)),
@@ -84,6 +85,11 @@ urlpatterns = patterns('',
     url(r'lista/notas/usuario/ajax/(?P<username>\w+)/$', 'Principal.views.lista_notas_usuarios_ajax', name='lista_notas_usuarios_ajax'),
 
     url(r'lista/notas/seccion/ajax/(?P<id>\d+)$', 'Principal.views.lista_notas_seccion_ajax', name='lista_notas_seccion_ajax'),
+
+    url(r'lista/novedades$', 'Principal.views.novedades', name='novedades'),
+    url(r'lista/populares$', 'Principal.views.usuarios_populares', name='usuarios_populares'),
+
+    url(r'chats/usuario/(?P<id>\d+)$', 'Principal.views.chats_usuario', name='chats_usuario'),
 
     #Seguir y dejar de Seguir
     url(r'unfollow/(?P<id>\d+)$', 'Principal.views.dejar_de_seguir', name='dejar_de_seguir'),

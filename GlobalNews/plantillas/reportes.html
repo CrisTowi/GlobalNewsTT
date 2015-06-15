@@ -31,7 +31,7 @@
                 <td>{{ reporte.id }}</td>
                 <td><a href="/publicacion/{{ reporte.nota.id }}">{{ reporte.nota.titulo }}</a></td>
                 <td>{{ reporte.descripcion }}</td>
-                <td><a id="abrir_eliminar" class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
+                <td><a class="glyphicon glyphicon-trash abrir_eliminar" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
                 <td><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
             </tr>
             {% endfor %}
@@ -97,22 +97,77 @@
     </div>
   </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="ModalPendientes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">¡Tienes reportes que tienen más de 1 semana!</h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Titulo</th>
+                    <th>Reporte</th>
+                    <th>Dar de Baja</th>
+                    <th>Contactar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reporte in reportes_pasados %}
+                <tr>
+                    <td>{{ reporte.id }}</td>
+                    <td><a href="/publicacion/{{ reporte.nota.id }}">{{ reporte.nota.titulo }}</a></td>
+                    <td>{{ reporte.descripcion }}</td>
+                    <td><a class="glyphicon glyphicon-trash abrir_eliminar" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
+                    <td><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica-inicio" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 <input type="hidden" id="input_usuario" value="{{ user.id }}"></input>
 <input type="hidden" id="media_url" value="{{ MEDIA_URL }}"></input>
 
 {% endblock %}
 
 {% block js %}
-  
   <script type="text/javascript">
 
-    $('#abrir_eliminar').on('click', function(e){
+    var cerrado = false;
+
+    if (('{{reportes_pasados}}').length > 2){
+      $('#ModalPendientes').modal('show'); 
+    }
+
+    $('#ModalPendientes').on('hide.bs.modal', function () {
+      cerrado = true;
+    })    
+
+    $('.abrir_eliminar').on('click', function(e){
       e.preventDefault();
       var id_nota = $(this).data('id');
-
+      $('#ModalPendientes').modal('hide'); 
       $('#btn-dardebaja').attr('href', '/dardebaja/nota/' + id_nota);
-
     });  
+
+    $('#btn-abre-platica-inicio').on('click', function(e){
+      e.preventDefault();
+      $('#ModalPendientes').modal('hide'); 
+      cerrado = false;
+    });
+
+    $('#ModalMD').on('hide.bs.modal', function () {
+      if (!cerrado) {
+        $('#ModalPendientes').modal('show'); 
+      }
+    })
 
   </script>
 
