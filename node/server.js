@@ -28,13 +28,16 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
     //Funcion que maneja cada evento enviado desde Django
     var recibeMensaje = function(channel, message){
         var i,j;
+        console.log(message);
         var datos = JSON.parse(message);
+        console.log(datos);
         switch (channel) {
             case 'chat':
                 io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
                 break;
 
             case 'publicacion':
+                console.log(datos.lista_usuarios);
                 for(j=0; j<datos.lista_usuarios.length; j++){            
                     for(i=0; i<usuarios.length; i++){
                         if(usuarios[i].session_id == datos.lista_usuarios[j]){
@@ -49,7 +52,7 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
                         "coordinates":[Number(datos.longitud),Number(datos.latitud)]}, 
                         spherical: true, 
                         num: 1000,   
-                        maxDistance: 7000
+                        maxDistance: 10000
                     }, function(err, results){
                     if(err){
                         return console.dir(err);
@@ -91,7 +94,6 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
             case 'usuario_reportado':
                 for(i=0; i<usuarios.length; i++){
                     if(usuarios[i].session_id == datos.session_key){
-                        console.log(usuarios[i].socket_id);
                         io.to(usuarios[i].socket_id).emit('usuario_reportado', datos);
                     }
                 }
@@ -130,6 +132,7 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
         };
 
         usuarios.push(obj_usuario);
+        console.log(usuarios);
         var doc = {
             '_id': obj_usuario.socket_id,
             "loc" : {

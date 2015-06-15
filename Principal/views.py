@@ -437,9 +437,15 @@ def nuevo_post(request):
 			helper.guardar_nota(nota)
 
 			seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = nota.usuario)
+			seguidores_seccion = UsuarioSigueSeccion.objects.filter(seccion = nota.subseccion.seccion)
 
 			for seguidor in seguidores:
 				session_id = session_from_usuario(seguidor.usuario_seguidor.id)
+				if session_id:
+					list_seguidores = list_seguidores + '"' + session_id +'",'
+
+			for seguidor in seguidores_seccion:
+				session_id = session_from_usuario(seguidor.usuario.id)
 				if session_id:
 					list_seguidores = list_seguidores + '"' + session_id +'",'
 

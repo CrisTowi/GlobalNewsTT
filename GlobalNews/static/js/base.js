@@ -284,7 +284,6 @@ if (navigator.geolocation) {
         });        
         
         socket.on('nueva_publicacion', function(data){
-
             var ubicacion = '';
 
             if(left_right == 1){
@@ -295,8 +294,10 @@ if (navigator.geolocation) {
                 left_right = 1;
             }
 
+            console.log(data);
+
             var template = $('<li' + ubicacion + '> \
-                                        <div class="timeline-badge"><i class="fa fa-check"></i> \
+                                        <div class="timeline-badge primary"> \
                                         </div> \
                                         <div class="timeline-panel"> \
                                             <div class="timeline-heading"> \
@@ -343,7 +344,6 @@ if (navigator.geolocation) {
             }
         });
         socket.on('nueva_publicacion_localizacion', function(data){
-
             var ubicacion = '';
 
             if(left_right == 1){
@@ -353,26 +353,6 @@ if (navigator.geolocation) {
                 ubicacion = '';
                 left_right = 1;
             }
-
-            var template = $('<li' + ubicacion + '> \
-                                        <div class="timeline-badge"><i class="fa fa-check"></i> \
-                                        </div> \
-                                        <div class="timeline-panel"> \
-                                            <div class="timeline-heading"> \
-                                                <a href="/publicacion/' + data.id + '"><h4 class="timeline-title">' + data.titulo + '</h4></a> \
-                                                <a href="/perfil/' + data.usuario_id + '"><h5>Por ' + data.usuario + '</h5></a> \
-                                                <p> \
-                                                    <small class="text-muted"><i class="fa fa-time"></i>' + data.fecha + '</small> \
-                                                </p> \
-                                            </div> \
-                                            <div class="timeline-body"> \
-                                                <p>' + data.descripcion + '</p> \
-                                            </div> \
-                                        </div> \
-                                    </li>');
-            template.hide();
-            $('#timeline').prepend(template);
-            template.show('slow');
 
             var n = noty({
                 text: '<span class="texto_noty" data-id_nota="' + data.id + '"> Una nueva noticia cercana a ti </span>',
