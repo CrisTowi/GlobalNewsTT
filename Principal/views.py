@@ -91,6 +91,7 @@ class MensajeDirectoViewSet(viewsets.ModelViewSet):
 	serializer_class = MensajeDirectoSerializer
 
 #Listas
+@login_required(login_url='/login')
 def lista_reportes(request):
 	reportes = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
 	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
@@ -109,6 +110,7 @@ def lista_reportes(request):
 	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados}
 	return render(request, 'reportes.html', ctx)
 
+@login_required(login_url='/login')
 def lista_reportes_usuario(request):
 	reportes = list(ReporteUsuario.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
 	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
@@ -132,6 +134,7 @@ def lista_usuarios(request):
 	ctx = {'nombre_vista': 'Lista de Usuarios'}
 	return render(request, 'usuarios_admin.html', ctx)
 
+@login_required(login_url='/login')
 def lista_mensajes(request):
 	chats = Chat.objects.filter(Q(usuario_uno = request.user) | Q(usuario_dos = request.user))
 
@@ -139,6 +142,7 @@ def lista_mensajes(request):
 
 	return render(request, 'lista_mensajes.html', ctx)
 
+@login_required(login_url='/login')
 def lista_seguidos(request, id):
 	lista_siguiendo = UsuarioSigueUsuario.objects.filter(usuario_seguidor = id)
 
@@ -154,6 +158,7 @@ def lista_seguidos(request, id):
 	ctx = {'nombre_vista': 'Lista de Seguidos', 'siguiendo': siguiendo}
 	return render(request, 'lista_siguiendo.html', ctx)
 
+@login_required(login_url='/login')
 def lista_seguidores(request, id):
 	lista_seguidores = UsuarioSigueUsuario.objects.filter(usuario_seguido = id)
 
@@ -228,6 +233,7 @@ def lista_secciones(request):
 	ctx = {'nombre_vista': 'Lista de Secciones', 'secciones': secciones}
 	return render(request, 'lista_secciones.html', ctx)		
 
+@login_required(login_url='/login')
 def lista_notificaciones(request):
 
 	notificaciones= Notification.objects.filter(recipient = request.user)
@@ -353,6 +359,7 @@ def publicacion_geolocalizacion(request, id):
 
 
 #Formularios
+@login_required(login_url='/login')
 def nuevo_reporte_post(request):
 	usuario = request.user
 	nota = Nota.objects.get(id = int(request.POST['publicacion_id']))
@@ -384,7 +391,7 @@ def nuevo_reporte_post(request):
 
 	return HttpResponseRedirect('/')
 
-
+@login_required(login_url='/login')
 def nuevo_reporte_usuario(request):
 	usuario_reportador = request.user
 	usuario_reportado = Usuario.objects.get(id = int(request.POST['perfil_id']))
