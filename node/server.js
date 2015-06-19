@@ -28,8 +28,8 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
     //Funcion que maneja cada evento enviado desde Django
     var recibeMensaje = function(channel, message){
         var i,j;
-        console.log(message);
-        var datos = JSON.parse(message);
+        console.log(message.replace(/\n/g,''));
+        var datos = JSON.parse(message.replace(/\n/g,""));
         console.log(datos);
         switch (channel) {
             case 'chat':

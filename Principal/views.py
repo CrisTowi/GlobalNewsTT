@@ -35,8 +35,8 @@ import Principal.helper as helper
 
 from django.db.models import Count
 
-MAX_REPORTES = 5
-CADUCA_REPORTES = 7
+MAX_REPORTES = 1
+CADUCA_REPORTES = 1
 
 def session_from_usuario(id_usuario):
 	sesiones = Session.objects.all()
@@ -93,7 +93,7 @@ class MensajeDirectoViewSet(viewsets.ModelViewSet):
 #Listas
 def lista_reportes(request):
 	reportes = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
-	last_date = datetime.today() - timedelta(days=CADUCA_REPORTES)
+	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -104,14 +104,14 @@ def lista_reportes(request):
 	except EmptyPage:
 		reportes_nota = paginator.page(paginator.num_pages)
 
-	reportes_pasados = ReporteNota.objects.filter(fecha__lte = last_date)
+	reportes_pasados = ReporteNota.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES).filter(fecha__lte = last_date)
 
 	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados}
 	return render(request, 'reportes.html', ctx)
 
 def lista_reportes_usuario(request):
 	reportes = list(ReporteUsuario.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
-	last_date = datetime.today() - timedelta(days=CADUCA_REPORTES)
+	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
 
 
 	paginator = Paginator(reportes, 8)
@@ -471,7 +471,7 @@ def nuevo_post(request):
 				list_seguidores = list_seguidores + "]"
 
 			r = redis.StrictRedis(host='localhost', port=6379, db=1)
-			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion +'", "usuario": "'+ nota.usuario.username +'", "lista_usuarios": ' + list_seguidores + ' }')
+			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion[:descripcion.index('.')] +'", "usuario": "'+ nota.usuario.username +'", "lista_usuarios": ' + list_seguidores + ' }')
 
 			return HttpResponseRedirect('/')
 	else:
