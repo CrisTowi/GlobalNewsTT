@@ -173,4 +173,4 @@ class UsuarioSigueSeccion(models.Model):
 
 
 	def __unicode__(self):
-		return str(self.usuario) + ' ' + str(self.seccion)
+		return str(self.usuario.id) + ' ' + str(self.seccion.id)

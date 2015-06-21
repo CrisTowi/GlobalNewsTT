@@ -23,6 +23,7 @@
                 <th>Reporte</th>
                 <th>Dar de Baja</th>
                 <th>Contactar</th>
+                <th>Cancelar reporte</th>
             </tr>
         </thead>
         <tbody>
@@ -31,8 +32,9 @@
                 <td>{{ reporte.id }}</td>
                 <td><a href="/publicacion/{{ reporte.nota.id }}">{{ reporte.nota.titulo }}</a></td>
                 <td>{{ reporte.descripcion }}</td>
-                <td><a class="glyphicon glyphicon-trash abrir_eliminar" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
-                <td><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
+                <td class="table-icon"><a class="glyphicon glyphicon-trash abrir_eliminar" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
+                <td class="table-icon"><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
+                <td class="table-icon"><a class="glyphicon glyphicon-check" href="/cancelar/reporte/nota/{{ reporte.id }}"></a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -114,6 +116,7 @@
                     <th>Reporte</th>
                     <th>Dar de Baja</th>
                     <th>Contactar</th>
+                    <th>Cancelar reporte</th>
                 </tr>
             </thead>
             <tbody>
@@ -122,8 +125,9 @@
                     <td>{{ reporte.id }}</td>
                     <td><a href="/publicacion/{{ reporte.nota.id }}">{{ reporte.nota.titulo }}</a></td>
                     <td>{{ reporte.descripcion }}</td>
-                    <td><a class="glyphicon glyphicon-trash abrir_eliminar" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
-                    <td><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica-inicio" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
+                    <td class="table-icon"><a class="glyphicon glyphicon-trash abrir_eliminar" data-toggle="modal" data-target="#myModal" data-id="{{ reporte.nota.id }}" href="#"></a></td>
+                    <td class="table-icon"><a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica-inicio" data-usuario="{{ reporte.nota.usuario.id }}" data-imagen="{{ reporte.nota.usuario.foto }}" data-username="{{ reporte.nota.usuario.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a></td>
+                    <td class="table-icon"><a class="glyphicon glyphicon-check" href="/cancelar/reporte/nota/{{ reporte.id }}"></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

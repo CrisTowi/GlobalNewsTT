@@ -19,18 +19,6 @@ def seguidores_siguiendo_publicaciones_processor(request):
 
 	return {'num_notas': num_notas, 'num_siguiendo': num_siguiendo, 'num_seguidores': num_seguidores}
 
-def novedades_processor(request):
-	last_day = datetime.today() - timedelta(days=1)	
-	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
-	lista_likes = []
-
-
-	for publicacion in novedades:
-		num_likes = LikeNota.objects.filter(nota = publicacion).count()
-		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
-
-	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
-	return {'novedades': novedades}
 
 def mensajes_directos_processor(request):
 	chats = []
@@ -45,8 +33,35 @@ def notificaciones_processor(request):
 		ctx = {'notificaciones': notificaciones}
 	return ctx 	
 
+def novedades_processor(request):
+	last_day = datetime.today() - timedelta(days=1)	
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	lista_likes = []
+
+
+	for publicacion in novedades:
+		num_likes = LikeNota.objects.filter(nota = publicacion).count()
+		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
+
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
+	return {'novedades': novedades}
+
 def usuarios_populares_processor(request):
-	usuarios_populares = Usuario.objects.all()[:5]
+	id_usuarios = []
+	last_day = datetime.today() - timedelta(days=1)	
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	lista_likes = []
+
+	for publicacion in novedades:
+		num_likes = LikeNota.objects.filter(nota = publicacion).count()
+		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
+
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
+	
+	for novedad in novedades:
+		id_usuarios.append(novedad['nota'].usuario.id)
+
+	usuarios_populares = Usuario.objects.filter(id__in=id_usuarios)
 
 	return {'usuarios_populares': usuarios_populares}	
 

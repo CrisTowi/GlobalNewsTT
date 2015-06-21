@@ -105,7 +105,7 @@ def lista_reportes(request):
 	except EmptyPage:
 		reportes_nota = paginator.page(paginator.num_pages)
 
-	reportes_pasados = ReporteNota.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES).filter(fecha__lte = last_date)
+	reportes_pasados = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES).filter(fecha__lte = last_date)
 
 	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados}
 	return render(request, 'reportes.html', ctx)
@@ -388,8 +388,20 @@ def nuevo_reporte_post(request):
 	            verb= 'nota_reportada'
 	        )
 
-
 	return HttpResponseRedirect('/')
+
+
+@login_required(login_url='/login')
+def cancelar_reporte_nota(request, id):
+	reporte_nota = ReporteNota.objects.get(id=id)
+	reporte_nota.delete()
+	return HttpResponseRedirect('/lista/reportes/nota')
+
+@login_required(login_url='/login')
+def cancelar_reporte_usuario(request, id):
+	reporte_usuario = ReporteUsuario.objects.get(id=id)
+	reporte_usuario.delete()
+	return HttpResponseRedirect('/lista/reportes/usuario')
 
 @login_required(login_url='/login')
 def nuevo_reporte_usuario(request):
@@ -516,6 +528,14 @@ def nuevo_post_movil(request):
 
 	return JsonResponse(respuesta, safe=False)
 
+def lista_secciones_usuarios(request, id):
+	secciones = list(UsuarioSigueSeccion.objects.filter(usuario=id).values())
+
+	for seccion in secciones:
+		seccion['nombre_seccion'] = Seccion.objects.get(id = seccion['seccion_id']).nombre
+		seccion['username'] = Usuario.objects.get(id = seccion['usuario_id']).username
+
+	return JsonResponse(secciones, safe=False)
 
 def nuevo_usuario(request):
 	ctx = {}

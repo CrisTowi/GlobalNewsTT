@@ -69,6 +69,8 @@ urlpatterns = patterns('',
     url(r'busca/nota/$', 'Principal.views.encuentra_nota', name='encuentra_nota'),
 
     #Vistas en AJAX
+    url(r'secciones/usuario/(?P<id>\d+)$', 'Principal.views.lista_secciones_usuarios', name='lista_secciones_usuarios'),
+    
     url(r'chat/$', 'Principal.views.get_chat', name='get_chat'),
     url(r'puntos/$', 'Principal.views.get_puntos', name='get_puntos'),
     url(r'get/chat/(?P<id>\d+)$', 'Principal.views.get_chat_id', name='get_chat_id'),
@@ -108,6 +110,9 @@ urlpatterns = patterns('',
     url(r'nuevo_reporte_nota/$', 'Principal.views.nuevo_reporte_post', name='nuevo_reporte_post'),
     url(r'nuevo_reporte_usuario/$', 'Principal.views.nuevo_reporte_usuario', name='nuevo_reporte_usuario'),
     url(r'ver/usuario/(?P<username>\w+)/$', 'Principal.views.ver_usuario', name='ver_usuario'),
+
+    url(r'cancelar/reporte/nota/(?P<id>\d+)$', 'Principal.views.cancelar_reporte_nota', name='cancelar_reporte_nota'),
+    url(r'cancelar/reporte/usuario/(?P<id>\d+)$', 'Principal.views.cancelar_reporte_usuario', name='cancelar_reporte_usuario'),
 
     #Administracion
     url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),

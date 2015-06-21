@@ -23,6 +23,7 @@
                 <th>Reporte</th>
                 <th>Eliminar</th>
                 <th>Contactar</th>
+                <th>Cancelar Reporte</th>
             </tr>
         </thead>
         <tbody>
@@ -34,9 +35,9 @@
                 <td><a class="glyphicon glyphicon-trash" id="abrir_eliminar" data-toggle="modal" data-id="{{ reporte.usuario_reportado.id }}" data-target="#myModal" href="#"></a></td>
                 <td>
                   <a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica" data-usuario="{{ reporte.usuario_reportado.id }}" data-imagen="{{ reporte.usuario_reportado.foto }}" data-username="{{ reporte.usuario_reportado.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a>
-
                 </td>
-            </tr>    
+                <td class="table-icon"><a class="glyphicon glyphicon-check" href="/cancelar/reporte/usuario/{{ reporte.id }}"></a></td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
@@ -151,6 +152,7 @@
                     <th>Reporte</th>
                     <th>Eliminar</th>
                     <th>Contactar</th>
+                    <th>Cancelar Reporte</th>
                 </tr>
             </thead>
             <tbody>
@@ -162,8 +164,8 @@
                     <td><a class="glyphicon glyphicon-trash" id="abrir_eliminar" data-toggle="modal" data-id="{{ reporte.usuario_reportado.id }}" data-target="#myModal" href="#"></a></td>
                     <td>
                       <a class="glyphicon glyphicon-edit btn-abre-platica" data-toggle="modal" id="btn-abre-platica-inicio" data-usuario="{{ reporte.usuario_reportado.id }}" data-imagen="{{ reporte.usuario_reportado.foto }}" data-username="{{ reporte.usuario_reportado.username }}" data-user="{{ user.username }}" data-userfoto="{{ user.foto }}" data-target="#ModalMD" href="#"></a>
-
                     </td>
+                    <td class="table-icon"><a class="glyphicon glyphicon-check" href="/cancelar/reporte/usuario/{{ reporte.id }}"></a></td>
                 </tr>    
                 {% endfor %}
             </tbody>
