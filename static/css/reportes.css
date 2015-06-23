@@ -1,1 +1,5 @@
 .post{border:1px solid #0174df;border-radius:10px;margin-top:10px;padding:.8em;}.post .descripcion .imagen_reporte img{width:180px}
+
+.modal-dialog {
+	width: 740px;
+}

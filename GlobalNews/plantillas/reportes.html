@@ -6,14 +6,18 @@
 
 {% block contenido %}
 <div class="col-lg-9">
+
+    <form action="/busca/reporte/nota/" method="GET">
     <div class="row">
         <div class="col-md-1">
-            <button class="btn btn-success">Buscar</button>
+            <button class="btn btn-success" type="submit">Buscar</button>
         </div>
         <div class="col-md-11">
-            <input type="text" class="form-control" placeholder="Buscar...">
+            <input type="text" name="q" class="form-control" placeholder="Buscar...">
         </div>
     </div>
+    </form>
+
     <br><br><br>
     <table class="table table-hover">
         <thead>

@@ -67,10 +67,14 @@ urlpatterns = patterns('',
 
 
     url(r'busca/nota/$', 'Principal.views.encuentra_nota', name='encuentra_nota'),
+    url(r'busca/reporte/nota/$', 'Principal.views.encuentra_reporte_nota', name='encuentra_reporte_nota'),
+    url(r'busca/reporte/usuario/$', 'Principal.views.encuentra_reporte_usuario', name='encuentra_reporte_usuario'),
 
     #Vistas en AJAX
     url(r'secciones/usuario/(?P<id>\d+)$', 'Principal.views.lista_secciones_usuarios', name='lista_secciones_usuarios'),
     
+    url(r'mensajes/chat/(?P<id>\d+)$', 'Principal.views.mensajes_chat', name='mensajes_chat'),
+
     url(r'chat/$', 'Principal.views.get_chat', name='get_chat'),
     url(r'puntos/$', 'Principal.views.get_puntos', name='get_puntos'),
     url(r'get/chat/(?P<id>\d+)$', 'Principal.views.get_chat_id', name='get_chat_id'),

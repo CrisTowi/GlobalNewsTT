@@ -3,3 +3,7 @@
 .table-icon {
     text-align: center;
 }
+
+.modal-dialog {
+	width: 740px;
+}

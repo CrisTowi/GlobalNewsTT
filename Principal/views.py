@@ -725,7 +725,62 @@ def encuentra_nota(request):
 	ctx = {'noticias': noticias}
 	return render(request, 'index.html', ctx)
 
+def encuentra_reporte_nota(request):
+	palabra = request.GET['q']
+
+	reportes = ReporteNota.objects.filter(Q(descripcion__contains=palabra) | Q(tipo__contains=palabra))
+
+	reportes = reportes.annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
+	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
+
+	paginator = Paginator(reportes, 8)
+ 	page = request.GET.get('page')
+ 	try:
+		reportes_nota = paginator.page(page)
+ 	except PageNotAnInteger:
+		reportes_nota = paginator.page(1)
+	except EmptyPage:
+		reportes_nota = paginator.page(paginator.num_pages)
+
+	reportes_pasados = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES).filter(fecha__lte = last_date)
+
+	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados}
+	return render(request, 'reportes.html', ctx)
+
+def encuentra_reporte_usuario(request):
+	palabra = request.GET['q']
+
+	reportes = ReporteUsuario.objects.filter(Q(descripcion__contains=palabra) | Q(tipo__contains=palabra))
+
+	reportes = list(reportes.annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
+	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
+
+	paginator = Paginator(reportes, 8)
+ 	page = request.GET.get('page')
+ 	try:
+		reportes_usuario = paginator.page(page)
+ 	except PageNotAnInteger:
+		reportes_usuario = paginator.page(1)
+	except EmptyPage:
+		reportes_usuario = paginator.page(paginator.num_pages)
+
+	reportes_pasados = ReporteUsuario.objects.filter(fecha__lte = last_date)
+
+	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario', 'reportes_pasados': reportes_pasados}
+	return render(request, 'reportes_usuarios.html', ctx)
+
+
 #Ajax
+def mensajes_chat(request, id):
+	chat = Chat.objects.get(id=id)
+
+	mensajes_directos = list(MensajeDirecto.objects.filter(chat = chat).values())
+
+	for mensaje in mensajes_directos:
+		mensaje['fecha'] = naturaltime(mensaje['fecha'])
+
+	return JsonResponse(mensajes_directos, safe=False)
+
 def chats_usuario(request, id):
 	user = Usuario.objects.get(id=id)
 	chats = list(Chat.objects.filter(Q(usuario_uno = user) | Q(usuario_dos = user)).values())
