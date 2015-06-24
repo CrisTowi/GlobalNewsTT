@@ -771,9 +771,56 @@ def encuentra_reporte_usuario(request):
 
 
 #Ajax
+@csrf_exempt
+def editar_usuario_movil(request):
+	u = Usuario.objects.get(id = int(form.cleaned_data['id']))
+	username = form.cleaned_data['username']
+	nombre = form.cleaned_data['nombre']
+	ap_paterno = form.cleaned_data['ap_paterno']
+	ap_materno = form.cleaned_data['ap_materno']
+	email = form.cleaned_data['email']
+	imagen = request.FILES['imagen']
+
+	u.nombre = nombre
+	u.ap_paterno = ap_paterno
+	u.ap_materno = ap_materno
+	u.username = username
+	u.correo = email
+
+	u.foto = imagen
+
+	if u.save():
+		return JsonResponse({'mensaje': 'Usuario editado correctamente', 'id': u.id}, safe=False)
+	else:
+		return JsonResponse({'mensaje': 'Usuario no ha sido editado correctamente', 'id': u.id}, safe=False)
+
+def editar_nota_movil(request):
+	nota = Nota.objects.get(id = int(form.cleaned_data['id']))
+	titulo = form.cleaned_data['titulo']
+	descripcion = form.cleaned_data['descripcion']
+	subseccion = form.cleaned_data['subseccion']
+	privacidad = form.cleaned_data['privacidad']
+	latitud = form.cleaned_data['latitud']
+	longitud = form.cleaned_data['longitud']
+	imagen = request.FILES['imagen']
+
+	nota.usuario = request.user
+	nota.titulo = titulo
+	nota.descripcion = descripcion
+	nota.subseccion = subseccion
+	nota.privacidad = p
+	nota.imagen = imagen
+	nota.latitud = latitud
+	nota.longitud = longitud
+
+	if nota.save():
+		return JsonResponse({'mensaje': 'Nota editada correctamente', 'id': nota.id}, safe=False)
+	else:
+		return JsonResponse({'mensaje': 'Nota no ha sido editada correctamente', 'id': nota.id}, safe=False)
+
+
 def mensajes_chat(request, id):
 	chat = Chat.objects.get(id=id)
-
 	mensajes_directos = list(MensajeDirecto.objects.filter(chat = chat).values())
 
 	for mensaje in mensajes_directos:
