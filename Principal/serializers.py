@@ -28,7 +28,6 @@ class NotaSerializer(serializers.ModelSerializer):
     likes = serializers.ReadOnlyField(source='get_likes')
     comentarios = serializers.ReadOnlyField(source='get_comentarios')
     imagen_usuario = serializers.ReadOnlyField(source='get_imagen_usuario')
-    usuario = serializers.SlugRelatedField(slug_field='id',read_only=True)
     
     class Meta:
         model = Nota

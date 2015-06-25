@@ -115,7 +115,7 @@ if (navigator.geolocation) {
                 $.get( "/eliminar/mensaje/", {id: id}, function(data){
                   $('#chat').html("");
                   var n = noty({
-                      text: 'Mensaje eliminado con éxito',
+                      text: 'Mensaje eliminado con éxico',
                       layout: 'bottomRight',
                       type: 'success',
                       timeout: 3500,
