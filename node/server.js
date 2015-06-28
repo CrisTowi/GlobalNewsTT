@@ -1,7 +1,7 @@
 //Importar los módulos
 //Cambiar host
-//var host = '192.168.1.70';
-var host = 'localhost'
+var host = '192.168.1.70';
+//var host = 'localhost'
 var http = require('http');
 var server = http.createServer().listen(3000);
 var io = require('socket.io').listen(server);

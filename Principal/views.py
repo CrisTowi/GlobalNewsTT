@@ -36,8 +36,8 @@ import Principal.helper as helper
 from django.db.models import Count
 
 #Cambiar host
-#HOST = "192.168.1.70"
-HOST = "localhost"
+HOST = "192.168.1.70"
+#HOST = "localhost"
 
 MAX_REPORTES = 1
 CADUCA_REPORTES = 1
@@ -262,9 +262,9 @@ def index(request):
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
 		subsecciones_id = Subseccion.objects.filter(seccion = siguiendo_seccion_id).values_list('id', flat=True)
 		siguiendo_id = UsuarioSigueUsuario.objects.filter(usuario_seguidor = request.user).values_list('usuario_seguido', flat=True)
-		lista_noticias = Nota.objects.filter((Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)), fecha__gte=last_day).order_by('-id')
+		lista_noticias = Nota.objects.filter((Q(usuario = siguiendo_id) | Q(usuario = request.user) | Q(subseccion = subsecciones_id)), fecha__gte=last_day).order_by('-fecha')
 	else:
-		lista_noticias = Nota.objects.filter(fecha__gte = last_day)
+		lista_noticias = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')
 
 	lista_noticias = list(lista_noticias.values())
 
@@ -646,7 +646,6 @@ def editar_post(request, id):
 	ctx = {}
 
 	nota = Nota.objects.get(id = id)
-
 	if request.method == 'GET':
 		if nota.privacidad == True:
 			privacidad = 'publico'
@@ -670,6 +669,8 @@ def editar_post(request, id):
 			descripcion = form.cleaned_data['descripcion']
 			subseccion = form.cleaned_data['subseccion']
 			privacidad = form.cleaned_data['privacidad']
+			latitud = request.POST['latitud']
+			longitud = request.POST['longitud']
 			imagen = request.FILES['imagen']
 
 			if privacidad == 'publico':
@@ -684,8 +685,8 @@ def editar_post(request, id):
 			nota.privacidad = p
 			nota.imagen = imagen
 
-			nota.longitud = 19.476286
-			nota.latitud = -99.097218
+			nota.longitud = longitud
+			nota.latitud = latitud
 
 			nota.save()
 
@@ -736,6 +737,17 @@ def encuentra_nota(request):
 	palabra = request.GET['q']
 	lista_noticias = Nota.objects.filter(Q(descripcion__contains=palabra) | Q(titulo__contains=palabra) | Q(titulo__contains=palabra)).order_by('-id')
 
+	lista_noticias = list(lista_noticias.values())
+
+	for noticia in lista_noticias:
+		usuario = Usuario.objects.get(id = noticia['usuario_id'])
+		noticia['usuario'] = {
+			'username': usuario.username,
+			'id': usuario.id
+		}
+		noticia['seccion_id'] = Subseccion.objects.get(id = noticia['subseccion_id']).seccion.id
+
+
 	paginator = Paginator(lista_noticias, 6)
  	page = request.GET.get('page')
  	try:
@@ -745,7 +757,7 @@ def encuentra_nota(request):
 	except EmptyPage:
 		noticias = paginator.page(paginator.num_pages)
 
-	ctx = {'noticias': noticias}
+	ctx = {'noticias': noticias, 'q': palabra}
 	return render(request, 'index.html', ctx)
 
 def encuentra_reporte_nota(request):
@@ -767,7 +779,7 @@ def encuentra_reporte_nota(request):
 
 	reportes_pasados = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES).filter(fecha__lte = last_date)
 
-	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados}
+	ctx = {'reportes_nota': reportes_nota, 'nombre_vista': 'Lista de Reportes de Notas', 'reportes_pasados': reportes_pasados, 'q': palabra}
 	return render(request, 'reportes.html', ctx)
 
 def encuentra_reporte_usuario(request):
@@ -789,7 +801,7 @@ def encuentra_reporte_usuario(request):
 
 	reportes_pasados = ReporteUsuario.objects.filter(fecha__lte = last_date)
 
-	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario', 'reportes_pasados': reportes_pasados}
+	ctx = {'reportes_usuario': reportes_usuario, 'nombre_vista': 'Lista de Reportes de Usuario', 'reportes_pasados': reportes_pasados, 'q': palabra}
 	return render(request, 'reportes_usuarios.html', ctx)
 
 
@@ -827,7 +839,7 @@ def like_movil(request):
 	id_usuario = request.GET['id_usuario']
 	id_nota = request.GET['id_nota']
 	le_gusta = request.GET['like']
-	
+
 	usuario = Usuario.objects.get(id = id_usuario)
 	nota = Nota.objects.get(id = id_nota)
 
@@ -912,7 +924,22 @@ def novedades(request):
 	return JsonResponse(novedades, safe=False)
 
 def usuarios_populares(request):
-	usuarios_populares = list(Usuario.objects.all()[:5].values())
+	id_usuarios = []
+	last_day = datetime.today() - timedelta(days=1)	
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	lista_likes = []
+
+	for publicacion in novedades:
+		num_likes = LikeNota.objects.filter(nota = publicacion).count()
+		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
+
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
+	
+	for novedad in novedades:
+		id_usuarios.append(novedad['nota'].usuario.id)
+
+	usuarios_populares = list(Usuario.objects.filter(id__in=id_usuarios).values())
+
 	return JsonResponse(usuarios_populares, safe=False)
 
 def ver_usuario(request, username):
@@ -983,7 +1010,7 @@ def get_chat_id(request, id):
 		return JsonResponse({'id': chat.id})
 
 def get_puntos(request):
-	last_day = datetime.today() - timedelta(weeks=1)
+	last_day = datetime.today() - timedelta(days=1)
 
 	if request.user.is_authenticated():
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
@@ -1031,7 +1058,6 @@ def nuevo_comentario(request):
 	comentario.save()
 
 	key_sesion = session_from_usuario(nota.usuario.id)
-
 
 	r = redis.StrictRedis(host='localhost', port=6379, db=2)
 	mensaje = '{ "session_key": "' + str(key_sesion) + '", "usuario": "' + comentario.usuario.username + '", "contenido": "' + comentario.contenido + '", "nota_id": ' + str(comentario.nota.id) + ', "nota": "' + comentario.nota.titulo + '", "fecha": "' + naturaltime(comentario.fecha) + '" }'

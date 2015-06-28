@@ -74,10 +74,10 @@
             {% endfor %}
             <ul class="pager">
             {% if noticias.has_previous %}
-                <li class="previous"><a href="?page={{ noticias.previous_page_number }}">&larr; Anterior</a></li>
+                <li class="previous"><a href="?page={{ noticias.previous_page_number }}&q={{ q }}">&larr; Anterior</a></li>
             {% endif %}
             {% if noticias.has_next %}
-                <li class="next"><a href="?page={{ noticias.next_page_number }}">Siguiente &rarr;</a></li>
+                <li class="next"><a href="?page={{ noticias.next_page_number }}&q={{ q }}">Siguiente &rarr;</a></li>
             {% endif %}
             </ul>
         </div>

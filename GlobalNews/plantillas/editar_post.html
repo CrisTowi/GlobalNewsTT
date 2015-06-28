@@ -40,25 +40,70 @@
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
 </script>
 <script>
-
+var markers = [];
+var map;
+// Agrega al mapa todos los marcadores del arreglo
+function setAllMap(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+// Borra los marcadores del array pero los sigue teniendo en el arreglo
+function clearMarkers() {
+  setAllMap(null);
+}
+// Agregar un marcador al arreglo
+function addMarker(location) {
+  var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+  markers.push(marker);
+}
+// Borra todos los markadores vaciando la referencia de ellos
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
+}
 $('#abrir_mapa').on('click', function(e){
     $('#googleMap').height(300);
     e.preventDefault();
       var lat, lon;
 
+      // Obtiene la localizaçión del usuario
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
               lat = position.coords.latitude;
               lon = position.coords.longitude;
                   var mapProp = {
-
             center:new google.maps.LatLng(lat,lon),
             zoom:13,
-            mapTypeId:google.maps.MapTypeId.ROADMAP
+            mapTypeId:google.maps.MapTypeId.ROADMAP,
+            disableDefaultUI: true
             };
-              var map=new google.maps.Map(document.getElementById("googleMap")
-            ,mapProp);
+            map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            var im = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+            var userMarker = new google.maps.Marker({
+              position: new google.maps.LatLng(lat,lon),
+              map: map,
+              title: 'Mi Ubicación',
+              icon: im
+            });
 
+            // Cuando presionas un marcador te envia a la nota
+            google.maps.event.addListener(map, "click", function(data)
+            {
+                latitud = data.latLng.A;
+                longitud = data.latLng.F;
+                deleteMarkers();
+                addMarker(new google.maps.LatLng(latitud,longitud));
+
+                console.log(latitud);
+                console.log(longitud);
+
+                $('#id_latitud').val(latitud);
+                $('#id_longitud').val(longitud);
+            });
       });
       }  
     });

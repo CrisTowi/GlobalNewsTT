@@ -45,11 +45,11 @@
     </table>
   <ul class="pager">
     {% if reportes_nota.has_previous %}
-      <li class="previous"><a href="?page={{ reportes_nota.previous_page_number }}">&larr; Anterior</a>
+      <li class="previous"><a href="?page={{ reportes_nota.previous_page_number }}&q={{ q }}">&larr; Anterior</a>
       </li>
     {% endif %}
     {% if reportes_nota.has_next %}
-      <li class="next"><a href="?page={{ reportes_nota.next_page_number }}">Siguiente &rarr;</a>
+      <li class="next"><a href="?page={{ reportes_nota.next_page_number }}&q={{ q }}">Siguiente &rarr;</a>
       </li>
     {% endif %}
   </ul>

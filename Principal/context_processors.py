@@ -43,7 +43,10 @@ def novedades_processor(request):
 		num_likes = LikeNota.objects.filter(nota = publicacion).count()
 		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
 
+	print ('Novedades', lista_likes)
 	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
+
+
 	return {'novedades': novedades}
 
 def usuarios_populares_processor(request):
@@ -58,10 +61,14 @@ def usuarios_populares_processor(request):
 
 	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
 	
+	print novedades
+
 	for novedad in novedades:
 		id_usuarios.append(novedad['nota'].usuario.id)
 
 	usuarios_populares = Usuario.objects.filter(id__in=id_usuarios)
+
+	print usuarios_populares
 
 	return {'usuarios_populares': usuarios_populares}	
 

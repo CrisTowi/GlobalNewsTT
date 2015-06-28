@@ -1,6 +1,6 @@
 //Cambiar host
-//var host = "http://192.168.1.70";
-var host = "localhost";
+var host = "http://192.168.1.70";
+//var host = "localhost";
 var icon = '';
 if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position){
@@ -286,6 +286,8 @@ if (navigator.geolocation) {
         });        
         
         socket.on('nueva_publicacion', function(data){
+            console.log('No Localizada');
+
             var ubicacion = '';
             var badge_class, badge_text;
 
@@ -299,22 +301,29 @@ if (navigator.geolocation) {
             if(data.seccion_id == 2) {
                 badge_class = 'trafico';
                 badge_text = 'Tráfico';
+                icon='http://maps.google.com/mapfiles/ms/icons/red-dot.png';
             } else if(data.seccion_id == 3) { 
                 badge_class = 'culturales';
                 badge_text = 'Cultura';
+                icon='http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
             } else if(data.seccion_id == 4) { 
                 badge_class = 'politica';
                 badge_text = 'Política';
+                icon='http://maps.google.com/mapfiles/ms/icons/purple-dot.png';
             } else if(data.seccion_id == 5) { 
                 badge_class = 'deportes';
                 badge_text = 'Deportes';
+                icon='http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
             } else if(data.seccion_id == 6) { 
                 badge_class = 'urbano'
                 badge_text = 'Urbano';
+                icon='http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
             } else if(data.seccion_id == 7) { 
                 badge_class = 'clima';
                 badge_text = 'Clima';
+                icon='http://maps.google.com/mapfiles/ms/icons/pink-dot.png';
             }
+
             var template = $('<li' + ubicacion + '> \
                                         <div class="timeline-badge '+ badge_class +'"> \
                                             <span> '+ badge_text +' </span> \
@@ -356,6 +365,7 @@ if (navigator.geolocation) {
                 var marker1 = new google.maps.Marker({
                     position: new google.maps.LatLng(data.latitud,data.longitud),
                     map: map,
+                    icon: icon,
                     title: data.titulo,
                     url: '/publicacion/' + data.id
                     });
@@ -365,6 +375,8 @@ if (navigator.geolocation) {
             }
         });
         socket.on('nueva_publicacion_localizacion', function(data){
+            console.log('Localizada');
+
             var ubicacion = '';
 
             if(left_right == 1){
@@ -407,6 +419,9 @@ if (navigator.geolocation) {
                 } else if(data.seccion_id == 7) { 
                   icon='http://maps.google.com/mapfiles/ms/icons/pink-dot.png';
                 }
+                console.log(data.seccion_id);
+                console.log(icon);
+
                 var marker1 = new google.maps.Marker({
                     position: new google.maps.LatLng(data.latitud,data.longitud),
                     map: map,

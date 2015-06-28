@@ -88,7 +88,10 @@ class Nota(models.Model):
 		return naturaltime(self.fecha)
 
 	def get_likes(self):
-		likes = LikeNota.objects.filter(nota = self).values('id', 'usuario')
+		likes_list = LikeNota.objects.filter(nota = self).values('usuario')
+		likes = []
+		for like in likes_list:
+			likes.append(like['usuario'])
 
 		return likes
 
