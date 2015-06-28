@@ -76,16 +76,17 @@
 }
 
 .timeline > li > .timeline-badge {
+    padding-top: 5px;
     z-index: 100;
     position: absolute;
     top: 16px;
     left: 50%;
-    width: 50px;
-    height: 50px;
-    margin-left: -25px;
+    width: 60px;
+    height: 60px;
+    margin-left: -30px;
     border-radius: 50% 50% 50% 50%;
     text-align: center;
-    font-size: 1.4em;
+    font-size: 14px;
     line-height: 50px;
     color: #fff;
     background-color: #999999;
@@ -109,24 +110,44 @@
     border-left-width: 0;
 }
 
+
+.timeline-badge.trafico {
+    background-color: #C52626 !important;
+}
+.timeline-badge.culturales {
+    background-color: #1B0CF4 !important;
+}
+.timeline-badge.politica {
+    background-color: #6C2EC3 !important;
+}
+.timeline-badge.deportes {
+    background-color: #DA652F !important;
+}
+.timeline-badge.urbano {
+    background-color: #EBDD1B !important;
+}
+.timeline-badge.clima {
+    background-color: #C751B9 !important;
+}
+
 .timeline-badge.primary {
-    background-color: #2e6da4 !important;
+    background-color: #2e6da4;
 }
 
 .timeline-badge.success {
-    background-color: #3f903f !important;
+    background-color: #3f903f;
 }
 
 .timeline-badge.warning {
-    background-color: #f0ad4e !important;
+    background-color: #f0ad4e;
 }
 
 .timeline-badge.danger {
-    background-color: #d9534f !important;
+    background-color: #d9534f;
 }
 
 .timeline-badge.info {
-    background-color: #5bc0de !important;
+    background-color: #5bc0de;
 }
 
 .timeline-title {

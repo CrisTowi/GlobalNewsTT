@@ -120,6 +120,9 @@ urlpatterns = patterns('',
     url(r'cancelar/reporte/nota/(?P<id>\d+)$', 'Principal.views.cancelar_reporte_nota', name='cancelar_reporte_nota'),
     url(r'cancelar/reporte/usuario/(?P<id>\d+)$', 'Principal.views.cancelar_reporte_usuario', name='cancelar_reporte_usuario'),
 
+    url(r'comentarios/nota/(?P<id>\d+)$', 'Principal.views.comentarios_noticias', name='comentarios_noticias'),
+    url(r'like/movil/$', 'Principal.views.like_movil', name='like_movil'),
+
     #Administracion
     url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),
     url(r'dardebaja/usuario/(?P<id>\d+)$', 'Principal.views.dar_de_baja_usuario', name='dar_de_baja_usuario'),

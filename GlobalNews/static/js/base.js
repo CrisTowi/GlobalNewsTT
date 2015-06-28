@@ -1,5 +1,7 @@
+//Cambiar host
+//var host = "http://192.168.1.70";
 var host = "localhost";
-
+var icon = '';
 if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position){
         lat = position.coords.latitude;
@@ -115,7 +117,7 @@ if (navigator.geolocation) {
                 $.get( "/eliminar/mensaje/", {id: id}, function(data){
                   $('#chat').html("");
                   var n = noty({
-                      text: 'Mensaje eliminado con éxico',
+                      text: 'Mensaje eliminado con éxito',
                       layout: 'bottomRight',
                       type: 'success',
                       timeout: 3500,
@@ -285,6 +287,7 @@ if (navigator.geolocation) {
         
         socket.on('nueva_publicacion', function(data){
             var ubicacion = '';
+            var badge_class, badge_text;
 
             if(left_right == 1){
                 ubicacion = ' class="timeline-inverted"';
@@ -293,11 +296,28 @@ if (navigator.geolocation) {
                 ubicacion = '';
                 left_right = 1;
             }
-
-            console.log(data);
-
+            if(data.seccion_id == 2) {
+                badge_class = 'trafico';
+                badge_text = 'Tráfico';
+            } else if(data.seccion_id == 3) { 
+                badge_class = 'culturales';
+                badge_text = 'Cultura';
+            } else if(data.seccion_id == 4) { 
+                badge_class = 'politica';
+                badge_text = 'Política';
+            } else if(data.seccion_id == 5) { 
+                badge_class = 'deportes';
+                badge_text = 'Deportes';
+            } else if(data.seccion_id == 6) { 
+                badge_class = 'urbano'
+                badge_text = 'Urbano';
+            } else if(data.seccion_id == 7) { 
+                badge_class = 'clima';
+                badge_text = 'Clima';
+            }
             var template = $('<li' + ubicacion + '> \
-                                        <div class="timeline-badge primary"> \
+                                        <div class="timeline-badge '+ badge_class +'"> \
+                                            <span> '+ badge_text +' </span> \
                                         </div> \
                                         <div class="timeline-panel"> \
                                             <div class="timeline-heading"> \
@@ -332,6 +352,7 @@ if (navigator.geolocation) {
                 window.location.href = '/publicacion/' + $(this).data('id_nota');
             });
             if (google != undefined) {
+
                 var marker1 = new google.maps.Marker({
                     position: new google.maps.LatLng(data.latitud,data.longitud),
                     map: map,
@@ -369,11 +390,27 @@ if (navigator.geolocation) {
             $('.texto_noty').on('click', function(){
                 window.location.href = '/publicacion/geolocalizacion/' + $(this).data('id_nota');
             });
-            if (google != undefined) {            
+
+
+            if (google != undefined) {
+
+                if(data.seccion_id == 2) {
+                  icon='http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+                } else if(data.seccion_id == 3) { 
+                  icon='http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+                } else if(data.seccion_id == 4) { 
+                  icon='http://maps.google.com/mapfiles/ms/icons/purple-dot.png';
+                } else if(data.seccion_id == 5) { 
+                  icon='http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+                } else if(data.seccion_id == 6) { 
+                  icon='http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+                } else if(data.seccion_id == 7) { 
+                  icon='http://maps.google.com/mapfiles/ms/icons/pink-dot.png';
+                }
                 var marker1 = new google.maps.Marker({
                     position: new google.maps.LatLng(data.latitud,data.longitud),
                     map: map,
-                    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                    icon: icon,
                     title: data.titulo,
                     url: '/publicacion/geolocalizacion/' + data.id + '?dis=' + (data.dis.toFixed(2))
                     });

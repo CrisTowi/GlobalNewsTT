@@ -35,6 +35,10 @@ import Principal.helper as helper
 
 from django.db.models import Count
 
+#Cambiar host
+#HOST = "192.168.1.70"
+HOST = "localhost"
+
 MAX_REPORTES = 1
 CADUCA_REPORTES = 1
 
@@ -262,6 +266,15 @@ def index(request):
 	else:
 		lista_noticias = Nota.objects.filter(fecha__gte = last_day)
 
+	lista_noticias = list(lista_noticias.values())
+
+	for noticia in lista_noticias:
+		usuario = Usuario.objects.get(id = noticia['usuario_id'])
+		noticia['usuario'] = {
+			'username': usuario.username,
+			'id': usuario.id
+		}
+		noticia['seccion_id'] = Subseccion.objects.get(id = noticia['subseccion_id']).seccion.id
 
 	paginator = Paginator(lista_noticias, 6)
  	page = request.GET.get('page')
@@ -489,8 +502,16 @@ def nuevo_post(request):
 				list_seguidores = list_seguidores[:-1]
 				list_seguidores = list_seguidores + "]"
 
+			if ("." in descripcion):
+				desc = descripcion[:descripcion.index('.')]
+			else :
+				desc = descripcion
+
+
+			seccion_id = Subseccion.objects.get(id = nota.subseccion.id).seccion.id
+
 			r = redis.StrictRedis(host='localhost', port=6379, db=1)
-			r.publish('publicacion', '{ "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ descripcion[:descripcion.index('.')] +'", "usuario": "'+ nota.usuario.username +'", "lista_usuarios": ' + list_seguidores + ' }')
+			r.publish('publicacion', '{ "seccion_id": "'+ str(seccion_id)+'", "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ desc +'", "usuario": "'+ nota.usuario.username +'", "lista_usuarios": ' + list_seguidores + ' }')
 
 			return HttpResponseRedirect('/')
 	else:
@@ -637,7 +658,9 @@ def editar_post(request, id):
 					'descripcion':nota.descripcion,
 					'imagen':nota.imagen,
 					'subseccion':nota.subseccion,
-					'privacidad':privacidad
+					'privacidad':privacidad,
+					'latitud':nota.latitud,
+					'longitud':nota.longitud
 				})
 
 	if request.method == 'POST':
@@ -794,6 +817,47 @@ def editar_usuario_movil(request):
 	else:
 		return JsonResponse({'mensaje': 'Usuario no ha sido editado correctamente', 'id': u.id}, safe=False)
 
+def comentarios_noticias(request, id):
+	nota = Nota.objects.get(id = id)
+	comentarios = list(Comentario.objects.filter(nota = nota).order_by('-fecha').values())
+
+	return JsonResponse(comentarios, safe=False)
+
+def like_movil(request):
+	id_usuario = request.GET['id_usuario']
+	id_nota = request.GET['id_nota']
+	le_gusta = request.GET['like']
+	
+	usuario = Usuario.objects.get(id = id_usuario)
+	nota = Nota.objects.get(id = id_nota)
+
+	if le_gusta == 'true':
+		like = LikeNota.objects.get(usuario = usuario, nota = nota)
+		like.delete()
+	else:
+		like = LikeNota()
+		like.nota = nota
+		like.usuario = usuario
+		like.save()
+
+		if (nota.usuario.id != request.user.id):
+			key_sesion = session_from_usuario(nota.usuario.id)
+			r = redis.StrictRedis(host='localhost', port=6379, db=2)
+			mensaje = '{ "session_key": "' + str(key_sesion) + '", "usuario": "' + usuario.username + '", "nota_id": ' + str(nota.id) + ', "nota": "' + nota.titulo + '" }'
+			r.publish('me_gusta', mensaje)
+
+			notify.send(
+		            like,
+		            description= usuario.username + ' le ha gustado ' + nota.titulo,
+		            recipient=nota.usuario,
+		            target=nota,
+		            verb= 'nuevo_like'
+		        )
+
+	respuesta = {'usuario': usuario.username, 'titulo': nota.titulo}
+	return JsonResponse(respuesta, safe=False)
+
+
 def editar_nota_movil(request):
 	nota = Nota.objects.get(id = int(form.cleaned_data['id']))
 	titulo = form.cleaned_data['titulo']
@@ -919,7 +983,7 @@ def get_chat_id(request, id):
 		return JsonResponse({'id': chat.id})
 
 def get_puntos(request):
-	last_day = datetime.today() - timedelta(days=1)
+	last_day = datetime.today() - timedelta(weeks=1)
 
 	if request.user.is_authenticated():
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
@@ -934,6 +998,13 @@ def get_puntos(request):
 
 	notas = list(Nota.objects.filter(fecha__gte = last_day).values())
 	notas_result = helper.obtener_notas_loc(request.GET['lon'] ,request.GET['lat'], notas)
+
+
+	for nota in lista_noticias:
+		nota['seccion_id'] = Subseccion.objects.get(id = nota['subseccion_id']).seccion.id
+
+	for nota in notas_result:
+		nota['seccion_id'] = Subseccion.objects.get(id = nota['subseccion_id']).seccion.id
 
 	result = {
 		'lista_noticias': lista_noticias,

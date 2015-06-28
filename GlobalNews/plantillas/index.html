@@ -18,13 +18,27 @@
             {% else %}
             <li>               
             {% endif %}
-                {% if noticia.usuario == user %}
-                <div class="timeline-badge success">
-                </div>
-                {% else %}
-                <div class="timeline-badge info">
-                </div>
+                {% if noticia.seccion_id == 2 %}
+                    <div class="timeline-badge trafico">
+                        Tráfico
+                {% elif noticia.seccion_id == 3 %}
+                    <div class="timeline-badge culturales">
+                        Cultura
+                {% elif noticia.seccion_id == 4 %}
+                    <div class="timeline-badge politica">
+                        Política
+                {% elif noticia.seccion_id == 5 %}
+                    <div class="timeline-badge deportes">
+                        Deportes
+                {% elif noticia.seccion_id == 6 %}
+                    <div class="timeline-badge urbano">
+                        Urbano
+                {% elif noticia.seccion_id == 7 %}
+                    <div class="timeline-badge clima">
+                        Clima
                 {% endif %}
+                </div>
+
                 <div class="timeline-panel">
                     <div class="timeline-heading">
                         <a href="/publicacion/{{ noticia.id }}"><h4 class="timeline-title">{{ noticia.titulo }}</h4></a>
@@ -38,7 +52,7 @@
                         <p>{{ noticia.descripcion|slice:":140"|add:" ..." }}</p>
                     </div>
 
-                    {% if noticia.usuario == user %}
+                    {% if noticia.usuario_id == user.id %}
                         <hr>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">

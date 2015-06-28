@@ -24,6 +24,7 @@
                     <div id="mapa">
                         <div id="googleMap"></div>
                     </div>
+
                     <br>
                     <br>
                     <input type="submit" id="btn-crear" class="btn btn-success" value="Crear"></input>
@@ -119,7 +120,7 @@ $('#abrir_mapa').on('click', function(e){
                 longitud = data.latLng.F;
                 deleteMarkers();
                 addMarker(new google.maps.LatLng(latitud,longitud));
-                console.log(data);
+
                 $('#id_latitud').val(latitud);
                 $('#id_longitud').val(longitud);
             });

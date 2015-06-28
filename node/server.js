@@ -1,4 +1,7 @@
 //Importar los módulos
+//Cambiar host
+//var host = '192.168.1.70';
+var host = 'localhost'
 var http = require('http');
 var server = http.createServer().listen(3000);
 var io = require('socket.io').listen(server);
@@ -6,7 +9,6 @@ var cookie_reader = require('cookie');
 var querystring = require('querystring');
 var MongoClient = require('mongodb').MongoClient;
 
-var host = 'localhost';
 var usuarios = [];
 
 //Crear un cliente Redis
@@ -28,16 +30,13 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
     //Funcion que maneja cada evento enviado desde Django
     var recibeMensaje = function(channel, message){
         var i,j;
-        console.log(message.replace(/\n/g,''));
         var datos = JSON.parse(message.replace(/\n/g,""));
-        console.log(datos);
         switch (channel) {
             case 'chat':
                 io.to('chat_' + datos.id_chat ).emit('mensaje_entrada', datos);
                 break;
 
             case 'publicacion':
-                console.log(datos.lista_usuarios);
                 for(j=0; j<datos.lista_usuarios.length; j++){            
                     for(i=0; i<usuarios.length; i++){
                         if(usuarios[i].session_id == datos.lista_usuarios[j]){
@@ -68,6 +67,10 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
                 break;
 
             case 'comentario':
+
+                console.log(usuarios);
+                console.log(datos);
+
                 for(i=0; i<usuarios.length; i++){
                     if(usuarios[i].session_id == datos.session_key){
                         io.to(usuarios[i].socket_id).emit('nuevo_comentario', datos);
@@ -132,7 +135,6 @@ MongoClient.connect('mongodb://localhost:27017/globalnews', function(err, db) {
         };
 
         usuarios.push(obj_usuario);
-        console.log(usuarios);
         var doc = {
             '_id': obj_usuario.socket_id,
             "loc" : {
