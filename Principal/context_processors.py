@@ -35,7 +35,7 @@ def notificaciones_processor(request):
 
 def novedades_processor(request):
 	last_day = datetime.today() - timedelta(days=1)	
-	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')
 	lista_likes = []
 
 
@@ -43,8 +43,7 @@ def novedades_processor(request):
 		num_likes = LikeNota.objects.filter(nota = publicacion).count()
 		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
 
-	print ('Novedades', lista_likes)
-	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)[:4]
 
 
 	return {'novedades': novedades}
@@ -52,23 +51,19 @@ def novedades_processor(request):
 def usuarios_populares_processor(request):
 	id_usuarios = []
 	last_day = datetime.today() - timedelta(days=1)	
-	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')[:4]
+	novedades = Nota.objects.filter(fecha__gte = last_day).order_by('-fecha')
 	lista_likes = []
 
 	for publicacion in novedades:
 		num_likes = LikeNota.objects.filter(nota = publicacion).count()
 		lista_likes.append({'nota':publicacion,'num_likes': num_likes})
 
-	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)
-	
-	print novedades
+	novedades = sorted(lista_likes, key=lambda k: k['num_likes'], reverse=True)[:4]
 
 	for novedad in novedades:
 		id_usuarios.append(novedad['nota'].usuario.id)
 
 	usuarios_populares = Usuario.objects.filter(id__in=id_usuarios)
-
-	print usuarios_populares
 
 	return {'usuarios_populares': usuarios_populares}	
 

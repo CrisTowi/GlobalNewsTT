@@ -39,7 +39,7 @@ from django.db.models import Count
 HOST = "192.168.1.70"
 #HOST = "localhost"
 
-MAX_REPORTES = 1
+MAX_REPORTES = 5
 CADUCA_REPORTES = 1
 
 def session_from_usuario(id_usuario):
@@ -98,7 +98,7 @@ class MensajeDirectoViewSet(viewsets.ModelViewSet):
 @login_required(login_url='/login')
 def lista_reportes(request):
 	reportes = ReporteNota.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
-	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
+	last_date = datetime.today() - timedelta(weeks=CADUCA_REPORTES)
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -117,7 +117,7 @@ def lista_reportes(request):
 @login_required(login_url='/login')
 def lista_reportes_usuario(request):
 	reportes = list(ReporteUsuario.objects.all().annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
-	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
+	last_date = datetime.today() - timedelta(weeks=CADUCA_REPORTES)
 
 
 	paginator = Paginator(reportes, 8)
@@ -766,7 +766,7 @@ def encuentra_reporte_nota(request):
 	reportes = ReporteNota.objects.filter(Q(descripcion__contains=palabra) | Q(tipo__contains=palabra))
 
 	reportes = reportes.annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES)
-	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
+	last_date = datetime.today() - timedelta(weeks=CADUCA_REPORTES)
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
@@ -788,7 +788,7 @@ def encuentra_reporte_usuario(request):
 	reportes = ReporteUsuario.objects.filter(Q(descripcion__contains=palabra) | Q(tipo__contains=palabra))
 
 	reportes = list(reportes.annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
-	last_date = datetime.today() - timedelta(minutes=CADUCA_REPORTES)
+	last_date = datetime.today() - timedelta(weeks=CADUCA_REPORTES)
 
 	paginator = Paginator(reportes, 8)
  	page = request.GET.get('page')
