@@ -292,7 +292,7 @@ def index(request):
 	ctx = {'noticias': noticias, 'mensaje': mensaje}
 	return render(request, 'index.html', ctx)
 
-def perfil(request, id)
+def perfil(request, id):
 	form = ReporteUsuarioForm()
 
 	perfil = Usuario.objects.get(id = id)
@@ -303,7 +303,7 @@ def perfil(request, id)
 		usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = perfil, usuario_seguidor = request.user)
 		if usu:
 			follow = True
-		else
+		else:
 			follow = False
 
 	else:
