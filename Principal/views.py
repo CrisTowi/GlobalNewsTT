@@ -36,7 +36,7 @@ import Principal.helper as helper
 from django.db.models import Count
 
 #Cambiar host
-HOST = "192.168.1.70"
+HOST = "10.10.1.152"
 #HOST = "localhost"
 
 MAX_REPORTES = 5
@@ -257,6 +257,8 @@ def lista_notificaciones(request):
 
 #Muestran info
 def index(request):
+	mensaje = ''
+	page = ''
 	last_day = datetime.today() - timedelta(days=1)
 	if request.user.is_authenticated():
 		siguiendo_seccion_id = UsuarioSigueSeccion.objects.filter(usuario = request.user).values_list('seccion', flat=True)
@@ -277,7 +279,9 @@ def index(request):
 		noticia['seccion_id'] = Subseccion.objects.get(id = noticia['subseccion_id']).seccion.id
 
 	paginator = Paginator(lista_noticias, 6)
- 	page = request.GET.get('page')
+	if request.GET:
+		mensaje = request.GET['mensaje']
+ 		page = request.GET.get('page')
  	try:
 		noticias = paginator.page(page)
  	except PageNotAnInteger:
@@ -285,11 +289,10 @@ def index(request):
 	except EmptyPage:
 		noticias = paginator.page(paginator.num_pages)
 
-	ctx = {'noticias': noticias}
+	ctx = {'noticias': noticias, 'mensaje': mensaje}
 	return render(request, 'index.html', ctx)
 
-def perfil(request, id):
-
+def perfil(request, id)
 	form = ReporteUsuarioForm()
 
 	perfil = Usuario.objects.get(id = id)
@@ -300,7 +303,7 @@ def perfil(request, id):
 		usu = UsuarioSigueUsuario.objects.filter(usuario_seguido = perfil, usuario_seguidor = request.user)
 		if usu:
 			follow = True
-		else:
+		else
 			follow = False
 
 	else:
@@ -401,7 +404,7 @@ def nuevo_reporte_post(request):
 	            verb= 'nota_reportada'
 	        )
 
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/?mensaje=Reporte%20creado%20correctamente')
 
 
 @login_required(login_url='/login')
@@ -445,8 +448,7 @@ def nuevo_reporte_usuario(request):
 	            verb= 'usuario_reportado'
 	        )
 
-
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/?mensaje=Reporte%20creado%20correctamente')
 
 @login_required(login_url='/login')
 def nuevo_post(request):
@@ -513,7 +515,8 @@ def nuevo_post(request):
 			r = redis.StrictRedis(host='localhost', port=6379, db=1)
 			r.publish('publicacion', '{ "seccion_id": "'+ str(seccion_id)+'", "titulo": "' + nota.titulo + '", "fecha": "' + naturaltime(nota.fecha) + '", "id": ' + str(nota.id) + ', "usuario_id":' + str(nota.usuario.id) + ', "latitud":' + str(nota.latitud) + ', "longitud":' + str(nota.longitud) + ', "descripcion": "'+ desc +'", "usuario": "'+ nota.usuario.username +'", "lista_usuarios": ' + list_seguidores + ' }')
 
-			return HttpResponseRedirect('/')
+			return HttpResponseRedirect('/?mensaje=Nota%20creada%20correctamente')
+
 	else:
 		form = NuevaNotaForm()
 
@@ -530,6 +533,7 @@ def nuevo_post_movil(request):
 	privacidad = True
 	latitud = float(request.POST['latitud'])
 	longitud = float(request.POST['longitud'])
+	imagen = request.FILES['imagen']
 
 	nota = Nota()
 	nota.usuario = Usuario.objects.get(id = usuario_id)
@@ -537,6 +541,7 @@ def nuevo_post_movil(request):
 	nota.descripcion = descripcion
 	nota.subseccion = Subseccion.objects.get(id = subseccion_id)
 	nota.privacidad = privacidad
+	nota.imagen = imagen
 
 	nota.longitud = longitud
 	nota.latitud = latitud
@@ -587,7 +592,7 @@ def nuevo_usuario(request):
 			if access is not None:
 				if access.is_active:
 					login(request,access)
-					return HttpResponseRedirect('/')
+					return HttpResponseRedirect('/?mensaje=Usuario%20creado%20con%20%C3%exito')
 				else:
 					return render_to_response('noactive.html', context_instance=RequestContext(request))
 			else:
@@ -690,7 +695,7 @@ def editar_post(request, id):
 
 			nota.save()
 
-			return HttpResponseRedirect('/')
+			return HttpResponseRedirect('/?mensaje=Datos%20guardados%20correctamente')
 
 	ctx = {'form':form}
 
@@ -702,7 +707,7 @@ def eliminar_post(request, id):
 	if(nota.usuario == request.user):
 		nota.delete()		
 
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/?mensaje=Nota%20eliminada%20correctamente')
 
 #Sesiones
 def login_usuario(request):
@@ -717,7 +722,7 @@ def login_usuario(request):
 			if access is not None:
 				if access.is_active:
 					login(request,access)
-					return HttpResponseRedirect('/')
+					return HttpResponseRedirect('/?mensaje=Conectado')
 				else:
 					return render(request, 'noactive.html', ctx)
 			else:
@@ -786,7 +791,6 @@ def encuentra_reporte_usuario(request):
 	palabra = request.GET['q']
 
 	reportes = ReporteUsuario.objects.filter(Q(descripcion__contains=palabra) | Q(tipo__contains=palabra))
-
 	reportes = list(reportes.annotate(num_reportes=Count('id')).filter(num_reportes__gte=MAX_REPORTES))
 	last_date = datetime.today() - timedelta(weeks=CADUCA_REPORTES)
 

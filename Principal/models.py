@@ -8,7 +8,6 @@ from django.core import serializers
 
 # Create your models here
 class Usuario(AbstractBaseUser, PermissionsMixin):
-
 	username = models.CharField(max_length=25, unique=True, db_index=True)
 	nombre = models.CharField(max_length=45)
 	ap_paterno = models.CharField(max_length=45)
@@ -16,6 +15,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 	correo = models.CharField(max_length=45)
 	foto = models.ImageField(upload_to = 'usuarios', null = True, blank = True)
 	estado = models.CharField(max_length=45)
+
 	added = models.DateTimeField(auto_now_add=True)
 
 	activo = models.BooleanField(default=True, help_text='Activa un usuario para poder usar el sistema')

@@ -1,7 +1,9 @@
 //Cambiar host
-var host = "http://192.168.1.70";
-//var host = "localhost";
+//var host = "http://10.10.1.152";
+var host = "localhost";
 var icon = '';
+
+
 if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position){
         lat = position.coords.latitude;
@@ -108,6 +110,19 @@ if (navigator.geolocation) {
                 } else {
                   var info = {usuario_consultor: usuario , usuario_chat: id_usuario, mensaje: mensaje, id_chat: id_chat};
                   socket.emit('nuevo_mensaje_chat', info);
+                    var n = noty({
+                      text: 'Mensaje enviado exitosamente',
+                      layout: 'bottomRight',
+                      type: 'success',
+                      timeout: 3500,
+                      callback: { onClose: function() { /* Go to the URL i want to go */ }},
+                      animation: {
+                          open: {height: 'toggle'}, // jQuery animate function property object
+                          close: {height: 'toggle'}, // jQuery animate function property object
+                          easing: 'swing', // easing
+                          speed: 500 // opening & closing animation speed
+                      }
+                  });
                 }
             });
 
@@ -117,7 +132,7 @@ if (navigator.geolocation) {
                 $.get( "/eliminar/mensaje/", {id: id}, function(data){
                   $('#chat').html("");
                   var n = noty({
-                      text: 'Mensaje eliminado con éxito',
+                      text: 'Mensaje eliminado exitosamente',
                       layout: 'bottomRight',
                       type: 'success',
                       timeout: 3500,
