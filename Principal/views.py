@@ -524,6 +524,34 @@ def nuevo_post(request):
 	return render(request,'nuevo_post.html',ctx)
 
 
+def dejar_de_seguir_usuario_movil(request):
+	id_usuario_seguidor = int(request.GET['id_seguidor'])
+	id_usuario_seguido = int(request.GET['id_seguido'])
+
+	usuario_seguido = Usuario.objects.get(id = id_usuario_seguido)
+	usuario_seguidor = Usuario.objects.get(id = id_usuario_seguidor)
+
+	u = UsuarioSigueUsuario.objects.get(usuario_seguido = usuario_seguido, usuario_seguidor = usuario_seguidor)
+	u.delete()
+
+	respuesta = {'mensaje': 'Usuario dejado de seguir'}
+
+	return JsonResponse(respuesta, safe=False)
+
+def dejar_de_seguir_seccion_movil(request):
+	id_usuario_seguidor = int(request.GET['id_seguidor'])
+	id_seccion = int(request.GET['id_seccion'])
+
+	usuario_seguidor = Usuario.objects.get(id = id_usuario_seguidor)
+	seccion = Seccion.objects.get(id = id_seccion)
+
+	uss = UsuarioSigueSeccion.objects.get(seccion = seccion, usuario = usuario_seguidor)
+	uss.delete()
+
+	respuesta = {'mensaje': 'Seccion dejado de seguir'}
+
+	return JsonResponse(respuesta, safe=False)
+
 @csrf_exempt
 def nuevo_post_movil(request):
 	usuario_id = int(request.POST['usuario'])

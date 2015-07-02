@@ -123,6 +123,10 @@ urlpatterns = patterns('',
     url(r'comentarios/nota/(?P<id>\d+)$', 'Principal.views.comentarios_noticias', name='comentarios_noticias'),
     url(r'like/movil/$', 'Principal.views.like_movil', name='like_movil'),
 
+    url(r'unfollow/usuario/$', 'Principal.views.dejar_de_seguir_usuario_movil', name='dejar_de_seguir_usuario_movil'),
+    url(r'unfollow/seccion/$', 'Principal.views.dejar_de_seguir_seccion_movil', name='dejar_de_seguir_seccion_movil'),
+
+
     #Administracion
     url(r'dardebaja/nota/(?P<id>\d+)$', 'Principal.views.dar_de_baja_nota', name='dar_de_baja_nota'),
     url(r'dardebaja/usuario/(?P<id>\d+)$', 'Principal.views.dar_de_baja_usuario', name='dar_de_baja_usuario'),
