@@ -1,6 +1,6 @@
 //Importar los módulos
 //Cambiar host
-//var host = '10.10.1.152';
+//var host = '8.40.1.107';
 var host = 'localhost'
 var http = require('http');
 var server = http.createServer().listen(3000);
